@@ -16,6 +16,12 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
+const csrftoken = sessionStorage.getItem('bbr-token');
+const CSRFToken = () => {
+  return (
+    <input type="hidden" name="csrfmiddlewaretoken" value={csrftoken} />
+  );
+};
 
 export const Login = ()  => {
   const classes = useStyles();
@@ -24,9 +30,15 @@ export const Login = ()  => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    const config = {
+      headers: {
+        'X-CSRFToken': csrftoken,
+      }
+    }
+    
     const data = {"username": username, "password": password}
     async function attemptLogin(data) {
-      const response = await axios.post(LOGIN_URL, data);
+      const response = await axios.post(LOGIN_URL, data, config, {withCredentials: true});
       console.log(response);
       sessionStorage.setItem('username', username)
     }
@@ -37,6 +49,7 @@ export const Login = ()  => {
     <div className={classes.root}>
     <Typography className={classes.paddedText} variant='subtitle2'>Login to join the chat</Typography>
       <form onSubmit={handleSubmit} className={classes.loginForm} noValidate autoComplete="off">
+        <CSRFToken />
         <TextField 
           id="username" 
           label="username" 

@@ -4,6 +4,7 @@ import { Grid, Paper, makeStyles } from '@material-ui/core';
 import { BbrAppBar } from "../AppBar/AppBar";
 import { Chat } from "../Chat/Chat";
 import { Login } from "../Login/Login";
+import { CONTENT_URL } from "../../constants";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -25,6 +26,14 @@ const useStyles = makeStyles((theme) => ({
 export const Dashboard = ()  => {
   const classes = useStyles();
   const [loggedIn, setLoggedIn] = useState(false);
+
+  useEffect(() => {
+    async function fetchContent() {
+      const { data } = await axios.get(CONTENT_URL);
+      setContent(data);
+    }
+    fetchContent();
+  }, []);
 
   return (
     <div className={classes.root}>

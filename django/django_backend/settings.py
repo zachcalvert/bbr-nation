@@ -38,7 +38,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'corsheaders'
+    'corsheaders',
+
+    'api',
+    'content'
 ]
 
 MIDDLEWARE = [
@@ -108,13 +111,14 @@ AUTH_PASSWORD_VALIDATORS = [
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.BasicAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
-    ]
+    ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 100
 }
 
-CORS_ORIGIN_WHITELIST = ['http://localhost:3000', 'https://bbrnation.com'] 
-
-
+CORS_ALLOWED_ORIGINS = ['http://localhost:3000', 'https://bbrnation.com'] 
+CSRF_COOKIE_SECURE = False
+SESSION_COOKIE_SECURE = False
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
 

@@ -11,35 +11,26 @@ services:
       - pgdata:/var/lib/postgresql/data/
   redis:
     image: redis
-  django:
+  server:
     build:
-      context: ./django
+      context: ./server
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
-      - ./django:/code
+      - ./server:/code
     ports:
       - "8000:8000"
     depends_on:
       - db
-  flask:
-    build: ./flask
-    volumes:
-      - ./flask/:/code
-    ports:
-      - 5000:5000
-    depends_on:
-      - redis
-    restart: "always"
-  react:
+  client:
     build:
-      context: ./react
+      context: ./client
       dockerfile: Dockerfile-dev
     volumes:
-      - ./react/:/code
+      - ./client/:/code
     ports:
       - 3000:3000
     depends_on:
-      - flask
+      - server
     tty: true
 
 volumes:

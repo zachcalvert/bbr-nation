@@ -29,3 +29,5 @@ __pycache__
 .idea
 .idea/
 node_modules/
+
+client/node_modules/

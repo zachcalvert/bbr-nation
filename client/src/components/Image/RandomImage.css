@@ -1,0 +1,7 @@
+.bbr-image img {
+    margin: auto;
+    height: auto;
+    width: auto;
+    max-height: 500px;
+    max-width: -webkit-fill-available;
+}

@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User, Group
 from rest_framework import serializers
 
-from content.models import Image, Video, Text, Page
+from content.models import Image, Video, Quote, Page
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
@@ -28,9 +28,9 @@ class ImageSerializer(serializers.HyperlinkedModelSerializer):
         fields = '__all__'
 
 
-class TextSerializer(serializers.HyperlinkedModelSerializer):
+class QuoteSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
-        model = Text
+        model = Quote
         fields = '__all__'
 
 

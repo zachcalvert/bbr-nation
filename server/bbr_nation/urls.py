@@ -11,7 +11,7 @@ router.register(r'users', views.UserViewSet)
 router.register(r'groups', views.GroupViewSet)
 router.register(r'videos', views.VideoViewSet)
 router.register(r'images', views.ImageViewSet)
-router.register(r'texts', views.TextViewSet)
+router.register(r'quotes', views.QuoteViewSet)
 router.register(r'pages', views.PageViewSet)
 
 

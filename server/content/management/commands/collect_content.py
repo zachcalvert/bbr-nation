@@ -56,11 +56,17 @@ class Command(BaseCommand):
 
             for message in message_list:
                 print(message)
-                # if Content.objects.filter(name=message['id']).exists():
-                #     continue
+                if Content.objects.filter(name=message['id']).exists():
+                    print('seen this message before, continuing on')
+                    continue
 
                 if message['attachments'] and message['favorited_by']:
-                    user = Profile.objects.get(groupme_id=message['user_id']).user
+                    try:
+                        user = Profile.objects.get(groupme_id=message['user_id']).user
+                    except Profile.DoesNotExist:
+                        print(f"unknown user id: {message['user_id']}")
+                        continue
+
                     attachment = message['attachments'][0]
                     url = attachment.get('url') or attachment.get('source_url') or attachment.get('preview_url')
                     if url:
@@ -99,7 +105,12 @@ class Command(BaseCommand):
                         print('found new url type, in above message')
 
                 elif not message['attachments'] and len(message['favorited_by']) > 1:
-                    user = Profile.objects.get(groupme_id=message['user_id']).user
+                    try:
+                        user = Profile.objects.get(groupme_id=message['user_id']).user
+                    except Profile.DoesNotExist:
+                        print(f"unknown user id: {message['user_id']}")
+                        continue
+
                     kwargs = {
                         "user": user,
                         "name": message['id'],

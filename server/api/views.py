@@ -5,10 +5,11 @@ from django.contrib.auth.models import User, Group
 from django.contrib.auth import authenticate
 from rest_framework import viewsets
 from rest_framework import permissions
+from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from api import serializers
-from content.models import Video, Image, Text, Page
+from content.models import Video, Image, Page, Quote
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -29,12 +30,18 @@ class GroupViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
 
-class TextViewSet(viewsets.ModelViewSet):
+class QuoteViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows text content to be viewed or edited.
     """
-    queryset = Text.objects.all()
-    serializer_class = serializers.TextSerializer
+    queryset = Quote.objects.all()
+    serializer_class = serializers.QuoteSerializer
+
+    @action(detail=False)
+    def random(self, request):
+        quote = Quote.objects.order_by('?').first()
+        serializer = serializers.QuoteSerializer(quote, context={'request': request})
+        return Response(serializer.data)
 
 
 class ImageViewSet(viewsets.ModelViewSet):
@@ -44,6 +51,12 @@ class ImageViewSet(viewsets.ModelViewSet):
     queryset = Image.objects.all()
     serializer_class = serializers.ImageSerializer
 
+    @action(detail=False)
+    def random(self, request):
+        image = Image.objects.order_by('?').first()
+        serializer = serializers.ImageSerializer(image, context={'request': request})
+        return Response(serializer.data)
+
 
 class VideoViewSet(viewsets.ModelViewSet):
     """
@@ -51,6 +64,12 @@ class VideoViewSet(viewsets.ModelViewSet):
     """
     queryset = Video.objects.all()
     serializer_class = serializers.VideoSerializer
+
+    @action(detail=False)
+    def random(self, request):
+        video = Video.objects.order_by('?').first()
+        serializer = serializers.VideoSerializer(video, context={'request': request})
+        return Response(serializer.data)
 
 
 class PageViewSet(viewsets.ModelViewSet):

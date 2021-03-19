@@ -1,5 +1,5 @@
 import React from "react";
-import { Grid, Paper, makeStyles, Hidden } from '@material-ui/core';
+import { Grid, makeStyles, Hidden } from '@material-ui/core';
 
 import { BbrAppBar } from "../AppBar/AppBar";
 import { Feed } from "../Feed/Feed";
@@ -29,7 +29,7 @@ export const Dashboard = ()  => {
       <BbrAppBar />
       <Grid className={classes.container} container spacing={3}>
         <Hidden smDown>
-          <Grid item md={1}></Grid>
+          <Grid item  md={1}></Grid>
         </Hidden>
         <Grid item md={10} xs={12}>
           <Feed />

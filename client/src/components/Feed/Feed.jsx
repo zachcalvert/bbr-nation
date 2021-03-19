@@ -23,10 +23,37 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
+const FEED_URL = `${API_URL}content/`
+
 export const Feed = () => {
   const classes = useStyles();
   const [content, setContent] = useState([]);
-  const FEED_URL = `${API_URL}content/`
+  const [isBottom, setIsBottom] = useState(false);
+
+  function handleScroll() {
+    const scrollTop = (document.documentElement
+      && document.documentElement.scrollTop)
+      || document.body.scrollTop;
+    const scrollHeight = (document.documentElement
+      && document.documentElement.scrollHeight)
+      || document.body.scrollHeight;
+    if (scrollTop + window.innerHeight + 50 >= scrollHeight){
+      setIsBottom(true);
+    }
+  }
+
+  async function fetchContent() {
+    const { data } = await axios.get(FEED_URL);
+    setContent([...content, ...data.results]);
+    setIsBottom(false);
+  }
+
+  useEffect(() => {
+    if (isBottom) {
+      fetchContent();
+    }
+  }, [isBottom]);
+
 
   useEffect(() => {
     async function fetchContent() {
@@ -34,6 +61,11 @@ export const Feed = () => {
       setContent(data.results);
     }
     fetchContent();
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const renderContent = (content) => {

@@ -1,3 +1,8 @@
+"""
+VERY FIRST STARTING MESSAGE ID
+144176812771878500
+"""
+
 import datetime
 import json
 import os
@@ -38,9 +43,9 @@ class Command(BaseCommand):
 
         starting_message_id = None
         
-        for i in range(200):
+        for i in range(500):
             print(f'on batch {i}')
-            time.sleep(2)
+            time.sleep(.5)
             messages_url = f"{BASE_URL}groups/{GROUP_ID}/messages?token={TOKEN}&limit=100"
 
             if starting_message_id:
@@ -51,82 +56,80 @@ class Command(BaseCommand):
             if response.status_code != 200:
                 print(response)
                 continue
-            
+
             content = json.loads(response.content.decode())
             message_list = content['response']['messages']
 
             for message in message_list:
-                if Content.objects.filter(name=message['id']).exists():
-                    print('seen this message before, continuing on')
-                    continue
-
-                if message['attachments'] and message['favorited_by']:
-                    try:
-                        user = Profile.objects.get(groupme_id=message['user_id']).user
-                    except Profile.DoesNotExist:
-                        print(f"unknown user id: {message['user_id']}")
-                        continue
-
-                    attachment = message['attachments'][0]
-                    url = attachment.get('url') or attachment.get('source_url') or attachment.get('preview_url')
-                    if url:
-                        file_type = self.get_file_type(url)
-                        if file_type:
-                            if file_type == '.mp4':
-                                kind = 'MOVIE'
-                            else:
-                                kind = 'IMAGE'
-
-                            file_name = '{}{}'.format(message['id'], file_type)
-                            response = requests.get(url, stream=True)
-
-                            if response.status_code != 200:
-                                continue
-                                                        
-                            lf = tempfile.NamedTemporaryFile()
-                            for block in response.iter_content(1024 * 8):
-                                if not block:
-                                    break
-                                lf.write(block)
-
-                            kwargs = {
-                                "user": user,
-                                "name": message['id'],
-                                "text": message['text'],
-                                "creator": message['name'],
-                                "create_date": datetime.datetime.fromtimestamp(message['created_at']),
-                                "likes": len(message['favorited_by']),
-                                "kind": kind
-                            }
-
-                            content = Content(**kwargs)
-                            content.upload.save(file_name, files.File(lf))
-
-
-                    else:
-                        print(message)
-                        print('found new url type, in above message')
-
-                elif not message['attachments'] and len(message['favorited_by']) > 1:
-                    try:
-                        user = Profile.objects.get(groupme_id=message['user_id']).user
-                    except Profile.DoesNotExist:
-                        print(f"unknown user id: {message['user_id']}")
-                        continue
-
-                    kwargs = {
-                        "user": user,
-                        "name": message['id'],
-                        "text": message['text'],
-                        "creator": message['name'],
-                        "create_date": datetime.datetime.fromtimestamp(message['created_at']),
-                        "likes": len(message['favorited_by']),
-                        "kind": 'TEXT'
-                    }
-                    Content.objects.create(**kwargs)
-
                 try:
-                    message_list[message_list.index(message) + 1]
-                except IndexError:
-                    starting_message_id = message['id']
-                    continue
+                    if Content.objects.filter(name=message['id']).exists():
+                        print('seen this message before, continuing on')
+                        continue
+
+                    if message['attachments'] and message['favorited_by']:
+                        user = Profile.objects.get(groupme_id=message['user_id']).user
+
+                        attachment = message['attachments'][0]
+                        url = attachment.get('url') or attachment.get('source_url') or attachment.get('preview_url')
+                        if url:
+                            file_type = self.get_file_type(url)
+                            if file_type:
+                                if file_type == '.mp4':
+                                    kind = 'MOVIE'
+                                else:
+                                    kind = 'IMAGE'
+
+                                file_name = '{}{}'.format(message['id'], file_type)
+                                response = requests.get(url, stream=True)
+
+                                if response.status_code != 200:
+                                    continue
+                                                            
+                                lf = tempfile.NamedTemporaryFile()
+                                for block in response.iter_content(1024 * 8):
+                                    if not block:
+                                        break
+                                    lf.write(block)
+
+                                kwargs = {
+                                    "user": user,
+                                    "name": message['id'],
+                                    "text": message['text'],
+                                    "creator": message['name'],
+                                    "create_date": datetime.datetime.fromtimestamp(message['created_at']),
+                                    "likes": len(message['favorited_by']),
+                                    "kind": kind
+                                }
+
+                                content = Content(**kwargs)
+                                content.upload.save(file_name, files.File(lf))
+
+
+                        else:
+                            print(message)
+                            print('found new url type, in above message')
+
+                    elif not message['attachments'] and len(message['favorited_by']) > 1:
+                        user = Profile.objects.get(groupme_id=message['user_id']).user
+
+                        kwargs = {
+                            "user": user,
+                            "name": message['id'],
+                            "text": message['text'],
+                            "creator": message['name'],
+                            "create_date": datetime.datetime.fromtimestamp(message['created_at']),
+                            "likes": len(message['favorited_by']),
+                            "kind": 'TEXT'
+                        }
+                        Content.objects.create(**kwargs)
+
+                except Exception as e:
+                    print(e)
+
+                finally:
+                    try:
+                        message_list[message_list.index(message) + 1]
+                    except IndexError:
+                        starting_message_id = message['id']
+                        print(f'new starting message id: {starting_message_id}')
+                        continue

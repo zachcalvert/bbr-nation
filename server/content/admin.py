@@ -1,24 +1,12 @@
 from django.contrib import admin
 
-from content.models import Video, Image, Quote, Page
+from content.models import Content, Page
 
 
-class VideoAdmin(admin.ModelAdmin):
-    list_display = ['__str__', 'text', 'creator', 'create_date', 'upload']
-    list_filter = ('creator',)
+class ContentAdmin(admin.ModelAdmin):
+    list_display = ['__str__', 'user', 'create_date', 'kind', 'upload', 'text']
+    list_filter = ('user', 'kind',)
 
 
-class ImageAdmin(admin.ModelAdmin):
-    list_display = ['__str__', 'text', 'creator', 'create_date', 'upload']
-    list_filter = ('creator',)
-
-
-class QuoteAdmin(admin.ModelAdmin):
-    list_display = ['__str__', 'text', 'creator', 'create_date']
-    list_filter = ('creator',)
-
-
-admin.site.register(Video, VideoAdmin)
-admin.site.register(Image, ImageAdmin)
-admin.site.register(Quote, QuoteAdmin)
+admin.site.register(Content, ContentAdmin)
 admin.site.register(Page)

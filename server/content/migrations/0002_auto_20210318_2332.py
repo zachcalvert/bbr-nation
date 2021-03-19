@@ -30,7 +30,7 @@ def create_users(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('content', '0007_auto_20210318_1757'),
+        ('content', '0001_initial'),
     ]
 
     operations = [

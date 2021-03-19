@@ -1,9 +1,8 @@
 import React from "react";
-import { Grid, Paper, makeStyles } from '@material-ui/core';
+import { Grid, Paper, makeStyles, Hidden } from '@material-ui/core';
 
 import { BbrAppBar } from "../AppBar/AppBar";
-import { TableOfContents } from "../TableOfContents/TableOfContents";
-import { RandomImage } from "../Image/RandomImage";
+import { Feed } from "../Feed/Feed";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -17,7 +16,7 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(2),
     textAlign: 'center',
     color: theme.palette.text.secondary,
-    height: "100%",
+    height: "auto",
     marginTop: theme.spacing(2)
   }
 }));
@@ -29,12 +28,11 @@ export const Dashboard = ()  => {
     <div className={classes.root}>
       <BbrAppBar />
       <Grid className={classes.container} container spacing={3}>
-        <Grid item xs={1}></Grid>
-        <Grid item xs={10}>
-          <Paper className={classes.paper}>
-            <RandomImage />
-            {/* <iframe src="https://giphy.com/embed/ud7WGyC5XOlZVOeV88" width="327" height="480" frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a href="https://giphy.com/gifs/ud7WGyC5XOlZVOeV88">via GIPHY</a></p> */}
-          </Paper>
+        <Hidden smDown>
+          <Grid item md={1}></Grid>
+        </Hidden>
+        <Grid item md={10} xs={12}>
+          <Feed />
         </Grid>
       </Grid>
     </div>

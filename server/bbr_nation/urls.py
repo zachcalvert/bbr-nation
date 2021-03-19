@@ -9,9 +9,7 @@ from api import views
 router = routers.DefaultRouter()
 router.register(r'users', views.UserViewSet)
 router.register(r'groups', views.GroupViewSet)
-router.register(r'videos', views.VideoViewSet)
-router.register(r'images', views.ImageViewSet)
-router.register(r'quotes', views.QuoteViewSet)
+router.register(r'content', views.ContentViewSet)
 router.register(r'pages', views.PageViewSet)
 
 

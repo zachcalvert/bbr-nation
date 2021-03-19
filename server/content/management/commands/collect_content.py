@@ -10,7 +10,7 @@ import time
 from django.core import files
 from django.core.management.base import BaseCommand
 
-from content.models import Image, Video, Content, Quote, Profile
+from content.models import Content, Profile
 
 
 BASE_URL = "https://api.groupme.com/v3/"
@@ -24,7 +24,7 @@ class Command(BaseCommand):
     )
 
     def get_file_type(self, url):
-        if 'png' in url:
+        if '.png' in url:
             return '.png'
         elif 'jpg' in url or 'jpeg' in url:
             return '.jpg'
@@ -38,7 +38,8 @@ class Command(BaseCommand):
 
         starting_message_id = None
         
-        for i in range(75):
+        for i in range(200):
+            print(f'on batch {i}')
             time.sleep(2)
             messages_url = f"{BASE_URL}groups/{GROUP_ID}/messages?token={TOKEN}&limit=100"
 
@@ -49,13 +50,12 @@ class Command(BaseCommand):
 
             if response.status_code != 200:
                 print(response)
-                return
+                continue
             
             content = json.loads(response.content.decode())
             message_list = content['response']['messages']
 
             for message in message_list:
-                print(message)
                 if Content.objects.filter(name=message['id']).exists():
                     print('seen this message before, continuing on')
                     continue
@@ -72,6 +72,11 @@ class Command(BaseCommand):
                     if url:
                         file_type = self.get_file_type(url)
                         if file_type:
+                            if file_type == '.mp4':
+                                kind = 'MOVIE'
+                            else:
+                                kind = 'IMAGE'
+
                             file_name = '{}{}'.format(message['id'], file_type)
                             response = requests.get(url, stream=True)
 
@@ -90,15 +95,13 @@ class Command(BaseCommand):
                                 "text": message['text'],
                                 "creator": message['name'],
                                 "create_date": datetime.datetime.fromtimestamp(message['created_at']),
-                                "likes": len(message['favorited_by'])
+                                "likes": len(message['favorited_by']),
+                                "kind": kind
                             }
 
-                            if file_type == '.mp4':
-                                video = Video(**kwargs)
-                                video.upload.save(file_name, files.File(lf))
-                            else:
-                                image = Image(**kwargs)
-                                image.upload.save(file_name, files.File(lf))
+                            content = Content(**kwargs)
+                            content.upload.save(file_name, files.File(lf))
+
 
                     else:
                         print(message)
@@ -117,9 +120,10 @@ class Command(BaseCommand):
                         "text": message['text'],
                         "creator": message['name'],
                         "create_date": datetime.datetime.fromtimestamp(message['created_at']),
-                        "likes": len(message['favorited_by'])
+                        "likes": len(message['favorited_by']),
+                        "kind": 'TEXT'
                     }
-                    Quote.objects.create(**kwargs)
+                    Content.objects.create(**kwargs)
 
                 try:
                     message_list[message_list.index(message) + 1]

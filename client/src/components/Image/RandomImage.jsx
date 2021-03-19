@@ -9,7 +9,7 @@ import './RandomImage.css'
 export const RandomImage = () => {
   const [image, setImage] = useState([]);
   const [createdDate, setCreatedDate] = useState(null);
-  const RANDOM_IMAGE_URL = `${API_URL}images/random/`
+  const RANDOM_IMAGE_URL = `${API_URL}content/random/`
 
   useEffect(() => {
     async function fetchRandomImage() {

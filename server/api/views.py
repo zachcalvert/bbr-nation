@@ -9,7 +9,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from api import serializers
-from content.models import Video, Image, Page, Quote
+from content.models import Content, Page
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -30,45 +30,23 @@ class GroupViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
 
-class QuoteViewSet(viewsets.ModelViewSet):
+class ContentViewSet(viewsets.ModelViewSet):
     """
-    API endpoint that allows text content to be viewed or edited.
+    API endpoint that shares content randomly.
     """
-    queryset = Quote.objects.all()
-    serializer_class = serializers.QuoteSerializer
+    queryset = Content.objects.all()
+    serializer_class = serializers.ContentSerializer
 
     @action(detail=False)
     def random(self, request):
-        quote = Quote.objects.order_by('?').first()
-        serializer = serializers.QuoteSerializer(quote, context={'request': request})
+        content = Content.objects.order_by('?').first()
+        serializer = serializers.ContentSerializer(content, context={'request': request})
         return Response(serializer.data)
 
-
-class ImageViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows images to be viewed or edited.
-    """
-    queryset = Image.objects.all()
-    serializer_class = serializers.ImageSerializer
-
     @action(detail=False)
-    def random(self, request):
-        image = Image.objects.order_by('?').first()
-        serializer = serializers.ImageSerializer(image, context={'request': request})
-        return Response(serializer.data)
-
-
-class VideoViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows groups to be viewed or edited.
-    """
-    queryset = Video.objects.all()
-    serializer_class = serializers.VideoSerializer
-
-    @action(detail=False)
-    def random(self, request):
-        video = Video.objects.order_by('?').first()
-        serializer = serializers.VideoSerializer(video, context={'request': request})
+    def feed(self, request):
+        content = Content.objects.order_by('?')[:10]
+        serializer = serializers.ContentSerializer(content, many=True, context={'request': request})
         return Response(serializer.data)
 
 

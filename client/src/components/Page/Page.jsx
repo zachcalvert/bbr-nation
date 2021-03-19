@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import axios from "axios"
 import { API_URL } from "../../constants"
 import { makeStyles, Paper, Typography } from '@material-ui/core';
 import { FormattedTime } from '../Common'
 
-import './Feed.css'
+import './Page.css'
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -18,10 +19,48 @@ const useStyles = makeStyles((theme) => ({
 
 const FEED_URL = `${API_URL}content/`
 
-export const Feed = () => {
+export const Page = () => {
   const classes = useStyles();
+  const { slug } = useParams();
   const [content, setContent] = useState([]);
   const [isBottom, setIsBottom] = useState(false);
+  const [nextUrl, setNexUrl] = useState(null);
+  const [keepScrolling, setKeepScrolling] = useState(true);
+
+  let contentUrl;
+  if (slug) {
+    contentUrl = `${FEED_URL}${slug}`;
+  } else {
+    contentUrl = FEED_URL;
+  }
+
+  useEffect(() => {
+    async function fetchContent() {
+      const { data } = await axios.get(contentUrl);
+      setContent(data.results);
+      setNexUrl(data.next);
+    }
+    fetchContent();
+  }, [slug]);
+
+  // scroll to top when slug changes
+  useEffect(() => {
+    try {
+      window.scroll({
+        top: 0,
+        left: 0,
+        behavior: 'smooth',
+      });
+    } catch (error) {
+      window.scrollTo(0, 0);
+    }
+  }, [slug]);
+
+  // add scroll listener to detect if we've reach the bottom of the page
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   function handleScroll() {
     const scrollTop = (document.documentElement
@@ -35,31 +74,21 @@ export const Feed = () => {
     }
   }
 
-  async function fetchContent() {
-    const { data } = await axios.get(FEED_URL);
-    setContent([...content, ...data.results]);
-    setIsBottom(false);
-  }
-
   useEffect(() => {
-    if (isBottom) {
-      fetchContent();
+    if (isBottom && keepScrolling) {
+      fetchContent(nextUrl);
     }
   }, [isBottom]);
 
-
-  useEffect(() => {
-    async function fetchContent() {
-      const { data } = await axios.get(FEED_URL);
-      setContent(data.results);
+  async function fetchContent(url) {
+    const { data } = await axios.get(url);
+    setContent([...content, ...data.results]);
+    setIsBottom(false);
+    if (!data.next) {
+      setKeepScrolling(false);
     }
-    fetchContent();
-  }, []);
-
-  useEffect(() => {
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+    setNexUrl(data.next);
+  }
 
   const renderContent = (content) => {
     let createdDate = FormattedTime(content.create_date);
@@ -76,6 +105,7 @@ export const Feed = () => {
       return (
         <div className='bbr-video'>
           <video controls><source src={content.upload} type="video/mp4" /></video>
+          {content.text && <Typography variant='h6'>"{content.text}"</Typography>}
           <Typography variant='subtitle1'>{content.creator} - {createdDate}</Typography>
         </div>
       )

@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import axios from "axios"
-import { IconButton, Link } from '@material-ui/core';
+import { IconButton, Typography } from '@material-ui/core';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
@@ -62,7 +63,7 @@ export const TableOfContents = () => {
             onClick={handleClose}
             component={Link}
             to={page.slug}>
-              {page.name}
+              <Typography variant='h6'>{page.name}</Typography>
           </MenuItem>
         ))}
       </Menu>

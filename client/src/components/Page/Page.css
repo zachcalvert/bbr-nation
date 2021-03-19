@@ -8,7 +8,7 @@
 
 .bbr-video video {
     margin: auto;
-    height: auto;
+    height: 500px;
     width: auto;
     max-height: 500px;
     max-width: -webkit-fill-available;

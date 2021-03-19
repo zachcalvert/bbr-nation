@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -32,7 +33,7 @@ export function BbAppBar(props) {
       <HideOnScroll {...props}>
         <AppBar>
           <Toolbar>
-            <Typography variant="h6">BBR Nation</Typography>
+            <Link to="/"><Typography variant="h6">BBR Nation</Typography></Link>
             <IconButton style={{marginLeft: 'auto'}} color="inherit" aria-label="menu">
               <TableOfContents />
             </IconButton>

@@ -44,8 +44,14 @@ class ContentViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     @action(detail=False)
-    def feed(self, request):
-        content = Content.objects.order_by('?')[:10]
+    def top(self, request):
+        content = Content.objects.order_by('-likes')[:50]
+        serializer = serializers.ContentSerializer(content, many=True, context={'request': request})
+        return Response(serializer.data)
+
+    @action(detail=False)
+    def videos(self, request):
+        content = Content.objects.filter(kind='MOVIE')
         serializer = serializers.ContentSerializer(content, many=True, context={'request': request})
         return Response(serializer.data)
 

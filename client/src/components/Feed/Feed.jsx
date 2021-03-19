@@ -7,13 +7,6 @@ import { FormattedTime } from '../Common'
 import './Feed.css'
 
 const useStyles = makeStyles((theme) => ({
-  root: {
-    flexGrow: 1,
-    height: "100%"
-  },
-  container: {
-    height: "90%"
-  },
   paper: {
     padding: theme.spacing(2),
     textAlign: 'center',
@@ -99,7 +92,7 @@ export const Feed = () => {
   return (
     <>
       {content.map((c, index) => (
-        <Paper className={classes.paper}>
+        <Paper key={c.id} className={classes.paper}>
           {renderContent(c)}
         </Paper>
       ))}

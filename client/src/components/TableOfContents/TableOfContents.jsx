@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import axios from "axios"
-import IconButton from '@material-ui/core/IconButton';
+import { IconButton, Link } from '@material-ui/core';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
@@ -56,8 +56,13 @@ export const TableOfContents = () => {
         }}
       >
         {pages.map((page) => (
-          <MenuItem key={page.name} selected={page === 'Home'} onClick={handleClose}>
-            {page.name}
+          <MenuItem 
+            key={page.slug} 
+            selected={page === 'Home'}
+            onClick={handleClose}
+            component={Link}
+            to={page.slug}>
+              {page.name}
           </MenuItem>
         ))}
       </Menu>

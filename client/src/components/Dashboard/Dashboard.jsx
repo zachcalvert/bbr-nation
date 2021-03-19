@@ -1,7 +1,7 @@
 import React from "react";
 import { Grid, makeStyles, Hidden } from '@material-ui/core';
 
-import { BbrAppBar } from "../AppBar/AppBar";
+import { BbAppBar } from "../AppBar/AppBar";
 import { Feed } from "../Feed/Feed";
 
 const useStyles = makeStyles((theme) => ({
@@ -26,7 +26,7 @@ export const Dashboard = ()  => {
 
   return (
     <div className={classes.root}>
-      <BbrAppBar />
+      <BbAppBar />
       <Grid className={classes.container} container spacing={3}>
         <Hidden smDown>
           <Grid item  md={1}></Grid>

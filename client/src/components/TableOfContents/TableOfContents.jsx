@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import axios from "axios"
-import { IconButton, Typography } from '@material-ui/core';
+import { Divider, IconButton, Typography } from '@material-ui/core';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import MenuRoundedIcon from '@material-ui/icons/MenuRounded';
@@ -51,7 +51,7 @@ export const TableOfContents = () => {
         onClose={handleClose}
         PaperProps={{
           style: {
-            maxHeight: ITEM_HEIGHT * 4.5,
+            maxHeight: ITEM_HEIGHT * 5.5,
             width: 'auto',
           },
         }}

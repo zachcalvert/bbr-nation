@@ -78,7 +78,7 @@ class ContentViewSet(viewsets.ModelViewSet):
 
     @paginate
     @action(detail=False)
-    def videos(self, request):
+    def watch(self, request):
         return Content.objects.filter(kind='VIDEO')
 
     @paginate

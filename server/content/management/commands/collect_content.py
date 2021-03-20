@@ -7,6 +7,7 @@ import datetime
 import json
 import os
 import random
+import re
 import requests
 import urllib
 import tempfile
@@ -38,6 +39,10 @@ class Command(BaseCommand):
         elif 'mp4' in url:
             return '.mp4'
         return ""
+
+    def strip_urls(self, text): 
+        text = re.sub(r'^https?:\/\/.*[\r\n]*', '', text, flags=re.MULTILINE)
+        return text
 
     def handle(self, *args, **options):
 
@@ -94,7 +99,7 @@ class Command(BaseCommand):
                                 kwargs = {
                                     "user": user,
                                     "name": message['id'],
-                                    "text": message['text'],
+                                    "text": self.strip_urls(message['text']),
                                     "creator": message['name'],
                                     "create_date": datetime.datetime.fromtimestamp(message['created_at']),
                                     "likes": len(message['favorited_by']),

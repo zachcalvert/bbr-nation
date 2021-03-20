@@ -45,6 +45,7 @@ export const App = () => {
           <Grid className={classes.container} container spacing={3}>
             <Hidden smDown><Grid item  md={1}></Grid></Hidden>
             <Grid item md={10} xs={12}>
+              <Route path="/content/:name" component={Page} />
               <Route path="/:slug?" component={Page} />
             </Grid>
           </Grid>

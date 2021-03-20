@@ -37,6 +37,9 @@ class Page(models.Model):
     slug = models.SlugField(null=True, blank=True)
     contents = models.ManyToManyField(Content, null=True, blank=True)
 
+    class Meta:
+        ordering = ['name']
+
     def __str__(self):
         return str(self.name)
     

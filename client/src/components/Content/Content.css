@@ -1,0 +1,27 @@
+.bbr-content {
+  width: fit-content;
+}
+
+.bbr-image img {
+    margin: auto;
+    height: auto;
+    width: auto;
+    max-height: 500px;
+    max-width: -webkit-fill-available;
+}
+
+.bbr-video video {
+    margin: auto;
+    height: auto;
+    width: auto;
+    max-height: 500px;
+    max-width: -webkit-fill-available;
+}
+
+.bbr-quote-author {
+  text-align: right;
+}
+
+.MuiDivider-root {
+    margin: revert!important;
+}

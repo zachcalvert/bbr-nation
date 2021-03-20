@@ -1,0 +1,22 @@
+steps:
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', 'gcr.io/optimum-pier-280005/bbrnation-backend:latest', 'server']
+  timeout: 500s
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 'gcr.io/optimum-pier-280005/bbrnation-backend:latest']
+- name: 'gcr.io/cloud-builders/kubectl'
+  args: ['set', 'image', 'deployment/bbrnation-backend', 'django=gcr.io/optimum-pier-280005/bbrnation-backend:latest', '--namespace', 'bbrnation']
+  env:
+  - 'CLOUDSDK_COMPUTE_ZONE=us-west1-a'
+  - 'CLOUDSDK_CONTAINER_CLUSTER=zmc-hub'
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', 'gcr.io/optimum-pier-280005/bbrnation-frontend:latest', 'client']
+  timeout: 500s
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 'gcr.io/optimum-pier-280005/bbrnation-frontend:latest']
+- name: 'gcr.io/cloud-builders/kubectl'
+  args: ['set', 'image', 'deployment/frontend-deployment', 'react=gcr.io/optimum-pier-280005/bbrnation-frontend:latest', '--namespace', 'bbrnation']
+  env:
+  - 'CLOUDSDK_COMPUTE_ZONE=us-west1-a'
+  - 'CLOUDSDK_CONTAINER_CLUSTER=zmc-hub'
+images: ['gcr.io/optimum-pier-280005/bbrnation-backend:latest', 'gcr.io/optimum-pier-280005/bbrnation-frontend:latest']

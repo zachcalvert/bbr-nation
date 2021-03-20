@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bbrnation-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bbrnation-backend
+  template:
+    metadata:
+      labels:
+        app: bbrnation-backend
+    spec:
+      containers:
+        - name: flask
+          image: "gcr.io/optimum-pier-280005/bbrnation-backend:latest"
+          ports:
+            - name: http
+              containerPort: 8000

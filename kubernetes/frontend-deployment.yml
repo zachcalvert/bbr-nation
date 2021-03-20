@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bbrnation-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bbrnation-frontend
+  template:
+    metadata:
+      labels:
+        app: bbrnation-frontend
+    spec:
+      containers:
+        - name: react
+          image: "gcr.io/optimum-pier-280005/bbrnation-frontend:latest"
+          ports:
+            - containerPort: 80

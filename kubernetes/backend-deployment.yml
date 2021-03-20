@@ -13,7 +13,7 @@ spec:
         app: bbrnation-backend
     spec:
       containers:
-        - name: flask
+        - name: django
           image: "gcr.io/optimum-pier-280005/bbrnation-backend:latest"
           ports:
             - name: http

@@ -3,12 +3,12 @@ import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import useScrollTrigger from '@material-ui/core/useScrollTrigger';
 import Slide from '@material-ui/core/Slide';
 import IconButton from '@material-ui/core/IconButton';
 import { TableOfContents } from '../TableOfContents/TableOfContents';
+import './AppBar.css';
 
 function HideOnScroll(props) {
   const { children, window } = props;
@@ -33,7 +33,7 @@ export function BbAppBar(props) {
       <HideOnScroll {...props}>
         <AppBar>
           <Toolbar>
-            <Link to="/"><Typography variant="h6">BBR Nation</Typography></Link>
+            <Link to="/"><img className='beer-icon' src='/beer-can.jpeg' /></Link>
             <IconButton style={{marginLeft: 'auto'}} color="inherit" aria-label="menu">
               <TableOfContents />
             </IconButton>

@@ -15,6 +15,14 @@ from functools import wraps
 from django.db.models import QuerySet
 
 
+SHOUTOUT_IDS = [
+    '160879140245416165',
+    '160879152046258192',
+    '160879261420945182',
+    '160879271942474197'
+]
+
+
 def paginate(func):
 
     @wraps(func)
@@ -66,12 +74,30 @@ class ContentViewSet(viewsets.ModelViewSet):
     @paginate
     @action(detail=False)
     def top(self, request):
-        return Content.objects.filter(likes__gte=7).order_by('-likes')
+        return Content.objects.filter(likes__gte=3).order_by('-likes')
 
     @paginate
     @action(detail=False)
     def videos(self, request):
-        return Content.objects.filter(kind='MOVIE')
+        return Content.objects.filter(kind='VIDEO')
+
+    @paginate
+    @action(detail=False)
+    def bot(self, request):
+        return Content.objects.filter(creator='Belly Bot', likes__gte=2).order_by('-likes')
+
+    @paginate
+    @action(detail=False)
+    def shoutouts(self, request):
+        shoutouts = []
+        for shoutout_id in SHOUTOUT_IDS:
+            shoutouts.append(Content.objects.get(name=shoutout_id))
+        return shoutouts
+
+    @paginate
+    @action(detail=False)
+    def the_twelve_days_of_shotguns(self, request):
+        return Content.objects.filter(name='The Twelve Days of Shotguns')
 
 
 class PageViewSet(viewsets.ModelViewSet):

@@ -4,7 +4,7 @@ import axios from "axios"
 import { IconButton, Typography } from '@material-ui/core';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
+import MenuRoundedIcon from '@material-ui/icons/MenuRounded';
 
 import { API_URL } from "../../constants"
 import './TableOfContents.css'
@@ -41,7 +41,7 @@ export const TableOfContents = () => {
         aria-haspopup="true"
         onClick={handleClick}
       >
-        <MoreVertIcon />
+        <MenuRoundedIcon />
       </IconButton>
       <Menu
         id="long-menu"

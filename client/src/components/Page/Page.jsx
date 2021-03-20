@@ -35,16 +35,8 @@ export const Page = () => {
   }
 
   useEffect(() => {
-    async function fetchContent() {
-      const { data } = await axios.get(contentUrl);
-      setContent(data.results);
-      setNexUrl(data.next);
-    }
-    fetchContent();
-  }, [slug]);
+    setContent([]);
 
-  // scroll to top when slug changes
-  useEffect(() => {
     try {
       window.scroll({
         top: 0,
@@ -54,6 +46,17 @@ export const Page = () => {
     } catch (error) {
       window.scrollTo(0, 0);
     }
+
+    async function fetchContent() {
+      const { data } = await axios.get(contentUrl);
+      setContent(data.results);
+      if (data.next) {
+        setNexUrl(data.next);
+      } else {
+        setKeepScrolling(false);
+      }
+    }
+    fetchContent();
   }, [slug]);
 
   // add scroll listener to detect if we've reach the bottom of the page
@@ -101,7 +104,7 @@ export const Page = () => {
           <Typography variant='subtitle1'>{content.creator} - {createdDate}</Typography>
         </div>
       )
-    } else if (content['kind'] === 'MOVIE') {
+    } else if (content['kind'] === 'VIDEO') {
       return (
         <div className='bbr-video'>
           <video controls><source src={content.upload} type="video/mp4" /></video>

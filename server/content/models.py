@@ -34,22 +34,18 @@ class Content(models.Model):
 
 class Page(models.Model):
     name = models.CharField(max_length=100, null=True, blank=True)
-    slug = models.SlugField(null=True, blank=True, editable=False)
+    slug = models.SlugField(null=True, blank=True)
     contents = models.ManyToManyField(Content, null=True, blank=True)
 
     def __str__(self):
         return str(self.name)
-
-    def save(self, *args, **kwargs):
-        if not self.slug:
-            self.slug = slugify(self.name)
-        super(Page, self).save(*args, **kwargs)
     
 
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
         Profile.objects.create(user=instance)
+
 
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):

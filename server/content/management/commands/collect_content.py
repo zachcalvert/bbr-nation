@@ -75,7 +75,7 @@ class Command(BaseCommand):
                             file_type = self.get_file_type(url)
                             if file_type:
                                 if file_type == '.mp4':
-                                    kind = 'MOVIE'
+                                    kind = 'VIDEO'
                                 else:
                                     kind = 'IMAGE'
 

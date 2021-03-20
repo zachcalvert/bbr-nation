@@ -20,6 +20,7 @@ class ContentSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Content
         fields = '__all__'
+        lookup_field = 'name'
 
 
 class PageSerializer(serializers.HyperlinkedModelSerializer):

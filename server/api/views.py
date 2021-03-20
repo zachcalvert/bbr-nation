@@ -99,6 +99,11 @@ class ContentViewSet(viewsets.ModelViewSet):
     def the_twelve_days_of_shotguns(self, request):
         return Content.objects.filter(name='The Twelve Days of Shotguns')
 
+    @paginate
+    @action(detail=False)
+    def early(self, request):
+        return Content.objects.order_by('create_date')
+
 
 class PageViewSet(viewsets.ModelViewSet):
     """

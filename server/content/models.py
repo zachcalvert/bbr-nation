@@ -16,7 +16,7 @@ class Content(models.Model):
         ('IMAGE', 'Image'),
         ('VIDEO', 'Video'),
     )
-    name = models.CharField(max_length=100, null=True, blank=True)
+    name = models.CharField(max_length=100, null=True, blank=True, db_index=True)
     user = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL)
     creator = models.CharField(max_length=200, null=True, blank=True)
     create_date = models.DateTimeField(null=True, blank=True)

@@ -18,3 +18,14 @@ spec:
           ports:
             - name: http
               containerPort: 8000
+        - name: db
+          image: postgres
+          env:
+            - name: "POSTGRES_DB"
+              value: "postgres"
+            - name: "POSTGRES_USER"
+              value: "postgres"
+            - name: "POSTGRES_PASSWORD"
+              value: "postgres"
+          ports:
+            - containerPort: 5432

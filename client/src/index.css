@@ -10,8 +10,14 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   padding: 0 40px;
+  text-decoration: none;
 }
 
 #root {
   height: 100%;
+}
+
+.navMenuLink a {
+    text-decoration: none;
+    color: white;
 }

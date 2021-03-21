@@ -2,12 +2,21 @@
   width: fit-content;
 }
 
+.bbr-content a {
+  text-decoration: none;
+}
+
+.bbr-image, .bbr-video {
+  text-align: center;
+}
+
 .bbr-image img {
     margin: auto;
     height: auto;
     width: auto;
     max-height: 500px;
     max-width: -webkit-fill-available;
+    text-align: center;
 }
 
 .bbr-video video {
@@ -16,6 +25,7 @@
     width: auto;
     max-height: 500px;
     max-width: -webkit-fill-available;
+    text-align: center;
 }
 
 .bbr-quote-author {

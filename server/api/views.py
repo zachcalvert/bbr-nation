@@ -1,3 +1,7 @@
+import datetime
+import json
+import requests
+
 from django.shortcuts import render
 
 # Create your views here.
@@ -13,6 +17,11 @@ from content.models import Content, Page
 
 from functools import wraps
 from django.db.models import QuerySet
+
+
+BASE_URL = "https://api.groupme.com/v3/"
+GROUP_ID = "16191637"
+TOKEN = "kUtmZNokfpZvOE8KrOw1tb7cF15wZ3h55Vxk0T34"
 
 
 SHOUTOUT_IDS = [
@@ -64,12 +73,33 @@ class ContentViewSet(viewsets.ModelViewSet):
     """
     queryset = Content.objects.all()
     serializer_class = serializers.ContentSerializer
+    lookup_field = 'name'
 
+    @action(detail=True)
+    def conversation(self, request, name):
+        # content = Content.objects.get(name=name)
+        conversation = Content.objects.get(name=name)
+
+        messages_url = f"{BASE_URL}groups/{GROUP_ID}/messages?token={TOKEN}&limit=5&before_id={name}"
+        response = requests.get(messages_url)
+        content = json.loads(response.content.decode())
+        message_list = content['response']['messages']
+
+        messages = [{
+            'id': m['id'],
+            'text': m['text'],
+            'created_date': datetime.datetime.fromtimestamp(m['created_at']).replace(tzinfo=datetime.timezone.utc).isoformat(),
+            'creator': m['name'],
+            'avatar_url': m['avatar_url']
+        } for m in message_list]
+        messages.reverse()
+
+        return Response(messages)
+
+    @paginate
     @action(detail=False)
     def random(self, request):
-        content = Content.objects.order_by('?').first()
-        serializer = serializers.ContentSerializer(content, context={'request': request})
-        return Response(serializer.data)
+        return Content.objects.order_by('?')
 
     @paginate
     @action(detail=False)

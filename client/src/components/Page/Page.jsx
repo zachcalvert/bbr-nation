@@ -2,25 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from "axios"
 import { API_URL } from "../../constants"
-import { makeStyles, Paper } from '@material-ui/core';
 
 import { Content } from '../Content/Content';
 import './Page.css'
 
-const useStyles = makeStyles((theme) => ({
-  paper: {
-    padding: theme.spacing(2),
-    textAlign: 'center',
-    color: theme.palette.text.secondary,
-    height: "auto",
-    marginTop: theme.spacing(4)
-  }
-}));
-
 const FEED_URL = `${API_URL}content/`
 
 export const Page = () => {
-  const classes = useStyles();
   const { slug } = useParams();
   const [content, setContent] = useState([]);
   const [isBottom, setIsBottom] = useState(false);
@@ -31,7 +19,7 @@ export const Page = () => {
   if (slug) {
     contentUrl = `${FEED_URL}${slug}`;
   } else {
-    contentUrl = FEED_URL;
+    contentUrl = `${FEED_URL}random`;
   }
 
   useEffect(() => {
@@ -96,9 +84,7 @@ export const Page = () => {
   return (
     <>
       {content.map((c, index) => (
-        <Paper key={c.id} className={classes.paper}>
-          <Content content={c} />
-        </Paper>
+        <Content key={c.id} content={c} />
       ))}
     </>
   )

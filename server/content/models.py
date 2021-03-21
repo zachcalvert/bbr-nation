@@ -26,7 +26,7 @@ class Content(models.Model):
     kind = models.CharField(max_length=10, choices=KIND_CHOICES, default='TEXT')
 
     class Meta:
-        ordering = ['?']
+        ordering = ['name']
 
     def __str__(self):
         return self.name

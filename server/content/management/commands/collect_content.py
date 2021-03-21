@@ -103,12 +103,12 @@ class Command(BaseCommand):
                                     "creator": message['name'],
                                     "create_date": datetime.datetime.fromtimestamp(message['created_at']),
                                     "likes": len(message['favorited_by']),
-                                    "kind": kind
+                                    "kind": kind,
+                                    "avatar_url": message['avatar_url']
                                 }
 
                                 content = Content(**kwargs)
                                 content.upload.save(file_name, files.File(lf))
-
 
                         else:
                             print(message)
@@ -124,7 +124,8 @@ class Command(BaseCommand):
                             "creator": message['name'],
                             "create_date": datetime.datetime.fromtimestamp(message['created_at']),
                             "likes": len(message['favorited_by']),
-                            "kind": 'TEXT'
+                            "kind": 'TEXT',
+                            "avatar_url": message['avatar_url']
                         }
                         Content.objects.create(**kwargs)
 

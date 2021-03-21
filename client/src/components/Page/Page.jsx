@@ -24,6 +24,7 @@ const useStyles = makeStyles((theme) => ({
     border: '2px solid #000',
     boxShadow: theme.shadows[5],
     padding: theme.spacing(2),
+    minWidth: '400px'
   },
   paper: {
     padding: theme.spacing(2),
@@ -216,7 +217,28 @@ export const Page = () => {
                 <Divider />
               </>
             ))}
-            {activeContent && <Content content={activeContent} />}
+            {activeContent && (
+              <>
+              <Grid container>
+                <Grid item xs={2}><img className={classes.avatar} src={activeContent.avatar_url} /></Grid>
+                <Grid item xs={10}>
+                  <Typography variant='subtitle1'>{activeContent.creator}</Typography>
+                  {activeContent.kind == 'IMAGE' && (
+                    <div className='bbr-image'>
+                      <img src={activeContent.upload} />
+                    </div>
+                  )}
+                  {activeContent.kind == 'VIDEO' && (
+                    <div className='bbr-video'>
+                      <video controls><source src={activeContent.upload} type="video/mp4" /></video>
+                    </div>
+                  )}
+                  {activeContent.text && <Typography variant='h6'>{activeContent.text}</Typography>}
+                </Grid>
+              </Grid>
+              <Typography className={classes.date} variant='subtitle2'>{FormattedTime(activeContent.create_date)}</Typography>
+              </>
+            )}
           </div>
         </Fade>
       </Dialog>

@@ -109,7 +109,7 @@ class ContentViewSet(viewsets.ModelViewSet):
     @paginate
     @action(detail=False)
     def watch(self, request):
-        return Content.objects.filter(kind='VIDEO')
+        return Content.objects.filter(kind='VIDEO').order_by('?')
 
     @paginate
     @action(detail=False)

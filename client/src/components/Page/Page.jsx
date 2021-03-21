@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useHistory, useLocation, useParams } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import axios from "axios"
-import { Backdrop, Dialog, Divider, Grid, makeStyles, Paper, Typography } from '@material-ui/core';
+import { Backdrop, Button, Dialog, Divider, Grid, makeStyles, Paper, Typography } from '@material-ui/core';
+import ZoomOutMapIcon from '@material-ui/icons/ZoomOutMap';
 import { useSpring, animated } from 'react-spring/web.cjs';
 
 import { FormattedTime } from '../Common'
@@ -27,11 +28,12 @@ const useStyles = makeStyles((theme) => ({
     minWidth: '400px'
   },
   paper: {
-    padding: theme.spacing(2),
+    padding: theme.spacing(3),
     textAlign: 'center',
     color: theme.palette.text.secondary,
     height: "auto",
-    marginTop: theme.spacing(4)
+    marginTop: theme.spacing(4),
+    position: 'relative'
   },
   avatar: {
     height: 'auto',
@@ -39,6 +41,11 @@ const useStyles = makeStyles((theme) => ({
   },
   date: {
     textAlign: 'right'
+  },
+  share: {
+    position: 'absolute',
+    top: '5px',
+    right: '5px'
   }
 }));
 
@@ -80,12 +87,13 @@ export const Page = () => {
   const classes = useStyles();
 
   const [pageContent, setPageContent] = useState([]);
-  const [isBottom, setIsBottom] = useState(false);
   const [nextUrl, setNexUrl] = useState(null);
+  const [isBottom, setIsBottom] = useState(false);
   const [keepScrolling, setKeepScrolling] = useState(true);
-  const [conversation, setConversation] = React.useState([]);
+
   const [open, setOpen] = React.useState(false);
   const [activeContent, setActiveContent] = React.useState(null);
+  const [conversation, setConversation] = React.useState([]);
 
   let contentUrl;
   if (slug) {
@@ -94,9 +102,14 @@ export const Page = () => {
     contentUrl = `${FEED_URL}random`;
   }
 
-  async function fetchPageContent(url) {
+  async function fetchPageContent(url, append=true) {
     const { data } = await axios.get(url);
-    setPageContent([...pageContent, ...data.results]);
+    if (!append) {
+      setPageContent(data.results);
+
+    } else {
+      setPageContent([...pageContent, ...data.results]);
+    }
     setIsBottom(false);
     if (!data.next) {
       setKeepScrolling(false);
@@ -105,7 +118,7 @@ export const Page = () => {
   }
 
   async function fetchConversation(name) {
-    const { data } = await axios.get(`${API_URL}content/${name}/conversation`)
+    const { data } = await axios.get(`${API_URL}content/${name}/conversation/`)
     setConversation(data);
   }
 
@@ -116,7 +129,6 @@ export const Page = () => {
 
   // first load
   useEffect(() => {
-    setPageContent([]);
     try {
       window.scroll({
         top: 0,
@@ -126,14 +138,12 @@ export const Page = () => {
     } catch (error) {
       window.scrollTo(0, 0);
     }
-    fetchPageContent(contentUrl);
+    fetchPageContent(contentUrl, false);
     
     const urlParams = new URLSearchParams(window.location.search);
     const contentName = urlParams.get('content');
-
     if (contentName) {
       fetchContentDetails(contentName);
-      fetchConversation(contentName);
       setOpen(true);
     }
   }, [slug]);
@@ -166,6 +176,8 @@ export const Page = () => {
   // modal stuff
   const handleClose = () => {
     setOpen(false);
+    setActiveContent(null);
+    setConversation([]);
     const queryParams = new URLSearchParams(location.search);
     if (queryParams.has('content')) {
       queryParams.delete('content')
@@ -181,14 +193,14 @@ export const Page = () => {
     history.push({
       search: `?content=${content.name}`
     })
-    fetchConversation(content.name);
     document.activeElement.blur();
   };
 
   return (
     <>
       {pageContent.map((c) => (
-        <Paper className={classes.paper} onClick={(e) => handleClick(c, e)}>
+        <Paper className={classes.paper}>
+          <ZoomOutMapIcon className={classes.share} onClick={(e) => handleClick(c, e)} />
           <Content key={c.id} content={c} />
         </Paper>
       ))}
@@ -204,11 +216,11 @@ export const Page = () => {
       >
         <Fade in={open}>
           <div className={classes.modalPaper}>
-            {conversation.map((message, index) => (
+            {activeContent && <Button onClick={() => fetchConversation(activeContent.name)}>View earlier messages</Button>}
+            {conversation && conversation.map((message, index) => (
               <>
                 <Grid container>
-                  <Grid item xs={2}><img className={classes.avatar} src={message.avatar_url} /></Grid>
-                  <Grid item xs={10}>
+                  <Grid item xs={12}>
                     <Typography variant='subtitle1'>{message.creator}</Typography>
                     {message.text && <Typography variant='h6'>{message.text}</Typography>}
                   </Grid>
@@ -220,8 +232,7 @@ export const Page = () => {
             {activeContent && (
               <>
               <Grid container>
-                <Grid item xs={2}><img className={classes.avatar} src={activeContent.avatar_url} /></Grid>
-                <Grid item xs={10}>
+                <Grid item xs={12}>
                   <Typography variant='subtitle1'>{activeContent.creator}</Typography>
                   {activeContent.kind == 'IMAGE' && (
                     <div className='bbr-image'>

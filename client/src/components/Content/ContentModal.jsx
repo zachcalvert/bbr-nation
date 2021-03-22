@@ -9,6 +9,7 @@ import { useSpring, animated } from 'react-spring/web.cjs';
 import { GroupMeMessage } from '../Content/GroupMeMessage'
 import { FormattedTime } from '../Common'
 import { API_URL } from "../../constants"
+import './ContentModal.css'
 
 
 const useStyles = makeStyles((theme) => ({
@@ -91,6 +92,7 @@ export const ContentModal = (props) => {
       className={classes.modal}
       open={open}
       onClose={handleClose}
+      fullWidth={true}
       closeAfterTransition
       BackdropComponent={Backdrop}
       BackdropProps={{
@@ -115,7 +117,7 @@ export const ContentModal = (props) => {
 
           <Grid container>
             <Grid item xs={12}>
-              <Typography variant='subtitle1' style={{ textAlign: 'left', float: 'left' }}>{activeContent.creator}</Typography> 
+              <Typography variant='subtitle1' className='creator-name'>{activeContent.creator}</Typography> 
               <div style={{ display: 'flex', textAlign: 'right', float: 'right' }}>
                 <Typography style={{ color: '#FFAEB9' }} variant='h5'>{activeContent.likes}</Typography>
                 <FavoriteBorderIcon style={{ color: '#FFAEB9', marginTop: '4px' }} />

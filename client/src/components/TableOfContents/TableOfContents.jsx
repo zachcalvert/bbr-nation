@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import axios from "axios"
-import { Divider, IconButton, Typography } from '@material-ui/core';
+import { IconButton, Typography } from '@material-ui/core';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import MenuRoundedIcon from '@material-ui/icons/MenuRounded';
@@ -23,7 +23,7 @@ export const TableOfContents = () => {
       setPages(data.results);        
     }
     fetchPages();
-  }, []);
+  }, [PAGES_URL]);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);

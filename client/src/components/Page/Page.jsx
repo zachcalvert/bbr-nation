@@ -1,16 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useHistory, useLocation, useParams } from 'react-router-dom';
-import PropTypes from 'prop-types';
 import axios from "axios"
-import { Accordion, AccordionDetails, AccordionSummary, Backdrop, Button, Dialog, Divider, Grid, makeStyles, Paper, Typography } from '@material-ui/core';
+import { makeStyles, Paper } from '@material-ui/core';
 import ZoomOutMapIcon from '@material-ui/icons/ZoomOutMap';
-import ExpandLessRoundedIcon from '@material-ui/icons/ExpandLessRounded';
-import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
-import { useSpring, animated } from 'react-spring/web.cjs';
 
-import { FormattedTime } from '../Common'
 import { API_URL } from "../../constants"
 import { Content } from '../Content/Content';
+import { ContentModal } from '../Content/ContentModal';
 import './Page.css'
 
 const FEED_URL = `${API_URL}content/`
@@ -56,36 +52,6 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const Fade = React.forwardRef(function Fade(props, ref) {
-  const { in: open, children, onEnter, onExited, ...other } = props;
-  const style = useSpring({
-    from: { opacity: 0 },
-    to: { opacity: open ? 1 : 0 },
-    onStart: () => {
-      if (open && onEnter) {
-        onEnter();
-      }
-    },
-    onRest: () => {
-      if (!open && onExited) {
-        onExited();
-      }
-    },
-  });
-
-  return (
-    <animated.div ref={ref} style={style} {...other}>
-      {children}
-    </animated.div>
-  );
-});
-
-Fade.propTypes = {
-  children: PropTypes.element,
-  in: PropTypes.bool.isRequired,
-  onEnter: PropTypes.func,
-  onExited: PropTypes.func,
-};
 
 export const Page = () => {
   const { slug } = useParams();
@@ -100,7 +66,6 @@ export const Page = () => {
 
   const [open, setOpen] = React.useState(false);
   const [activeContent, setActiveContent] = React.useState(null);
-  const [conversation, setConversation] = React.useState([]);
 
   let contentUrl;
   if (slug) {
@@ -114,7 +79,6 @@ export const Page = () => {
     if (!append) {
       setPageContent([]);
       setPageContent(data.results);
-
     } else {
       setPageContent([...pageContent, ...data.results]);
     }
@@ -123,11 +87,6 @@ export const Page = () => {
       setKeepScrolling(false);
     }
     setNexUrl(data.next);
-  }
-
-  async function fetchConversation(name) {
-    const { data } = await axios.get(`${API_URL}content/${name}/conversation/`)
-    setConversation(data);
   }
 
   async function fetchContentDetails(name) {
@@ -151,8 +110,7 @@ export const Page = () => {
     const urlParams = new URLSearchParams(window.location.search);
     const contentName = urlParams.get('content');
     if (contentName) {
-      fetchContentDetails(contentName);
-      fetchConversation(contentName);
+      fetchContentDetails(contentName)
       setOpen(true);
     }
   }, [slug]);
@@ -181,12 +139,18 @@ export const Page = () => {
     }
   }, [isBottom]);
 
+  const handleClick = (content, e) => {
+    setActiveContent(content);
+    setOpen(true);
+    history.push({
+      search: `?content=${content.name}`
+    })
+    document.activeElement.blur();
+  };
 
   // modal stuff
   const handleClose = () => {
     setOpen(false);
-    setActiveContent(null);
-    setConversation([]);
     const queryParams = new URLSearchParams(location.search);
     if (queryParams.has('content')) {
       queryParams.delete('content')
@@ -194,16 +158,6 @@ export const Page = () => {
         search: '',
       })
     }
-  };
-
-  const handleClick = (content, e) => {
-    setOpen(true);
-    setActiveContent(content);
-    fetchConversation(content.name);
-    history.push({
-      search: `?content=${content.name}`
-    })
-    document.activeElement.blur();
   };
 
   return (
@@ -215,69 +169,7 @@ export const Page = () => {
         </Paper>
       ))}
       
-      <Dialog
-        className={classes.modal}
-        open={open}
-        onClose={handleClose}
-        closeAfterTransition
-        BackdropComponent={Backdrop}
-        BackdropProps={{
-          timeout: 500,
-        }}
-      >
-        <Fade in={open}>
-          <div className={classes.modalPaper}>
-            {activeContent && (
-              <>
-              <Accordion>
-                <AccordionSummary
-                  expandIcon={<ExpandLessRoundedIcon fontSize='large' />}
-                  aria-controls="panel2a-content"
-                  id="panel2a-header">
-                </AccordionSummary>
-                <AccordionDetails>
-                  {conversation && conversation.map((message, index) => (
-                    <>
-                      <Grid container>
-                        <Grid item xs={12}>
-                          <Typography variant='subtitle2'>{message.creator}</Typography>
-                          {message.text && <Typography variant='h6'>{message.text}</Typography>}
-                        </Grid>
-                      </Grid>
-                      <Typography className={classes.date} variant='subtitle2'>{FormattedTime(message.created_date)}</Typography>
-                      <Divider />
-                  </>
-                  ))}
-                </AccordionDetails>
-              </Accordion>
-
-              <Grid container>
-                <Grid item xs={12}>
-                  <Typography variant='subtitle1' style={{ textAlign: 'left', float: 'left' }}>{activeContent.creator}</Typography> 
-                  <div style={{ display: 'flex', textAlign: 'right', float: 'right' }}>
-                    <Typography style={{ color: '#FFAEB9' }} variant='h5'>{activeContent.likes}</Typography>
-                    <FavoriteBorderIcon style={{ color: '#FFAEB9', marginTop: '4px' }} />
-                  </div>
-                  <Divider style={{ backgroundColor: 'transparent', clear: "both" }} />
-                  {activeContent.kind == 'IMAGE' && (
-                    <div className='bbr-modal-image'>
-                      <img src={activeContent.upload} />
-                    </div>
-                  )}
-                  {activeContent.kind == 'VIDEO' && (
-                    <div className='bbr-video'>
-                      <video controls><source src={activeContent.upload} type="video/mp4" /></video>
-                    </div>
-                  )}
-                  {activeContent.text && <Typography variant='h6'>{activeContent.text}</Typography>}
-                </Grid>
-              </Grid>
-              <Typography className={classes.date} variant='subtitle2'>{FormattedTime(activeContent.create_date)}</Typography>
-            </>
-          )}
-          </div>
-        </Fade>
-      </Dialog>
+      {open && activeContent && <ContentModal open={open} handleClose={handleClose} activeContent={activeContent} />}
     </>
   )
 }

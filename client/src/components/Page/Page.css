@@ -15,7 +15,7 @@
 }
 
 .MuiAccordion-root.Mui-expanded {
-  margin: 16px 0 0;
+  margin: 16px 0 0!important;
 }
 
 .bbr-modal-image, .bbr-modal-video {

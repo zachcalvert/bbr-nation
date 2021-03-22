@@ -12,7 +12,7 @@ export const Content = (props) => {
     <div>
       {kind === 'IMAGE' && (
           <div className='bbr-image'>
-          <img src={content.upload} />
+          <img alt='bbr-content' src={content.upload} />
           {content.text && <Typography variant='h6'>"{content.text}"</Typography>}
           </div>
       )}

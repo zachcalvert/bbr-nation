@@ -9,7 +9,7 @@ export const FormattedDate = (time) => {
 
 export const FormattedTime = (time) => {
   const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-  const pattern = 'MM/dd/yyyy hh:mm:ss zzzz';
+  const pattern = 'MM/dd/yyyy hh:mm:ss';
   const zonedDate = utcToZonedTime(new Date(time), userTimezone);
   return format(zonedDate, pattern, { userTimezone });
 };

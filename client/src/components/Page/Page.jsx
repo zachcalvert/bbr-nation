@@ -34,10 +34,6 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(4),
     position: 'relative'
   },
-  avatar: {
-    height: 'auto',
-    width: '50px'
-  },
   date: {
     textAlign: 'right'
   },

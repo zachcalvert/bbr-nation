@@ -24,6 +24,7 @@ class Content(models.Model):
     upload = models.FileField(upload_to='uploads/%Y/%m/%d/', null=True, blank=True)
     text = models.TextField(null=True, blank=True)
     kind = models.CharField(max_length=10, choices=KIND_CHOICES, default='TEXT')
+    avatar_url = models.CharField(max_length=255, null=True, blank=True)
 
     class Meta:
         ordering = ['name']

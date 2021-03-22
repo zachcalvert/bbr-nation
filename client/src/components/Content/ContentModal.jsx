@@ -24,7 +24,6 @@ const useStyles = makeStyles((theme) => ({
       border: '2px solid #000',
       boxShadow: theme.shadows[5],
       padding: theme.spacing(2),
-      minWidth: '400px',
       borderRadius: '4px'
     },
     avatar: {
@@ -92,7 +91,6 @@ export const ContentModal = (props) => {
       className={classes.modal}
       open={open}
       onClose={handleClose}
-      fullWidth={true}
       closeAfterTransition
       BackdropComponent={Backdrop}
       BackdropProps={{
@@ -117,8 +115,11 @@ export const ContentModal = (props) => {
 
           <Grid container>
             <Grid item xs={12}>
-              <Typography variant='subtitle1' className='creator-name'>{activeContent.creator}</Typography> 
-              <div style={{ display: 'flex', textAlign: 'right', float: 'right' }}>
+              <div className='creator'>
+                <img className={classes.avatar} src={activeContent.avatar_url} />
+                <Typography variant='subtitle1' className='creator-name'>{activeContent.creator}</Typography> 
+              </div>
+              <div className='likes'>
                 <Typography style={{ color: '#FFAEB9' }} variant='h5'>{activeContent.likes}</Typography>
                 <FavoriteBorderIcon style={{ color: '#FFAEB9', marginTop: '4px' }} />
               </div>

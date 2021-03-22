@@ -1,5 +1,6 @@
 import datetime
 import json
+import re
 import requests
 
 from django.shortcuts import render
@@ -87,7 +88,7 @@ class ContentViewSet(viewsets.ModelViewSet):
 
         messages = [{
             'id': m['id'],
-            'text': m['text'],
+            'text': re.sub(r'^https?:\/\/.*[\r\n]*', '', m['text'], flags=re.MULTILINE) if m['text'] else None,
             'created_date': datetime.datetime.fromtimestamp(m['created_at']).replace(tzinfo=datetime.timezone.utc).isoformat(),
             'creator': m['name'],
             'avatar_url': m['avatar_url']

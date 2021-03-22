@@ -1,10 +1,33 @@
-.creator-name {
+.creator {
   text-align: left;
   float: left;
+  display: flex;
+  /* padding: 0 15px; */
+}
+.creator-name {
+  margin: auto 0;
+  padding: 0 5px;
 }
 
-/* @media only screen and (max-width: 500px) {
-  .creator-name {
-    margin-left: 25px!important;
+.likes {
+  display: flex;
+  text-align: right;
+  float: right;
+  /* padding: 0 15px; */
+}
+
+.avatar {
+  height: auto;
+  width: 40px;
+}
+
+@media only screen and (max-width: 500px) {
+  .creator, .likes {
+    padding: 0 15px;
   }
-} */
+  .avatar {
+    height: auto;
+    width: 20px;
+  }
+
+}

@@ -7,7 +7,7 @@
 }
 
 .MuiAccordionSummary-expandIcon {
-  padding: 0;
+  padding: 0!important;
 }
 
 .MuiAccordionSummary-content {
@@ -15,7 +15,7 @@
 }
 
 .MuiAccordion-root.Mui-expanded {
-  margin: 16px 0 0!important;
+  margin: 0!important;
 }
 
 .bbr-modal-image, .bbr-modal-video {
@@ -27,6 +27,7 @@
     height: auto;
     width: auto;
     max-height: 500px;
+    max-width: 100%;
     max-width: -webkit-fill-available;
     text-align: center;
 }

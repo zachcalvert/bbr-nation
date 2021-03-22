@@ -6,12 +6,20 @@
   display: block!important;
 }
 
+.MuiAccordionSummary-expandIcon {
+  padding: 0;
+}
+
 .MuiAccordionSummary-content {
   display: none!important;
 }
 
+.MuiAccordion-root.Mui-expanded {
+  margin: 16px 0 0;
+}
+
 .bbr-modal-image, .bbr-modal-video {
-  text-align: left;
+  text-align: center;
 }
 
 .bbr-modal-image img {

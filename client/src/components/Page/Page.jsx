@@ -258,7 +258,7 @@ export const Page = () => {
                     <Typography style={{ color: '#FFAEB9' }} variant='h5'>{activeContent.likes}</Typography>
                     <FavoriteBorderIcon style={{ color: '#FFAEB9', marginTop: '4px' }} />
                   </div>
-                  <Divider style={{ clear: "both" }} />
+                  <Divider style={{ backgroundColor: 'transparent', clear: "both" }} />
                   {activeContent.kind == 'IMAGE' && (
                     <div className='bbr-modal-image'>
                       <img src={activeContent.upload} />

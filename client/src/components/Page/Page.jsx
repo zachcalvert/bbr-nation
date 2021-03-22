@@ -5,6 +5,7 @@ import axios from "axios"
 import { Accordion, AccordionDetails, AccordionSummary, Backdrop, Button, Dialog, Divider, Grid, makeStyles, Paper, Typography } from '@material-ui/core';
 import ZoomOutMapIcon from '@material-ui/icons/ZoomOutMap';
 import ExpandLessRoundedIcon from '@material-ui/icons/ExpandLessRounded';
+import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
 import { useSpring, animated } from 'react-spring/web.cjs';
 
 import { FormattedTime } from '../Common'
@@ -251,9 +252,14 @@ export const Page = () => {
 
               <Grid container>
                 <Grid item xs={12}>
-                  <Typography variant='subtitle1'>{activeContent.creator}</Typography>
+                  <Typography variant='subtitle1' style={{ textAlign: 'left', float: 'left' }}>{activeContent.creator}</Typography> 
+                  <div style={{ display: 'flex', textAlign: 'right', float: 'right' }}>
+                    <Typography style={{ color: '#FF92BB' }} variant='h5'>{activeContent.likes}</Typography>
+                    <FavoriteBorderIcon style={{ color: '#FF92BB', marginTop: '4px' }} />
+                  </div>
+                  <Divider style={{ clear: "both" }} />
                   {activeContent.kind == 'IMAGE' && (
-                    <div className='bbr-image'>
+                    <div className='bbr-modal-image'>
                       <img src={activeContent.upload} />
                     </div>
                   )}

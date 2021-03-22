@@ -80,7 +80,7 @@ class ContentViewSet(viewsets.ModelViewSet):
         # content = Content.objects.get(name=name)
         conversation = Content.objects.get(name=name)
 
-        messages_url = f"{BASE_URL}groups/{GROUP_ID}/messages?token={TOKEN}&limit=5&before_id={name}"
+        messages_url = f"{BASE_URL}groups/{GROUP_ID}/messages?token={TOKEN}&limit=8&before_id={name}"
         response = requests.get(messages_url)
         content = json.loads(response.content.decode())
         message_list = content['response']['messages']

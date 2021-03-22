@@ -1,0 +1,7 @@
+.MuiAccordionDetails-root {
+  display: block!important;
+}
+
+.MuiAccordionSummary-content {
+  display: none!important;
+}

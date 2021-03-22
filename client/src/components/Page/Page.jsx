@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useHistory, useLocation, useParams } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import axios from "axios"
-import { Backdrop, Button, Dialog, Divider, Grid, makeStyles, Paper, Typography } from '@material-ui/core';
+import { Accordion, AccordionDetails, AccordionSummary, Backdrop, Button, Dialog, Divider, Grid, makeStyles, Paper, Typography } from '@material-ui/core';
 import ZoomOutMapIcon from '@material-ui/icons/ZoomOutMap';
 import ExpandLessRoundedIcon from '@material-ui/icons/ExpandLessRounded';
 import { useSpring, animated } from 'react-spring/web.cjs';
@@ -150,6 +150,7 @@ export const Page = () => {
     const contentName = urlParams.get('content');
     if (contentName) {
       fetchContentDetails(contentName);
+      fetchConversation(contentName);
       setOpen(true);
     }
   }, [slug]);
@@ -195,7 +196,8 @@ export const Page = () => {
 
   const handleClick = (content, e) => {
     setOpen(true);
-    setActiveContent(content)
+    setActiveContent(content);
+    fetchConversation(content.name);
     history.push({
       search: `?content=${content.name}`
     })
@@ -210,6 +212,7 @@ export const Page = () => {
           <Content key={c.id} content={c} />
         </Paper>
       ))}
+      
       <Dialog
         className={classes.modal}
         open={open}
@@ -222,23 +225,30 @@ export const Page = () => {
       >
         <Fade in={open}>
           <div className={classes.modalPaper}>
-            {activeContent && conversation.length === 0 && <Button className={classes.viewConversation} onClick={() => fetchConversation(activeContent.name)}>
-              <ExpandLessRoundedIcon fontSize='large' />
-            </Button>}
-            {conversation && conversation.map((message, index) => (
-              <>
-                <Grid container>
-                  <Grid item xs={12}>
-                    <Typography variant='subtitle2'>{message.creator}</Typography>
-                    {message.text && <Typography variant='h6'>{message.text}</Typography>}
-                  </Grid>
-                </Grid>
-                <Typography className={classes.date} variant='subtitle2'>{FormattedTime(message.created_date)}</Typography>
-                <Divider />
-              </>
-            ))}
             {activeContent && (
               <>
+              <Accordion>
+                <AccordionSummary
+                  expandIcon={<ExpandLessRoundedIcon fontSize='large' />}
+                  aria-controls="panel2a-content"
+                  id="panel2a-header">
+                </AccordionSummary>
+                <AccordionDetails>
+                  {conversation && conversation.map((message, index) => (
+                    <>
+                      <Grid container>
+                        <Grid item xs={12}>
+                          <Typography variant='subtitle2'>{message.creator}</Typography>
+                          {message.text && <Typography variant='h6'>{message.text}</Typography>}
+                        </Grid>
+                      </Grid>
+                      <Typography className={classes.date} variant='subtitle2'>{FormattedTime(message.created_date)}</Typography>
+                      <Divider />
+                  </>
+                  ))}
+                </AccordionDetails>
+              </Accordion>
+
               <Grid container>
                 <Grid item xs={12}>
                   <Typography variant='subtitle1'>{activeContent.creator}</Typography>
@@ -256,8 +266,8 @@ export const Page = () => {
                 </Grid>
               </Grid>
               <Typography className={classes.date} variant='subtitle2'>{FormattedTime(activeContent.create_date)}</Typography>
-              </>
-            )}
+            </>
+          )}
           </div>
         </Fade>
       </Dialog>

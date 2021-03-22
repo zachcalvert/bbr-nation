@@ -112,6 +112,7 @@ export const Page = () => {
   async function fetchPageContent(url, append=true) {
     const { data } = await axios.get(url);
     if (!append) {
+      setPageContent([]);
       setPageContent(data.results);
 
     } else {
@@ -254,8 +255,8 @@ export const Page = () => {
                 <Grid item xs={12}>
                   <Typography variant='subtitle1' style={{ textAlign: 'left', float: 'left' }}>{activeContent.creator}</Typography> 
                   <div style={{ display: 'flex', textAlign: 'right', float: 'right' }}>
-                    <Typography style={{ color: '#FF92BB' }} variant='h5'>{activeContent.likes}</Typography>
-                    <FavoriteBorderIcon style={{ color: '#FF92BB', marginTop: '4px' }} />
+                    <Typography style={{ color: '#FFAEB9' }} variant='h5'>{activeContent.likes}</Typography>
+                    <FavoriteBorderIcon style={{ color: '#FFAEB9', marginTop: '4px' }} />
                   </div>
                   <Divider style={{ clear: "both" }} />
                   {activeContent.kind == 'IMAGE' && (

@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import axios from "axios"
 import { Backdrop, Button, Dialog, Divider, Grid, makeStyles, Paper, Typography } from '@material-ui/core';
 import ZoomOutMapIcon from '@material-ui/icons/ZoomOutMap';
+import ExpandLessRoundedIcon from '@material-ui/icons/ExpandLessRounded';
 import { useSpring, animated } from 'react-spring/web.cjs';
 
 import { FormattedTime } from '../Common'
@@ -25,7 +26,8 @@ const useStyles = makeStyles((theme) => ({
     border: '2px solid #000',
     boxShadow: theme.shadows[5],
     padding: theme.spacing(2),
-    minWidth: '400px'
+    minWidth: '400px',
+    borderRadius: '4px'
   },
   paper: {
     padding: theme.spacing(3),
@@ -41,6 +43,10 @@ const useStyles = makeStyles((theme) => ({
   },
   date: {
     textAlign: 'right'
+  },
+  viewConversation: {
+    margin: '0 auto',
+    display: 'block'
   },
   share: {
     position: 'absolute',
@@ -216,12 +222,14 @@ export const Page = () => {
       >
         <Fade in={open}>
           <div className={classes.modalPaper}>
-            {activeContent && <Button onClick={() => fetchConversation(activeContent.name)}>View earlier messages</Button>}
+            {activeContent && conversation.length === 0 && <Button className={classes.viewConversation} onClick={() => fetchConversation(activeContent.name)}>
+              <ExpandLessRoundedIcon fontSize='large' />
+            </Button>}
             {conversation && conversation.map((message, index) => (
               <>
                 <Grid container>
                   <Grid item xs={12}>
-                    <Typography variant='subtitle1'>{message.creator}</Typography>
+                    <Typography variant='subtitle2'>{message.creator}</Typography>
                     {message.text && <Typography variant='h6'>{message.text}</Typography>}
                   </Grid>
                 </Grid>

@@ -138,4 +138,3 @@ class Command(BaseCommand):
                     except IndexError:
                         starting_message_id = message['id']
                         print(f'new starting message id: {starting_message_id}')
-                        continue

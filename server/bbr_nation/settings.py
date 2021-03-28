@@ -25,7 +25,7 @@ SECRET_KEY = 'y6t#17tny_q$f%ts6*o1#&t2t5cx=e4sbks8q%b0&_9j1zaldd'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '143.198.238.73']
 
 
 # Application definition
@@ -117,7 +117,7 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 10
 }
 
-CORS_ALLOWED_ORIGINS = ['http://localhost', 'https://bbrnation.com', 'http://143.198.238.73:8000'] 
+CORS_ALLOWED_ORIGINS = ['http://localhost', 'https://bbrnation.com', 'http://143.198.238.73'] 
 CSRF_COOKIE_SECURE = False
 SESSION_COOKIE_SECURE = False
 

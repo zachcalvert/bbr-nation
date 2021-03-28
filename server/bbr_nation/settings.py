@@ -117,7 +117,7 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 10
 }
 
-CORS_ALLOWED_ORIGINS = ['http://localhost', 'https://bbrnation.com', 'http://143.198.238.73'] 
+CORS_ALLOWED_ORIGINS = ['http://localhost', 'https://bbrnation.com', 'http://143.198.238.73:8000'] 
 CSRF_COOKIE_SECURE = False
 SESSION_COOKIE_SECURE = False
 

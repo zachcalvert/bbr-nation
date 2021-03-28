@@ -25,6 +25,7 @@ class Content(models.Model):
     text = models.TextField(null=True, blank=True)
     kind = models.CharField(max_length=10, choices=KIND_CHOICES, default='TEXT')
     avatar_url = models.CharField(max_length=255, null=True, blank=True)
+    media_url = models.CharField(max_length=255, null=True, blank=True)
 
     class Meta:
         ordering = ['name']

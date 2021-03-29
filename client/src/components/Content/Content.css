@@ -19,13 +19,11 @@
     text-align: center;
 }
 
-.bbr-video video {
+.framed-video {
     margin: auto;
     height: auto;
-    width: auto;
-    max-height: 500px;
-    max-width: -webkit-fill-available;
-    text-align: center;
+    width: 100%;
+    height: 500px;
 }
 
 .bbr-quote-author {

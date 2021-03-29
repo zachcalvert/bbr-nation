@@ -24,7 +24,6 @@ export const GroupMeMessage = (props) => {
           </div>
           <Divider style={{ backgroundColor: 'transparent', clear: "both" }} />
           {message.text && <Typography variant='h6'>{message.text}</Typography>}
-          {isVideo && <span>attachment</span>}
         </Grid>
       </Grid>
       <Typography className={classes.date} variant='subtitle2'>{FormattedTime(message.created_date)}</Typography>

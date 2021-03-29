@@ -85,7 +85,7 @@ export const Page = () => {
   }
 
   async function fetchContentDetails(name) {
-    const { data } = await axios.get(`${API_URL}content/${name}`);
+    const { data } = await axios.get(`${CONTENT_URL}/${name}`);
     setActiveContent(data);
   }
 

@@ -13,8 +13,6 @@ const useStyles = makeStyles((theme) => ({
 export const GroupMeMessage = (props) => {
   const { message } = props;
   const classes = useStyles();
-  const [loadingAttachment, setLoadingAttachment] = React.useState(false);
-  const isVideo = message.text?.includes('v.groupme.com');
 
   return (
     <>

@@ -33,6 +33,18 @@ services:
     depends_on:
       - server
     tty: true
+  local-client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./client/:/code
+    ports:
+      - 3000:3000
+    depends_on:
+      - server
+    tty: true
+
 
 volumes:
   pgdata:

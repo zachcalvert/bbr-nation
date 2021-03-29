@@ -84,18 +84,6 @@ class Command(BaseCommand):
                                 else:
                                     kind = 'IMAGE'
 
-                                file_name = '{}{}'.format(message['id'], file_type)
-                                response = requests.get(url, stream=True)
-
-                                if response.status_code != 200:
-                                    continue
-                                                            
-                                lf = tempfile.NamedTemporaryFile()
-                                for block in response.iter_content(1024 * 8):
-                                    if not block:
-                                        break
-                                    lf.write(block)
-
                                 kwargs = {
                                     "user": user,
                                     "name": message['id'],
@@ -104,11 +92,10 @@ class Command(BaseCommand):
                                     "create_date": datetime.datetime.fromtimestamp(message['created_at']),
                                     "likes": len(message['favorited_by']),
                                     "kind": kind,
-                                    "avatar_url": message['avatar_url']
+                                    "avatar_url": message['avatar_url'],
+                                    "media_url": url
                                 }
-
-                                content = Content(**kwargs)
-                                content.upload.save(file_name, files.File(lf))
+                                content = Content.objects.create(**kwargs)
 
                         else:
                             print(message)

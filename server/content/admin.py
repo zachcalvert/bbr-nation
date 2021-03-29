@@ -4,14 +4,14 @@ from content.models import Content, Page
 
 
 class ContentAdmin(admin.ModelAdmin):
-    list_display = ['__str__', 'user', 'create_date', 'kind', 'upload', 'text']
+    list_display = ['__str__', 'user', 'create_date', 'kind', 'text', 'media_url']
     list_filter = ('user', 'kind',)
+    search_fields = ['name',]
 
     fields = (
         'user',
-        'create_date',
         'kind',
-        'upload',
+        'media_url',
         'text',
     )
     readonly_fields = fields

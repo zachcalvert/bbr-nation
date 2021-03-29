@@ -4,12 +4,11 @@ import axios from "axios"
 import { makeStyles, Paper } from '@material-ui/core';
 import ZoomOutMapIcon from '@material-ui/icons/ZoomOutMap';
 
-import { API_URL } from "../../constants"
 import { Content } from '../Content/Content';
 import { ContentModal } from '../Content/ContentModal';
 import './Page.css'
 
-const FEED_URL = `${API_URL}content/`
+const CONTENT_URL = `${process.env.REACT_APP_API_URL}/content`
 
 const useStyles = makeStyles((theme) => ({
   modal: {
@@ -65,9 +64,9 @@ export const Page = () => {
 
   let contentUrl;
   if (slug) {
-    contentUrl = `${FEED_URL}${slug}`;
+    contentUrl = `${CONTENT_URL}/${slug}`;
   } else {
-    contentUrl = `${FEED_URL}random`;
+    contentUrl = `${CONTENT_URL}/random`;
   }
 
   async function fetchPageContent(url, append=true) {

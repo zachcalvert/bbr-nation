@@ -12,13 +12,13 @@ export const Content = (props) => {
     <div>
       {kind === 'IMAGE' && (
           <div className='bbr-image'>
-          <img alt='bbr-content' src={content.upload} />
+          <img alt='bbr-content' src={content.media_url} />
           {content.text && <Typography variant='h6'>"{content.text}"</Typography>}
           </div>
       )}
       {kind === 'VIDEO' && (
         <div className='bbr-video'>
-          <video controls><source src={content.upload} type="video/mp4" /></video>
+          <iframe id={content.name} type="text/html" height="500px" src={content.media_url} frameborder="0"></iframe>
         </div>
       )}
       {kind === 'TEXT' && (

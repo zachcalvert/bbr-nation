@@ -2,6 +2,8 @@
 FROM node:13.12.0-alpine as build
 WORKDIR /app
 ENV PATH /app/node_modules/.bin:$PATH
+ARG REACT_APP_API_URL
+ENV REACT_APP_API_URL http://143.198.238.73:8000/api
 COPY package.json ./
 COPY package-lock.json ./
 RUN npm ci

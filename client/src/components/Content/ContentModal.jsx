@@ -8,9 +8,9 @@ import { useSpring, animated } from 'react-spring/web.cjs';
 
 import { GroupMeMessage } from '../Content/GroupMeMessage'
 import { FormattedTime } from '../Common'
-import { API_URL } from "../../constants"
 import './ContentModal.css'
 
+const CONTENT_URL = `${process.env.REACT_APP_API_URL}/content`
 
 const useStyles = makeStyles((theme) => ({
     modal: {
@@ -78,7 +78,7 @@ export const ContentModal = (props) => {
   const [conversation, setConversation] = React.useState([]);
 
   async function fetchConversation(name) {
-    const { data } = await axios.get(`${API_URL}content/${name}/conversation/`)
+    const { data } = await axios.get(`${CONTENT_URL}/${name}/conversation/`)
     setConversation(data);
   }
 

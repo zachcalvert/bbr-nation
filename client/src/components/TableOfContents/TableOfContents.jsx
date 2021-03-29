@@ -5,14 +5,12 @@ import { IconButton, Typography } from '@material-ui/core';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import MenuRoundedIcon from '@material-ui/icons/MenuRounded';
-
-import { API_URL } from "../../constants"
 import './TableOfContents.css'
 
+const PAGES_URL = `${process.env.REACT_APP_API_URL}/pages/`
 const ITEM_HEIGHT = 50;
 
 export const TableOfContents = () => {
-  const PAGES_URL = `${API_URL}pages/`
   const [pages, setPages] = useState([]);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);

@@ -1,3 +1,7 @@
 .beer-icon {
     height: 50px;
 }
+
+.MuiAppBar-colorPrimary {
+    background-color: lightslategray;
+}

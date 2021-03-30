@@ -7,8 +7,15 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import useScrollTrigger from '@material-ui/core/useScrollTrigger';
 import Slide from '@material-ui/core/Slide';
 import IconButton from '@material-ui/core/IconButton';
+import { makeStyles } from '@material-ui/core';
 import { TableOfContents } from '../TableOfContents/TableOfContents';
 import './AppBar.css';
+
+const useStyles = makeStyles((theme) => ({
+  appBar: {
+    backgroundColor: theme.palette.primary.dark
+  }
+}));
 
 function HideOnScroll(props) {
   const { children, window } = props;
@@ -27,11 +34,13 @@ HideOnScroll.propTypes = {
 };
 
 export function BbAppBar(props) {
+  const classes = useStyles();
+
   return (
     <React.Fragment>
       <CssBaseline />
       <HideOnScroll {...props}>
-        <AppBar>
+        <AppBar className={classes.appBar}>
           <Toolbar>
             <Link to="/"><img className='beer-icon' src='/beer-can.jpeg' /></Link>
             <IconButton style={{marginLeft: 'auto'}} color="inherit" aria-label="menu">

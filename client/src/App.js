@@ -40,7 +40,7 @@ export const App = () => {
         <CssBaseline />
         <div className={classes.root}>
           <BbAppBar />
-          <Grid className={classes.container} container spacing={3}>
+          <Grid className={classes.container} container spacing={1}>
             <Hidden smDown>
               <Grid item md={1}></Grid>
             </Hidden>

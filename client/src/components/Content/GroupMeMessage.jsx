@@ -90,7 +90,7 @@ export const GroupMeMessage = (props) => {
               <>
                 <div className='creator'>
                   <img className='avatar' src={message.avatar_url} />
-                  <Typography variant='subtitle1' className='creator-name'>{message.creator}</Typography> 
+                  <Typography variant='subtitle2' className='creator-name'>{message.creator}</Typography> 
                 </div>
 
                 <Divider style={{ backgroundColor: 'transparent', clear: "both" }} />
@@ -101,7 +101,7 @@ export const GroupMeMessage = (props) => {
 
                 { videoUrl && <iframe id={message.id} type="text/html" class='framed-video' src={videoUrl} frameborder="0"></iframe>}
 
-                {message.text && <Typography variant='h6'>{message.text}</Typography>}
+                {message.text && <Typography variant='subtitle1'>{message.text}</Typography>}
               </>
             )
           }

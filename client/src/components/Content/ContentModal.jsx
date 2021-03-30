@@ -26,10 +26,6 @@ const useStyles = makeStyles((theme) => ({
       padding: theme.spacing(2),
       borderRadius: '4px'
     },
-    avatar: {
-      height: 'auto',
-      width: '50px'
-    },
     date: {
       textAlign: 'right'
     },
@@ -116,7 +112,7 @@ export const ContentModal = (props) => {
           <Grid container>
             <Grid item xs={12}>
               <div className='creator'>
-                <img className={classes.avatar} src={activeContent.avatar_url} />
+                <img className='avatar' src={activeContent.avatar_url} />
                 <Typography variant='subtitle1' className='creator-name'>{activeContent.creator}</Typography> 
               </div>
               <div className='likes'>

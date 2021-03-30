@@ -91,8 +91,10 @@ class ContentViewSet(viewsets.ModelViewSet):
             'text': re.sub(r'^https?:\/\/.*[\r\n]*', '', m['text'], flags=re.MULTILINE) if m['text'] else None,
             'created_date': datetime.datetime.fromtimestamp(m['created_at']).replace(tzinfo=datetime.timezone.utc).isoformat(),
             'creator': m['name'],
-            'avatar_url': m['avatar_url']
+            'avatar_url': m['avatar_url'],
+            'attachments': m['attachments']
         } for m in message_list]
+        
         messages.reverse()
 
         return Response(messages)

@@ -84,22 +84,27 @@ export const GroupMeMessage = (props) => {
     <>
       <Grid container>
         <Grid item xs={12}>
-          <div className='creator'>
-            <img className='avatar' src={message.avatar_url} />
-            <Typography variant='subtitle1' className='creator-name'>{message.creator}</Typography> 
-          </div>
-          <Divider style={{ backgroundColor: 'transparent', clear: "both" }} />
-          { imageUrl && <div className='bbr-modal-image'>
-            <img alt='bbr-content' src={imageUrl} />
-          </div>}
-          { videoUrl && <iframe id={message.id} type="text/html" class='framed-video' src={videoUrl} frameborder="0"></iframe>}
-          {message.text && (
-            fromGroupMe ? (
+          {fromGroupMe ? (
               <Typography variant='subtitle'>{message.text}</Typography>
             ) : (
-              <Typography variant='h6'>{message.text}</Typography>
+              <>
+                <div className='creator'>
+                  <img className='avatar' src={message.avatar_url} />
+                  <Typography variant='subtitle1' className='creator-name'>{message.creator}</Typography> 
+                </div>
+
+                <Divider style={{ backgroundColor: 'transparent', clear: "both" }} />
+
+                { imageUrl && <div className='bbr-modal-image'>
+                  <img alt='bbr-content' src={imageUrl} />
+                </div>}
+
+                { videoUrl && <iframe id={message.id} type="text/html" class='framed-video' src={videoUrl} frameborder="0"></iframe>}
+
+                {message.text && <Typography variant='h6'>{message.text}</Typography>}
+              </>
             )
-          )}
+          }
         </Grid>
       </Grid>
       <Typography className={classes.date} variant='subtitle2'>{FormattedTime(message.created_date)}</Typography>

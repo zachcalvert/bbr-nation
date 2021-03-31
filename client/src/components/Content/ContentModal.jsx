@@ -3,6 +3,7 @@ import { Accordion, AccordionDetails, AccordionSummary, Backdrop, Dialog, Divide
 import PropTypes from 'prop-types';
 import axios from "axios"
 import ExpandLessRoundedIcon from '@material-ui/icons/ExpandLessRounded';
+import ExpandMoreRoundedIcon from '@material-ui/icons/ExpandMoreRounded';
 import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
 import { useSpring, animated } from 'react-spring/web.cjs';
 
@@ -24,8 +25,8 @@ const useStyles = makeStyles((theme) => ({
       border: '2px solid #000',
       boxShadow: theme.shadows[5],
       paddingBottom: theme.spacing(1),
-      paddingLeft: theme.spacing(2),
-      paddingRight: theme.spacing(2),
+      paddingLeft: theme.spacing(3),
+      paddingRight: theme.spacing(3),
       paddingTop: theme.spacing(1),
       borderRadius: '4px'
     },
@@ -75,15 +76,23 @@ export const ContentModal = (props) => {
   const { handleClose } = props;
   const { activeContent } = props;
   const [avatarUrl, setAvatarUrl] = React.useState(null);
-  const [conversation, setConversation] = React.useState([]);
+  const [precedingConversation, setPrecedingConversation] = React.useState([]);
+  const [ensuingConversation, setEnsuingConversation] = React.useState([]);
 
-  async function fetchConversation(name) {
-    const { data } = await axios.get(`${CONTENT_URL}/${name}/conversation/`)
-    setConversation(data);
+  async function fetchConversation(name, ensuing=false) {
+    if (ensuing) {
+      const { data } = await axios.get(`${CONTENT_URL}/${name}/conversation/?ensuing=true`)
+      setEnsuingConversation(data);
+    } else {
+      const { data } = await axios.get(`${CONTENT_URL}/${name}/conversation/`)
+      setPrecedingConversation(data);
+    }
+
   }
 
   useEffect(() => {
     fetchConversation(activeContent.name);
+    fetchConversation(activeContent.name, true);
     setAvatarUrl(activeContent.avatar_url);
   }, [activeContent]);
 
@@ -108,7 +117,7 @@ export const ContentModal = (props) => {
               id="panel2a-header">
             </AccordionSummary>
             <AccordionDetails>
-              {conversation && conversation.map((message, index) => (
+              {precedingConversation && precedingConversation.map((message, index) => (
                 <GroupMeMessage key={index} message={message} />
               ))}
             </AccordionDetails>
@@ -137,6 +146,19 @@ export const ContentModal = (props) => {
             </Grid>
           </Grid>
           <Typography className={classes.date} variant='subtitle2'>{FormattedTime(activeContent.create_date)}</Typography>
+
+          <Accordion>
+            <AccordionSummary
+              expandIcon={<ExpandMoreRoundedIcon fontSize='large' />}
+              aria-controls="panel2a-content"
+              id="panel2a-header">
+            </AccordionSummary>
+            <AccordionDetails>
+              {ensuingConversation && ensuingConversation.map((message, index) => (
+                <GroupMeMessage key={index} message={message} />
+              ))}
+            </AccordionDetails>
+          </Accordion>
         </>
       )}
       </div>

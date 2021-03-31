@@ -77,11 +77,17 @@ class ContentViewSet(viewsets.ModelViewSet):
     lookup_field = 'name'
 
     @action(detail=True)
-    def conversation(self, request, name):
-        # content = Content.objects.get(name=name)
-        conversation = Content.objects.get(name=name)
+    def conversation(self, request, name, **kwargs):
+        """
+        name: the id of the groupme message.
+        Strip URLs out of the text as the frontend doesn't display them well
+        Fetch the messages either directly before or after a groupme message
+        """
+        if request.GET.get('ensuing') == 'true':
+            messages_url = f"{BASE_URL}groups/{GROUP_ID}/messages?token={TOKEN}&limit=6&after_id={name}"
+        else:
+            messages_url = f"{BASE_URL}groups/{GROUP_ID}/messages?token={TOKEN}&limit=6&before_id={name}"
 
-        messages_url = f"{BASE_URL}groups/{GROUP_ID}/messages?token={TOKEN}&limit=6&before_id={name}"
         response = requests.get(messages_url)
         content = json.loads(response.content.decode())
         message_list = content['response']['messages']
@@ -94,7 +100,7 @@ class ContentViewSet(viewsets.ModelViewSet):
             'avatar_url': m['avatar_url'],
             'attachments': m['attachments']
         } for m in message_list]
-        
+
         messages.reverse()
 
         return Response(messages)

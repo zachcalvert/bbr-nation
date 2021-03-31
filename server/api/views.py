@@ -101,7 +101,8 @@ class ContentViewSet(viewsets.ModelViewSet):
             'attachments': m['attachments']
         } for m in message_list]
 
-        messages.reverse()
+        if not request.GET.get('ensuing') == 'true':
+            messages.reverse()
 
         return Response(messages)
 

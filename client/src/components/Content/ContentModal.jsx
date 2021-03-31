@@ -23,7 +23,10 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor: theme.palette.background.paper,
       border: '2px solid #000',
       boxShadow: theme.shadows[5],
-      padding: theme.spacing(2),
+      paddingBottom: theme.spacing(1),
+      paddingLeft: theme.spacing(2),
+      paddingRight: theme.spacing(2),
+      paddingTop: theme.spacing(1),
       borderRadius: '4px'
     },
     date: {
@@ -71,6 +74,7 @@ export const ContentModal = (props) => {
   const { open } = props;
   const { handleClose } = props;
   const { activeContent } = props;
+  const [avatarUrl, setAvatarUrl] = React.useState(null);
   const [conversation, setConversation] = React.useState([]);
 
   async function fetchConversation(name) {
@@ -80,6 +84,7 @@ export const ContentModal = (props) => {
 
   useEffect(() => {
     fetchConversation(activeContent.name);
+    setAvatarUrl(activeContent.avatar_url);
   }, [activeContent]);
 
   return (
@@ -112,7 +117,7 @@ export const ContentModal = (props) => {
           <Grid container>
             <Grid item xs={12}>
               <div className='creator'>
-                <img className='avatar' src={activeContent.avatar_url} />
+                <img className='avatar' src={avatarUrl ? avatarUrl : 'avatar.gif'} />
                 <Typography variant='subtitle1' className='creator-name'>{activeContent.creator}</Typography> 
               </div>
               <div className='likes'>

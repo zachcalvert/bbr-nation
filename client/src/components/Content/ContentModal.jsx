@@ -1,11 +1,13 @@
 import React, { useEffect } from 'react';
-import { Accordion, AccordionDetails, AccordionSummary, Backdrop, Dialog, Divider, Grid, makeStyles, Typography } from '@material-ui/core';
+import { Accordion, AccordionDetails, AccordionSummary, Backdrop, Dialog, Divider, Grid, makeStyles, Slide, Snackbar, Typography } from '@material-ui/core';
 import PropTypes from 'prop-types';
 import axios from "axios"
 import ExpandLessRoundedIcon from '@material-ui/icons/ExpandLessRounded';
 import ExpandMoreRoundedIcon from '@material-ui/icons/ExpandMoreRounded';
 import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
+import ShareIcon from '@material-ui/icons/Share';
 import { useSpring, animated } from 'react-spring/web.cjs';
+import { useClipboard } from 'use-clipboard-copy';
 
 import { GroupMeMessage } from '../Content/GroupMeMessage'
 import { FormattedTime } from '../Common'
@@ -75,9 +77,11 @@ export const ContentModal = (props) => {
   const { open } = props;
   const { handleClose } = props;
   const { activeContent } = props;
+  const clipboard = useClipboard();
   const [avatarUrl, setAvatarUrl] = React.useState(null);
   const [precedingConversation, setPrecedingConversation] = React.useState([]);
   const [ensuingConversation, setEnsuingConversation] = React.useState([]);
+  const [snackBarOpen, setSnackBarOpen] = React.useState(false);
 
   async function fetchConversation(name, ensuing=false) {
     if (ensuing) {
@@ -95,6 +99,18 @@ export const ContentModal = (props) => {
     fetchConversation(activeContent.name, true);
     setAvatarUrl(activeContent.avatar_url);
   }, [activeContent]);
+
+  function TransitionDown(props) {
+    return <Slide {...props} direction="down" />;
+  }
+
+  const handleShareClick = () => {
+    clipboard.copy();
+    setSnackBarOpen(true);
+    setTimeout(function (){
+      setSnackBarOpen(false)
+    }, 2000);
+  };
 
   return (
     <Dialog
@@ -125,6 +141,18 @@ export const ContentModal = (props) => {
 
           <Grid container>
             <Grid item xs={12}>
+              <div class='copy-link'>
+                <input ref={clipboard.target} value={window.location.href} readOnly hidden />
+                <ShareIcon onClick={handleShareClick} style={{cursor: 'pointer'}} />
+                <Snackbar
+                  anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+                  open={snackBarOpen}
+                  onClose={handleClose}
+                  TransitionComponent={TransitionDown}
+                  message="Link copied!"
+                  key='link-copied-snackbar'
+                />
+              </div>
               <div className='creator'>
                 <img className='avatar' src={avatarUrl ? avatarUrl : 'avatar.gif'} />
                 <Typography variant='subtitle1' className='creator-name'>{activeContent.creator}</Typography> 

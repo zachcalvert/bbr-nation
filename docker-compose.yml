@@ -20,18 +20,9 @@ services:
       - 8000:8000
     depends_on:
       - db
+    networks:
+      - app-network
   react:
-    build:
-      context: ./client
-      dockerfile: Dockerfile
-    volumes:
-      - ./client/:/code
-    ports:
-      - 80:80
-    depends_on:
-      - django
-    tty: true
-  local-client:
     build:
       context: ./client
       dockerfile: Dockerfile.dev
@@ -42,23 +33,45 @@ services:
     depends_on:
       - django
     tty: true
+    networks:
+      - app-network
   nginx:
-    image: nginx:1.15-alpine
+    image: nginx:mainline-alpine
+    container_name: nginx
+    restart: unless-stopped
     ports:
       - "80:80"
-      - "443:443"
     volumes:
-      - ./data/nginx:/etc/nginx/conf.d
-      - ./data/certbot/conf:/etc/letsencrypt
-      - ./data/certbot/www:/var/www/certbot
-    command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
+      - web-root:/var/www/html
+      - ./nginx:/etc/nginx/conf.d
+      - certbot-etc:/etc/letsencrypt
+      - certbot-var:/var/lib/letsencrypt
+    depends_on:
+      - nodejs
+    networks:
+      - app-network
   certbot:
     image: certbot/certbot
+    container_name: certbot
     volumes:
-      - ./data/certbot/conf:/etc/letsencrypt
-      - ./data/certbot/www:/var/www/certbot
-    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
-
+      - certbot-etc:/etc/letsencrypt
+      - certbot-var:/var/lib/letsencrypt
+      - web-root:/var/www/html
+    depends_on:
+      - nginx
+    command: certonly --webroot --webroot-path=/var/www/html --email zacharym.calvert@gmail.com --agree-tos --no-eff-email --staging -d bbrnation.com  -d www.bbrnation.com
 
 volumes:
   pgdata:
+  certbot-etc:
+  certbot-var:
+  web-root:
+    driver: local
+    driver_opts:
+      type: none
+      device: /dev/bbrnation/client/
+      o: bind
+
+networks:
+  app-network:
+    driver: bridge

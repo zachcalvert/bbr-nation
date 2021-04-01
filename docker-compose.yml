@@ -9,8 +9,6 @@ services:
       - POSTGRES_PASSWORD=postgres
     volumes:
       - pgdata:/var/lib/postgresql/data/
-    networks:
-      - app-network
   django:
     build:
       context: ./server
@@ -22,8 +20,6 @@ services:
       - 8000:8000
     depends_on:
       - db
-    networks:
-      - app-network
   react:
     build:
       context: ./client

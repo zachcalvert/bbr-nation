@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Accordion, AccordionDetails, AccordionSummary, Backdrop, Dialog, Divider, Grid, makeStyles, Slide, Snackbar, Typography } from '@material-ui/core';
+import { Accordion, AccordionDetails, AccordionSummary, Backdrop, Dialog, Divider, Grid, Link, makeStyles, Slide, Snackbar, Typography } from '@material-ui/core';
 import PropTypes from 'prop-types';
 import axios from "axios"
 import ExpandLessRoundedIcon from '@material-ui/icons/ExpandLessRounded';
@@ -155,7 +155,7 @@ export const ContentModal = (props) => {
               </div>
               <div className='creator'>
                 <img className='avatar' src={avatarUrl ? avatarUrl : 'avatar.gif'} />
-                <Typography variant='subtitle1' className='creator-name'>{activeContent.creator}</Typography> 
+                <Link href={`/u/${activeContent.creator_name}`} variant="body2"><Typography variant='subtitle1'>{activeContent.creator_nickname}</Typography></Link> 
               </div>
               <div className='likes'>
                 <Typography style={{ color: '#FFAEB9' }} variant='h5'>{activeContent.likes}</Typography>

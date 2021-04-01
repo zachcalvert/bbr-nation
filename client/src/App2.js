@@ -7,19 +7,13 @@ import AppBar from '@material-ui/core/AppBar';
 import Divider from '@material-ui/core/Divider';
 import Drawer from '@material-ui/core/Drawer';
 import IconButton from '@material-ui/core/IconButton';
-import InboxIcon from '@material-ui/icons/MoveToInbox';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import MailIcon from '@material-ui/icons/Mail';
 import MenuIcon from '@material-ui/icons/Menu';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 
-import { BbAppBar } from "./components/AppBar/AppBar";
 import { Page } from "./components/Page/Page";
 import { TableOfContents } from './components/TableOfContents/TableOfContents';
+import { Member } from './components/Member/Member';
 
 const drawerWidth = 240;
 
@@ -142,8 +136,11 @@ export const App = (props) => {
         <Grid className={classes.container} container spacing={1}>
 
             <Grid item xs={12}>
-              <Route path="/:slug?" component={Page} />
+              <Route path="/u/:name" component={Member} />
+              <Route path="/content/:slug" component={Page} />
+              <Route path="/" exact component={Page} />
             </Grid>
+
           </Grid>
       </main>
     </div>

@@ -2,29 +2,23 @@ import datetime
 import json
 import re
 import requests
+from functools import wraps
 
-from django.shortcuts import render
-
-# Create your views here.
 from django.contrib.auth.models import User, Group
 from django.contrib.auth import authenticate
-from rest_framework import viewsets
-from rest_framework import permissions
+from django.db.models import QuerySet
+from django.shortcuts import render
+from rest_framework import generics, permissions, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from api import serializers
-from content.models import Content, Page
-
-from functools import wraps
-from django.db.models import QuerySet
+from content.models import Content, Page, Member
 
 
 BASE_URL = "https://api.groupme.com/v3/"
 GROUP_ID = "16191637"
 TOKEN = "kUtmZNokfpZvOE8KrOw1tb7cF15wZ3h55Vxk0T34"
-
-
 SHOUTOUT_IDS = [
     '160879140245416165',
     '160879152046258192',
@@ -50,11 +44,24 @@ def paginate(func):
     return inner
 
 
+class MemberViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that returns Members.
+    """
+    queryset = Member.objects.all().order_by('name')
+    serializer_class = serializers.MemberSerializer
+    lookup_field = 'name'
+
+    def retrieve(self, request, *args, **kwargs):
+        self.serializer_class = serializers.MemberDetailsSerializer
+        return super(MemberViewSet, self).retrieve(request, *args, **kwargs)
+
+
 class UserViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """
-    queryset = User.objects.all().order_by('username')
+    queryset = User.objects.all().order_by('-date_joined')
     serializer_class = serializers.UserSerializer
 
     def retrieve(self, request, *args, **kwargs):
@@ -75,9 +82,17 @@ class ContentViewSet(viewsets.ModelViewSet):
     """
     API endpoint that shares content randomly.
     """
-    queryset = Content.objects.all()
     serializer_class = serializers.ContentSerializer
     lookup_field = 'name'
+    queryset = Content.objects.all()
+
+    @paginate
+    @action(detail=True)
+    def member(self, request, name, **kwargs):
+        """
+        Return content for a given member, used by the member page
+        """
+        return Content.objects.filter(creator__name=name).order_by('-likes')
 
     @action(detail=True)
     def conversation(self, request, name, **kwargs):
@@ -126,11 +141,6 @@ class ContentViewSet(viewsets.ModelViewSet):
 
     @paginate
     @action(detail=False)
-    def bot(self, request):
-        return Content.objects.filter(creator='Belly Bot', likes__gte=2).order_by('-likes')
-
-    @paginate
-    @action(detail=False)
     def shoutouts(self, request):
         shoutouts = []
         for shoutout_id in SHOUTOUT_IDS:
@@ -141,11 +151,6 @@ class ContentViewSet(viewsets.ModelViewSet):
     @action(detail=False)
     def the_twelve_days_of_shotguns(self, request):
         return Content.objects.filter(name='The Twelve Days of Shotguns')
-
-    @paginate
-    @action(detail=False)
-    def early(self, request):
-        return Content.objects.order_by('create_date')
 
 
 class PageViewSet(viewsets.ModelViewSet):

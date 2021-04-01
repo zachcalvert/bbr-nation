@@ -16,7 +16,7 @@ import time
 from django.core import files
 from django.core.management.base import BaseCommand
 
-from content.models import Content, Profile
+from content.models import Content, Member, Nickname
 
 
 BASE_URL = "https://api.groupme.com/v3/"
@@ -50,7 +50,6 @@ class Command(BaseCommand):
         
         for i in range(500):
             print(f'on batch {i}')
-            time.sleep(.5)
             messages_url = f"{BASE_URL}groups/{GROUP_ID}/messages?token={TOKEN}&limit=100"
 
             if starting_message_id:
@@ -71,8 +70,23 @@ class Command(BaseCommand):
                         print('seen this message before, continuing on')
                         continue
 
-                    if message['attachments'] and message['favorited_by']:
-                        user = Profile.objects.get(groupme_id=message['user_id']).user
+                    if message['attachments'] and len(message['favorited_by']) > 1:
+                        try:
+                            member = Member.objects.get(groupme_id=message['user_id'])
+                        except Member.DoesNotExist:
+                            Member.objects.create(
+                                groupme_id=message['user_id'],
+                                name=message['name'],
+                                avatar_url=message['avatar_url']
+                            )
+                        if not member.avatar_url and message['avatar_url']:
+                            member.avatar_url = message['avatar_url']
+                            member.save()
+
+                        Nickname.objects.get_or_create(
+                            nickname=message['name'],
+                            member=member
+                        )
 
                         attachment = message['attachments'][0]
                         url = attachment.get('url') or attachment.get('source_url') or attachment.get('preview_url')
@@ -85,15 +99,16 @@ class Command(BaseCommand):
                                     kind = 'IMAGE'
 
                                 kwargs = {
-                                    "user": user,
-                                    "name": message['id'],
-                                    "text": self.strip_urls(message['text']),
-                                    "creator": message['name'],
-                                    "create_date": datetime.datetime.fromtimestamp(message['created_at']),
-                                    "likes": len(message['favorited_by']),
-                                    "kind": kind,
                                     "avatar_url": message['avatar_url'],
-                                    "media_url": url
+                                    "creator": member,
+                                    "creator_nickname": message['name'],
+                                    "create_date": datetime.datetime.fromtimestamp(message['created_at']),
+                                    "kind": kind,
+                                    "likes": len(message['favorited_by']),
+                                    "media_url": url,
+                                    "name": message['id'],
+                                    "text": self.strip_urls(message['text'])
+
                                 }
                                 content = Content.objects.create(**kwargs)
 
@@ -102,22 +117,36 @@ class Command(BaseCommand):
                             print('found new url type, in above message')
 
                     elif not message['attachments'] and len(message['favorited_by']) > 1:
-                        user = Profile.objects.get(groupme_id=message['user_id']).user
+                        try:
+                            member = Member.objects.get(groupme_id=message['user_id'])
+                        except Member.DoesNotExist:
+                            member = Member.objects.create(
+                                groupme_id=message['user_id'],
+                                name=message['name'],
+                                avatar_url=message['avatar_url']
+                            )
+
+                        if not member.avatar_url and message['avatar_url']:
+                            member.avatar_url = message['avatar_url']
+                            member.save()
+
+                        Nickname.objects.get_or_create(
+                            nickname=message['name'],
+                            member=member
+                        )
 
                         kwargs = {
-                            "user": user,
-                            "name": message['id'],
-                            "text": message['text'],
-                            "creator": message['name'],
+                            "avatar_url": message['avatar_url'],
+                            "creator": member,
+                            "creator_nickname": message['name'],
                             "create_date": datetime.datetime.fromtimestamp(message['created_at']),
-                            "likes": len(message['favorited_by']),
                             "kind": 'TEXT',
-                            "avatar_url": message['avatar_url']
+                            "likes": len(message['favorited_by']),
+                            "name": message['id'],
+                            "text": self.strip_urls(message['text'])
                         }
                         Content.objects.create(**kwargs)
 
-                except Profile.DoesNotExist:
-                    print('NEW PROFILE: {}'.format(message))
                 except Exception as e:
                     print(e)
 

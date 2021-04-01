@@ -11,6 +11,8 @@ router.register(r'users', views.UserViewSet)
 router.register(r'groups', views.GroupViewSet)
 router.register(r'content', views.ContentViewSet)
 router.register(r'pages', views.PageViewSet)
+router.register(r'members', views.MemberViewSet)
+
 
 
 urlpatterns = [

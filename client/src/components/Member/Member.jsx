@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import axios from "axios"
 import { Avatar, Grid, makeStyles, Paper, Typography } from '@material-ui/core';
 
-import { Content } from '../Content/Content';
+import { Feed } from '../Feed/Feed';
 
 const useStyles = makeStyles((theme) => ({
   leftAlign: {
@@ -32,30 +32,6 @@ export const Member = () => {
   const [avatarUrl, setAvatarUrl] = useState(null);
   const [nicks, setNicks] = useState([]);
   const nickname = nicks[Math.floor(Math.random() * nicks.length)];
-  const [content, setContent] = useState([]);
-  const [nextUrl, setNexUrl] = useState(null);
-  const [isBottom, setIsBottom] = useState(false);
-  const [keepScrolling, setKeepScrolling] = useState(true);
-
-  async function fetchMemberContent() {
-    const { data } = await axios.get(MEMBER_CONTENT_URL);
-    setContent(data.results); 
-  }
-
-  async function fetchMemberContent(url, append=true) {
-    const { data } = await axios.get(url);
-    if (!append) {
-      setContent([]);
-      setContent(data.results);
-    } else {
-      setContent([...content, ...data.results]);
-    }
-    setIsBottom(false);
-    if (!data.next) {
-      setKeepScrolling(false);
-    }
-    setNexUrl(data.next);
-  }
 
   useEffect(() => {
     try {
@@ -74,35 +50,10 @@ export const Member = () => {
       setNicks(data.nicks);
     }
     fetchUserDetails();
-    fetchMemberContent(MEMBER_CONTENT_URL, false)
   }, [DETAIL_URL, name]);
 
-  // scroll stuff
-  useEffect(() => {
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  function handleScroll() {
-    const scrollTop = (document.documentElement
-      && document.documentElement.scrollTop)
-      || document.body.scrollTop;
-    const scrollHeight = (document.documentElement
-      && document.documentElement.scrollHeight)
-      || document.body.scrollHeight;
-    if (scrollTop + window.innerHeight + 50 >= scrollHeight){
-      setIsBottom(true);
-    }
-  }
-
-  useEffect(() => {
-    if (isBottom && keepScrolling) {
-      fetchMemberContent(nextUrl);
-    }
-  }, [isBottom]);
-
   return (
-      <>
+    <>
       <Grid className={classes.container} container spacing={1}>
         <Grid item>
           <Avatar className={classes.large} alt={name} src={avatarUrl} />
@@ -113,15 +64,11 @@ export const Member = () => {
         </Grid>
       </Grid>
 
-        {/* {nicks.map((nick) => (
-          <Typography variant='subtitle1'>{nick}</Typography>
-        ))} */}
+      {/* {nicks.map((nick) => (
+        <Typography variant='subtitle1'>{nick}</Typography>
+      ))} */}
 
-        {content.map((c) => (
-          <Paper className={classes.paper}>
-            <Content key={c.id} content={c} />
-          </Paper>
-        ))}
-      </>
+      <Feed url={MEMBER_CONTENT_URL} />
+    </>
   )
 }

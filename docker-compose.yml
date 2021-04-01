@@ -9,6 +9,8 @@ services:
       - POSTGRES_PASSWORD=postgres
     volumes:
       - pgdata:/var/lib/postgresql/data/
+    networks:
+      - app-network
   django:
     build:
       context: ./server
@@ -35,15 +37,14 @@ services:
     tty: true
     networks:
       - app-network
-  nginx:
+  webserver:
     image: nginx:mainline-alpine
-    container_name: nginx
+    container_name: webserver
     restart: unless-stopped
     ports:
       - "80:80"
     volumes:
-      - web-root:/var/www/html
-      - ./nginx:/etc/nginx/conf.d
+      - ./nginx-conf:/etc/nginx/conf.d
       - certbot-etc:/etc/letsencrypt
       - certbot-var:/var/lib/letsencrypt
     depends_on:
@@ -58,7 +59,7 @@ services:
       - certbot-var:/var/lib/letsencrypt
       - web-root:/var/www/html
     depends_on:
-      - nginx
+      - webserver
     command: certonly --webroot --webroot-path=/var/www/html --email zacharym.calvert@gmail.com --agree-tos --no-eff-email --staging -d bbrnation.com  -d www.bbrnation.com
 
 volumes:
@@ -67,10 +68,6 @@ volumes:
   certbot-var:
   web-root:
     driver: local
-    driver_opts:
-      type: none
-      device: /dev/bbrnation/client/
-      o: bind
 
 networks:
   app-network:

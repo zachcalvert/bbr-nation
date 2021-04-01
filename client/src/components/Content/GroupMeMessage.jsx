@@ -1,5 +1,5 @@
 import React from 'react';
-import { Divider, Grid, Typography, makeStyles } from '@material-ui/core';
+import { Avatar, Divider, Grid, Typography, makeStyles } from '@material-ui/core';
 import { FormattedTime } from '../Common'
 
 import './ContentModal.css';
@@ -50,7 +50,7 @@ export const GroupMeMessage = (props) => {
             ) : (
               <>
                 <div className='creator'>
-                  <img className='avatar' src={avatarUrl ? avatarUrl : 'avatar.gif' } />
+                  <Avatar alt={message.name} src={avatarUrl} />
                   <Typography variant='subtitle2' className='creator-name'>{message.creator}</Typography> 
                 </div>
 

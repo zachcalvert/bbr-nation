@@ -1,0 +1,10 @@
+::-webkit-scrollbar {
+    background: #424242;
+    z-index: -1;
+  }
+  ::-webkit-scrollbar-track {
+    background: #424242;
+  }
+  ::-webkit-scrollbar-corner {
+    background: #424242;
+  }

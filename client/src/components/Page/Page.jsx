@@ -8,9 +8,9 @@ export const Page = () => {
   const { slug } = useParams();
   
   if ( slug ) {
-    PAGE_URL = `${process.env.API_URL}/content/${slug}`
+    PAGE_URL = `${API_URL}/content/${slug}`
   } else {
-    PAGE_URL = `${process.env.API_URL}/content/`
+    PAGE_URL = `${API_URL}/content/`
   }
 
   return (

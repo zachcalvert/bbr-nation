@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Accordion, AccordionDetails, AccordionSummary, Backdrop, Dialog, Divider, Grid, Link, makeStyles, Slide, Snackbar, Typography } from '@material-ui/core';
+import { Accordion, AccordionDetails, AccordionSummary, Avatar, Backdrop, Dialog, Divider, Grid, Link, makeStyles, Slide, Snackbar, Typography } from '@material-ui/core';
 import PropTypes from 'prop-types';
 import axios from "axios"
 import ExpandLessRoundedIcon from '@material-ui/icons/ExpandLessRounded';
@@ -24,7 +24,6 @@ const useStyles = makeStyles((theme) => ({
     },
     modalPaper: {
       backgroundColor: theme.palette.background.paper,
-      border: '2px solid #000',
       boxShadow: theme.shadows[5],
       paddingBottom: theme.spacing(1),
       paddingLeft: theme.spacing(3),
@@ -38,6 +37,9 @@ const useStyles = makeStyles((theme) => ({
     viewConversation: {
       margin: '0 auto',
       display: 'block'
+    },
+    creatorName: {
+      margin: 'auto 10px'
     }
   }));
 
@@ -154,8 +156,8 @@ export const ContentModal = (props) => {
                 />
               </div>
               <div className='creator'>
-                <img className='avatar' src={avatarUrl ? avatarUrl : 'avatar.gif'} />
-                <Link href={`/u/${activeContent.creator_name}`} variant="body2"><Typography variant='subtitle1'>{activeContent.creator_nickname}</Typography></Link> 
+                <Link href={`/u/${activeContent.creator_name}`}><Avatar alt={activeContent.name} src={avatarUrl} /></Link>
+                <Typography className={classes.creatorName} variant='subtitle1'>{activeContent.creator_nickname}</Typography>
               </div>
               <div className='likes'>
                 <Typography style={{ color: '#FFAEB9' }} variant='h5'>{activeContent.likes}</Typography>

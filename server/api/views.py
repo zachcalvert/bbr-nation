@@ -126,11 +126,6 @@ class ContentViewSet(viewsets.ModelViewSet):
 
     @paginate
     @action(detail=False)
-    def random(self, request):
-        return Content.objects.order_by('?')
-
-    @paginate
-    @action(detail=False)
     def top(self, request):
         return Content.objects.filter(likes__gte=3).order_by('-likes')
 
@@ -141,16 +136,16 @@ class ContentViewSet(viewsets.ModelViewSet):
 
     @paginate
     @action(detail=False)
+    def gallery(self, request):
+        return Content.objects.filter(kind='IMAGE').order_by('?')
+
+    @paginate
+    @action(detail=False)
     def shoutouts(self, request):
         shoutouts = []
         for shoutout_id in SHOUTOUT_IDS:
             shoutouts.append(Content.objects.get(name=shoutout_id))
         return shoutouts
-
-    @paginate
-    @action(detail=False)
-    def the_twelve_days_of_shotguns(self, request):
-        return Content.objects.filter(name='The Twelve Days of Shotguns')
 
 
 class PageViewSet(viewsets.ModelViewSet):

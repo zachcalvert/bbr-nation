@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import axios from "axios"
 import { Avatar, Divider, List, Typography, makeStyles } from '@material-ui/core';
 import MenuItem from '@material-ui/core/MenuItem';
+import './TableOfContents.css';
 
 const PAGES_URL = `${process.env.REACT_APP_API_URL}/pages/`
 const MEMBERS_URL = `${process.env.REACT_APP_API_URL}/members/`
@@ -37,12 +38,6 @@ export const TableOfContents = () => {
   return (
     <>
       <List>
-        <MenuItem 
-          key='home'
-          component={Link}
-          to='/'>
-            <Typography variant='h6'>Home</Typography>
-          </MenuItem>
         {pages.map((page) => (
           <MenuItem 
             key={page.slug} 

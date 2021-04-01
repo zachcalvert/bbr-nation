@@ -30,7 +30,7 @@ const useStyles = makeStyles((theme) => ({
     textAlign: 'center',
     color: theme.palette.text.secondary,
     height: "auto",
-    marginTop: theme.spacing(4),
+    marginTop: theme.spacing(2),
     position: 'relative'
   },
   date: {

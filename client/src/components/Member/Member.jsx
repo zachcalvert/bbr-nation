@@ -25,10 +25,12 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export const Member = () => {
-  const { name } = useParams();
   const classes = useStyles();
+
+  const { name } = useParams();
   const DETAIL_URL = `${process.env.REACT_APP_API_URL}/members/${name}/`
   const MEMBER_CONTENT_URL = `${process.env.REACT_APP_API_URL}/content/${name}/member`
+  
   const [avatarUrl, setAvatarUrl] = useState(null);
   const [nicks, setNicks] = useState([]);
   const nickname = nicks[Math.floor(Math.random() * nicks.length)];

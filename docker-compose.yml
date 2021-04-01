@@ -27,6 +27,17 @@ services:
   react:
     build:
       context: ./client
+      dockerfile: Dockerfile
+    volumes:
+      - ./client/:/code
+    ports:
+      - 80:80
+    depends_on:
+      - django
+    tty: true
+  local-client:
+    build:
+      context: ./client
       dockerfile: Dockerfile.dev
     volumes:
       - ./client/:/code
@@ -35,40 +46,5 @@ services:
     depends_on:
       - django
     tty: true
-    networks:
-      - app-network
-  webserver:
-    image: nginx:mainline-alpine
-    container_name: webserver
-    restart: unless-stopped
-    ports:
-      - "80:80"
-    volumes:
-      - ./nginx-conf:/etc/nginx/conf.d
-      - certbot-etc:/etc/letsencrypt
-      - certbot-var:/var/lib/letsencrypt
-    depends_on:
-      - react
-    networks:
-      - app-network
-  certbot:
-    image: certbot/certbot
-    container_name: certbot
-    volumes:
-      - certbot-etc:/etc/letsencrypt
-      - certbot-var:/var/lib/letsencrypt
-      - web-root:/var/www/html
-    depends_on:
-      - webserver
-    command: certonly --webroot --webroot-path=/var/www/html --email zacharym.calvert@gmail.com --agree-tos --no-eff-email --staging -d bbrnation.com  -d www.bbrnation.com
-
 volumes:
   pgdata:
-  certbot-etc:
-  certbot-var:
-  web-root:
-    driver: local
-
-networks:
-  app-network:
-    driver: bridge

@@ -58,6 +58,10 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.UserSerializer
     permission_classes = [permissions.IsAuthenticated]
 
+    def retrieve(self, request, *args, **kwargs):
+        self.serializer_class = serializers.UserDetailSerializer
+        return super(UserViewSet, self).retrieve(request, *args, **kwargs)
+
 
 class GroupViewSet(viewsets.ModelViewSet):
     """

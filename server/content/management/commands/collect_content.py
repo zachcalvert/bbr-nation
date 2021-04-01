@@ -116,6 +116,8 @@ class Command(BaseCommand):
                         }
                         Content.objects.create(**kwargs)
 
+                except Profile.DoesNotExist:
+                    print('NEW PROFILE: {}'.format(message))
                 except Exception as e:
                     print(e)
 

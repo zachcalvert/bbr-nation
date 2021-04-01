@@ -4,18 +4,6 @@ from rest_framework import serializers
 from content.models import Content, Page
 
 
-class UserSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = User
-        fields = ['url', 'username', 'email', 'groups']
-
-
-class GroupSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = Group
-        fields = ['url', 'name']
-
-
 class ContentSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Content
@@ -31,3 +19,23 @@ class PageSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Page
         fields = '__all__'
+
+
+class UserSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = User
+        fields = ['url', 'username', 'email', 'groups']
+
+
+class UserDetailSerializer(serializers.HyperlinkedModelSerializer):
+    content = ContentSerializer(read_only=True, many=True)
+
+    class Meta:
+        model = User
+        fields = ['url', 'username', 'email', 'groups', 'content']
+
+
+class GroupSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Group
+        fields = ['url', 'name']

@@ -1,7 +1,7 @@
 import React from 'react';
-import { Divider, Link, Typography } from '@material-ui/core';
+import { Divider, Typography } from '@material-ui/core';
 
-import { FormattedTime } from '../Common'
+import { FormattedDate } from '../Common'
 import './Content.css';
 
 export const Content = (props) => {
@@ -25,7 +25,7 @@ export const Content = (props) => {
         </div>
       )}
       <Divider />
-        <Typography variant='subtitle1'>{content.creator_nickname}, {FormattedTime(content.create_date)}</Typography>    
+        <Typography variant='subtitle1'>{content.creator_nickname}, {FormattedDate(content.create_date)}</Typography>
     </div>
   )
 };

@@ -9,7 +9,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  padding: 0;
+  padding: 0 20px;
   text-decoration: none;
 }
 
@@ -20,4 +20,10 @@ body {
 .navMenuLink a {
     text-decoration: none;
     color: white;
+}
+
+@media only screen and (max-width: 500px) {
+  body {
+    padding: 0!important;
+  }
 }

@@ -42,9 +42,9 @@ export const App = () => {
           <BbAppBar />
           <Grid className={classes.container} container spacing={1}>
             <Hidden smDown>
-              <Grid item md={1}></Grid>
+              <Grid item md={3}></Grid>
             </Hidden>
-            <Grid item md={10} sm={12} xs={12}>
+            <Grid item md={9} sm={12} xs={12}>
               <Route path="/:slug?" component={Page} />
             </Grid>
           </Grid>

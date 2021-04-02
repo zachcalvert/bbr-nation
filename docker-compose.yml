@@ -23,11 +23,9 @@ services:
   react:
     build:
       context: ./client
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile
     volumes:
       - ./client/:/code
-    ports:
-      - 3000:3000
     depends_on:
       - django
     tty: true

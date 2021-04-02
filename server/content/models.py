@@ -32,6 +32,8 @@ class Content(models.Model):
         ('VIDEO', 'Video'),
     )
     name = models.CharField(max_length=100, null=True, blank=True, db_index=True)
+    display_name = models.CharField(max_length=100, null=True, blank=True)
+    description = models.TextField(null=True, blank=True)
     creator = models.ForeignKey(Member, null=True, blank=True, on_delete=models.SET_NULL, related_name='content')
     creator_nickname = models.CharField(max_length=200, null=True, blank=True)
     create_date = models.DateTimeField(null=True, blank=True)
@@ -53,7 +55,7 @@ class Content(models.Model):
 class Page(models.Model):
     name = models.CharField(max_length=100, null=True, blank=True)
     slug = models.SlugField(null=True, blank=True)
-    contents = models.ManyToManyField(Content, null=True, blank=True)
+    contents = models.ManyToManyField(Content, null=True, blank=True, related_name='pages')
 
     class Meta:
         ordering = ['name']

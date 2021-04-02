@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from "axios"
-import { Avatar, Grid, makeStyles, Paper, Typography } from '@material-ui/core';
+import { Avatar, Grid, makeStyles, Typography } from '@material-ui/core';
 
 import { Feed } from '../Feed/Feed';
 
@@ -56,7 +56,7 @@ export const Member = () => {
 
   return (
     <>
-      <Grid className={classes.container} container spacing={1}>
+      <Grid container spacing={1}>
         <Grid item>
           <Avatar className={classes.large} alt={name} src={avatarUrl} />
         </Grid>

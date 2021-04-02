@@ -86,6 +86,27 @@ class ContentViewSet(viewsets.ModelViewSet):
     lookup_field = 'name'
     queryset = Content.objects.all()
 
+    def get_queryset(self):
+        queryset = super(ContentViewSet, self).get_queryset()
+
+        sort = self.request.query_params.get('sort', '')
+        print(sort)
+        if sort:
+            order_by_name = sort.split(' ')[0]
+            order_by_sign = sort.split(' ')[1]
+            order_by_sign = '' if order_by_sign == 'asc' else '-'
+            queryset = queryset.order_by(order_by_sign + order_by_name)
+
+        return queryset
+
+    @paginate
+    @action(detail=True)
+    def page(self, request, name, **kwargs):
+        """
+        Return content for a given member, used by the member page
+        """
+        return Content.objects.filter(pages__slug=name).order_by('-likes')
+
     @paginate
     @action(detail=True)
     def member(self, request, name, **kwargs):
@@ -126,26 +147,9 @@ class ContentViewSet(viewsets.ModelViewSet):
 
     @paginate
     @action(detail=False)
-    def top(self, request):
-        return Content.objects.filter(likes__gte=3).order_by('-likes')
-
-    @paginate
-    @action(detail=False)
     def watch(self, request):
         return Content.objects.filter(kind='VIDEO').order_by('?')
 
-    @paginate
-    @action(detail=False)
-    def gallery(self, request):
-        return Content.objects.filter(kind='IMAGE').order_by('?')
-
-    @paginate
-    @action(detail=False)
-    def shoutouts(self, request):
-        shoutouts = []
-        for shoutout_id in SHOUTOUT_IDS:
-            shoutouts.append(Content.objects.get(name=shoutout_id))
-        return shoutouts
 
 
 class PageViewSet(viewsets.ModelViewSet):
@@ -154,3 +158,4 @@ class PageViewSet(viewsets.ModelViewSet):
     """
     queryset = Page.objects.all()
     serializer_class = serializers.PageSerializer
+    lookup_field = 'slug'

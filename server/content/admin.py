@@ -15,22 +15,44 @@ class MemberAdmin(admin.ModelAdmin):
     readonly_fields = ('groupme_id',)
 
 
+
+class PageInline(admin.TabularInline):
+    model = Content.pages.through
+    extra = 1
+
+
 class ContentAdmin(admin.ModelAdmin):
-    list_display = ['__str__', 'creator', 'creator_nickname', 'create_date', 'kind', 'text', 'likes']
+    list_display = ['__str__', 'creator', 'create_date', 'display_name', 'description', 'kind', 'text', 'likes']
     list_filter = ('creator', 'kind',)
+    inlines = (PageInline,)
     search_fields = ['name',]
 
     fields = (
         'creator',
         'creator_nickname',
+        'display_name',
+        'description',
         'create_date',
         'media_url',
         'text',
         'likes',
     )
-    readonly_fields = fields
+    readonly_fields = (
+        'creator',
+        'creator_nickname',
+        'create_date',
+        'media_url',
+        'text',
+        'likes',)
+
+
+
+
+class PageAdmin(admin.ModelAdmin):
+    list_display = ['name']
+
 
 admin.site.register(Member, MemberAdmin)
 admin.site.register(Nickname)
 admin.site.register(Content, ContentAdmin)
-admin.site.register(Page)
+admin.site.register(Page, PageAdmin)

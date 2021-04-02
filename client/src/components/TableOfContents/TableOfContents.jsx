@@ -38,10 +38,10 @@ export const TableOfContents = () => {
   return (
     <>
       <List>
+        <Typography className={classes.menuHeader} variant='h5'>Content</Typography>
         {pages.map((page) => (
           <MenuItem 
             key={page.slug} 
-            selected={page === 'Home'}
             component={Link}
             to={`/content/${page.slug}`}>
               <Typography variant='h6'>{page.name}</Typography>
@@ -50,7 +50,7 @@ export const TableOfContents = () => {
       </List>
       <Divider />
       <List>
-        <Typography className={classes.menuHeader} variant='h6'>Members</Typography>
+        <Typography className={classes.menuHeader} variant='h5'>Members</Typography>
         {members?.map((member, index) => (
           <MenuItem 
             key={member.name} 

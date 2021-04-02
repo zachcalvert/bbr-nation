@@ -9,7 +9,7 @@ class ContentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Content
-        fields = ['name', 'creator_nickname', 'creator_name', 'create_date', 'likes', 'text', 'kind', 'avatar_url', 'media_url']
+        fields = ['id', 'name', 'display_name', 'description', 'creator_nickname', 'creator_name', 'create_date', 'likes', 'text', 'kind', 'avatar_url', 'media_url']
         extra_kwargs = {
             'url': {'lookup_field': 'name'}
         }
@@ -24,6 +24,9 @@ class PageSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Page
         fields = '__all__'
+        extra_kwargs = {
+            'url': {'lookup_field': 'slug'}
+        }
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):

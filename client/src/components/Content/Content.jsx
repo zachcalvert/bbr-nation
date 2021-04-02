@@ -10,6 +10,7 @@ export const Content = (props) => {
 
   return (
     <div>
+      {content.display_name && <Typography style={{textAlign: 'left'}} variant='h5'>{content.display_name}</Typography>}
       {kind === 'IMAGE' && (
         <div className='bbr-image'>
           <img alt='bbr-content' src={content.media_url} />
@@ -25,7 +26,11 @@ export const Content = (props) => {
         </div>
       )}
       <Divider />
+      {content.description ? (
+        <Typography style={{textAlign: 'center'}} variant='h6'>{content.description}</Typography>
+      ) : (
         <Typography variant='subtitle1'>{content.creator_nickname}, {FormattedDate(content.create_date)}</Typography>
+      )}
     </div>
   )
 };

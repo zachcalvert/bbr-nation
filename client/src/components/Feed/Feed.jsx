@@ -57,6 +57,8 @@ export const Feed = (props) => {
   const [content, setContent] = useState([]);
   const [activeContent, setActiveContent] = React.useState(null);
   const [open, setOpen] = React.useState(false);
+  const [sort, setSort] = useState(null);
+  const [filter, setFilter] = useState(null);
 
   const [nextUrl, setNexUrl] = useState(null);
   const [isBottom, setIsBottom] = useState(false);

@@ -26,9 +26,6 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./client/:/code
-    environment:
-      - VIRTUAL_HOST=bbrnation.com
-      - LETSENCRYPT_HOST=bbrnation.com
     depends_on:
       - django
     tty: true

@@ -28,11 +28,9 @@ services:
       - ./client/:/code
     ports:
       - 3000:3000
-    environment:
-      - VIRTUAL_HOST=bbrnation.com
-      - LETSENCRYPT_HOST=bbrnation.com
     depends_on:
       - django
     tty: true
+
 volumes:
   pgdata:

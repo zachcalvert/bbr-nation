@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import axios from "axios"
 import ExpandLessRoundedIcon from '@material-ui/icons/ExpandLessRounded';
 import ExpandMoreRoundedIcon from '@material-ui/icons/ExpandMoreRounded';
+import EditRoundedIcon from '@material-ui/icons/EditRounded';
 import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
 import ShareIcon from '@material-ui/icons/Share';
 import { useSpring, animated } from 'react-spring/web.cjs';
@@ -14,6 +15,7 @@ import { FormattedTime } from '../Common'
 import './ContentModal.css'
 
 const CONTENT_URL = `${process.env.REACT_APP_API_URL}/content`
+const ADMIN_URL = `${process.env.REACT_APP_ADMIN_URL}`
 
 const useStyles = makeStyles((theme) => ({
     modal: {
@@ -145,7 +147,7 @@ export const ContentModal = (props) => {
             <Grid item xs={12}>
               <div class='copy-link'>
                 <input ref={clipboard.target} value={window.location.href} readOnly hidden />
-                <Link href={`http://localhost:8000/admin/content/content/${activeContent.id}/change`} style={{cursor: 'pointer'}}>Admin</Link>
+                <Link href={`${ADMIN_URL}content/content/${activeContent.id}/change`} style={{cursor: 'pointer'}}>Admin</Link>
 
                 <ShareIcon onClick={handleShareClick} style={{cursor: 'pointer'}} />
                 <Snackbar

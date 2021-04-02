@@ -26,8 +26,6 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./client/:/code
-    ports:
-      - 80:80
     environment:
       - VIRTUAL_HOST=bbrnation.com
       - LETSENCRYPT_HOST=bbrnation.com

@@ -1,0 +1,36 @@
+version: '3.7'
+
+services:
+  db:
+    image: postgres
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - pgdata:/var/lib/postgresql/data/
+  django:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./server:/code
+    ports:
+      - 8000:8000
+    depends_on:
+      - db
+  react:
+    build:
+      context: ./client
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./client/:/code
+    ports:
+      - 3000:3000
+    depends_on:
+      - django
+    tty: true
+
+volumes:
+  pgdata:

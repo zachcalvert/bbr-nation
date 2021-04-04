@@ -10,7 +10,7 @@
   padding: 0!important;
 }
 
-.MuiAccordionSummary-content {
+.modalAccordion .MuiAccordionSummary-content {
   display: none!important;
 }
 

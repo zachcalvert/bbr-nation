@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import axios from "axios"
-import { Avatar, Divider, List, Typography, makeStyles } from '@material-ui/core';
-import MenuItem from '@material-ui/core/MenuItem';
+import { Accordion, AccordionDetails, AccordionSummary, Avatar, Divider, List, MenuItem, Typography, makeStyles } from '@material-ui/core';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+
 import './TableOfContents.css';
 
 const PAGES_URL = `${process.env.REACT_APP_API_URL}/pages/`
@@ -14,6 +15,10 @@ const useStyles = makeStyles((theme) => ({
   },
   menuHeader: {
     padding: '6px 6px 6px 16px',
+  },
+  heading: {
+    fontSize: theme.typography.pxToRem(6),
+    fontWeight: theme.typography.fontWeightRegular,
   }
 }));
 
@@ -33,7 +38,7 @@ export const TableOfContents = () => {
     }
     fetchPages();
     fetchMembers();
-  }, [PAGES_URL]);
+  }, [PAGES_URL, MEMBERS_URL]);
 
   return (
     <>
@@ -48,19 +53,27 @@ export const TableOfContents = () => {
           </MenuItem>
         ))}
       </List>
-      <Divider />
-      <List>
-        <Typography className={classes.menuHeader} variant='h5'>Members</Typography>
-        {members?.map((member, index) => (
-          <MenuItem 
-            key={member.name} 
-            component={Link}
-            to={`/u/${member.name}`}>
-              <Avatar alt={member.name} src={member.avatar_url} />
-              <Typography className={classes.memberName} variant='h6'>{member.name}</Typography>
-          </MenuItem>
-        ))}
-      </List>
+      <Accordion>
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="panel1a-content"
+          id="panel1a-header">
+          <Typography variant='h5'>Members</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <List>
+            {members?.map((member, index) => (
+              <MenuItem 
+                key={member.name} 
+                component={Link}
+                to={`/u/${member.name}`}>
+                  <Avatar alt={member.name} src={member.avatar_url} />
+                  <Typography className={classes.memberName} variant='h6'>{member.name}</Typography>
+              </MenuItem>
+            ))}
+          </List>
+        </AccordionDetails>
+      </Accordion>
     </>
   )
 }

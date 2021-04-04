@@ -4,3 +4,4 @@ djangorestframework==3.12.2
 django-extensions
 django-cors-headers==3.7.0
 requests
+espn_api

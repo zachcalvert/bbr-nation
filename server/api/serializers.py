@@ -81,23 +81,66 @@ class PlayerSerializer(serializers.HyperlinkedModelSerializer):
         return obj.get_image_url()
 
 
+class PlayerSeasonSerializer(serializers.HyperlinkedModelSerializer):
+    season = serializers.SerializerMethodField('get_season')
+    team = serializers.SerializerMethodField('get_team')
+    name = serializers.SerializerMethodField('get_player_name')
+    position = serializers.SerializerMethodField('get_player_position')
+
+    class Meta:
+        model = PlayerSeason
+        fields = ['season', 'player', 'name', 'position', 'team', 'position_rank', 'total_points']
+
+    def get_season(self, obj):
+        return obj.season.year
+
+    def get_team(self, obj):
+        return obj.team.id
+
+    def get_player_name(self, obj):
+        return obj.player.name
+
+    def get_player_position(self, obj):
+        return obj.player.position
+
+
 class TeamSerializer(serializers.HyperlinkedModelSerializer):
+    manager = serializers.SerializerMethodField('get_manager_name')
+    players = serializers.SerializerMethodField('get_players')
 
     class Meta:
         model = Team
-        fields = '__all__'
+        fields = ['id', 'name', 'players', 'logo_url', 'manager', 'wins', 'losses', 'standing', 'final_standing']
+
+    def get_manager_name(self, obj):
+        return obj.manager.name
+
+    def get_players(self, obj):
+        return [{
+            "id": player.id,
+            "name": player.name,
+            "position": player.position
+        } for player in obj.players.all()]
 
 
 class SeasonSerializer(serializers.HyperlinkedModelSerializer):
     teams = serializers.SerializerMethodField('get_teams')
+    winner = serializers.SerializerMethodField('get_winner')
+    piercee = serializers.SerializerMethodField('get_piercee')
 
     class Meta:
         model = Season
-        fields = ['year', 'teams']
+        fields = ['year', 'teams', 'winner', 'piercee']
         extra_kwargs = {
             'url': {'lookup_field': 'year'}
         }
 
     def get_teams(self, obj):
         return obj.get_teams()
+
+    def get_winner(self, obj):
+        return obj.winner.name
+
+    def get_piercee(self, obj):
+        return obj.piercee.name
 

@@ -8,6 +8,7 @@ import './TableOfContents.css';
 
 const PAGES_URL = `${process.env.REACT_APP_API_URL}/pages/`
 const MEMBERS_URL = `${process.env.REACT_APP_API_URL}/members/`
+const SEASONS_URL = `${process.env.REACT_APP_API_URL}/seasons/`
 
 const useStyles = makeStyles((theme) => ({
   memberName: {
@@ -26,6 +27,7 @@ export const TableOfContents = () => {
   const classes = useStyles();
   const [pages, setPages] = useState([]);
   const [members, setMembers] = useState([]);
+  const [seasons, setSeasons] = useState([]);
 
   useEffect(() => {
     async function fetchPages() {
@@ -36,9 +38,14 @@ export const TableOfContents = () => {
       const { data } = await axios.get(MEMBERS_URL);
       setMembers(data.results);        
     }
+    async function fetchSeasons() {
+      const { data } = await axios.get(SEASONS_URL);
+      setSeasons(data.results);
+    }
     fetchPages();
     fetchMembers();
-  }, [PAGES_URL, MEMBERS_URL]);
+    fetchSeasons();
+  }, [PAGES_URL, MEMBERS_URL, SEASONS_URL]);
 
   return (
     <>
@@ -69,6 +76,27 @@ export const TableOfContents = () => {
                 to={`/u/${member.name}`}>
                   <Avatar alt={member.name} src={member.avatar_url} />
                   <Typography className={classes.memberName} variant='h6'>{member.name}</Typography>
+              </MenuItem>
+            ))}
+          </List>
+        </AccordionDetails>
+      </Accordion>
+
+      <Accordion>
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="panel1a-content"
+          id="panel1a-header">
+          <Typography variant='h5'>Seasons</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <List>
+            {seasons?.map((season, index) => (
+              <MenuItem 
+                key={season.year} 
+                component={Link}
+                to={`/season/${season.year}`}>
+                  <Typography className={classes.memberName} variant='h6'>{season.year}</Typography>
               </MenuItem>
             ))}
           </List>

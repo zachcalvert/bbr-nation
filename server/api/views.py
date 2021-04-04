@@ -168,7 +168,25 @@ class PlayerViewSet(viewsets.ModelViewSet):
     """
     queryset = Player.objects.all()
     serializer_class = serializers.PlayerSerializer
-    lookup_field = 'slug'
+
+
+class PlayerSeasonViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows groups to be viewed or edited.
+    """
+    queryset = PlayerSeason.objects.all()
+    serializer_class = serializers.PlayerSeasonSerializer
+
+    def get_queryset(self):
+        """
+        Optionally restricts the returned purchases to a given user,
+        by filtering against a `username` query parameter in the URL.
+        """
+        queryset = PlayerSeason.objects.all()
+        team = self.request.query_params.get('team')
+        if team is not None:
+            queryset = queryset.filter(team_id=team)
+        return queryset
 
 
 class SeasonViewSet(viewsets.ModelViewSet):

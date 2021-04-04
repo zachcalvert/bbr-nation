@@ -108,6 +108,8 @@ class Command(BaseCommand):
                     else:
                         player = Player.objects.get(name=espn_player.name)
                     
+                    team.players.add(player)
+
                     if not PlayerSeason.objects.filter(season=season, player=player).exists():
                         player_season_kwargs = {
                             "season": season,

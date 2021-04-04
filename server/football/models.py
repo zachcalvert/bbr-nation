@@ -29,7 +29,9 @@ class Season(models.Model):
                 "image_url": team.logo_url,
                 "wins": team.wins,
                 "losses": team.losses,
-                "final_standing": team.final_standing
+                "standing": team.standing,
+                "final_standing": team.final_standing,
+                "manager": team.manager.name
             } for team in self.teams.all()
         ]
 
@@ -69,6 +71,9 @@ class Team(models.Model):
     final_standing = models.IntegerField()
     logo_url = models.URLField()
 
+    class Meta:
+        ordering = ['standing']
+
     def __str__(self):
         return f'{self.name} ({self.season.year})'
 
@@ -79,6 +84,9 @@ class PlayerSeason(models.Model):
     player = models.ForeignKey(Player, null=True, on_delete=models.SET_NULL)
     position_rank = models.IntegerField()
     total_points = models.IntegerField()
+
+    class Meta:
+        ordering = ['position_rank']
 
     def __str__(self):
         return f'{self.season} {self.player.name}'

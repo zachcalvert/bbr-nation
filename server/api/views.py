@@ -14,6 +14,7 @@ from rest_framework.response import Response
 
 from api import serializers
 from content.models import Content, Page, Member
+from football.models import Player, PlayerSeason, Season, Team
 
 
 BASE_URL = "https://api.groupme.com/v3/"
@@ -159,3 +160,29 @@ class PageViewSet(viewsets.ModelViewSet):
     queryset = Page.objects.all()
     serializer_class = serializers.PageSerializer
     lookup_field = 'slug'
+
+
+class PlayerViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows groups to be viewed or edited.
+    """
+    queryset = Player.objects.all()
+    serializer_class = serializers.PlayerSerializer
+    lookup_field = 'slug'
+
+
+class SeasonViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows groups to be viewed or edited.
+    """
+    queryset = Season.objects.all()
+    serializer_class = serializers.SeasonSerializer
+    lookup_field = 'year'
+
+
+class TeamViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows groups to be viewed or edited.
+    """
+    queryset = Team.objects.all()
+    serializer_class = serializers.TeamSerializer

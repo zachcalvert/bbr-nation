@@ -72,6 +72,7 @@ class Command(BaseCommand):
             for espn_team in espn_season.teams:
                 try:
                     member = Member.objects.get(name=TEAM_USER_MAP[year][espn_team.team_id])
+                    season.members.add(member)
                 except Member.DoesNotExist:
                     print(vars(espn_team))
                 if not Team.objects.filter(season=season, name=espn_team.team_name).exists():
@@ -83,7 +84,8 @@ class Command(BaseCommand):
                         "losses": espn_team.losses,
                         "ties": espn_team.ties,
                         "logo_url": espn_team.logo_url,
-                        "final_standing": espn_team.final_standing
+                        "final_standing": espn_team.final_standing,
+                        "standing": espn_team.standing
                     }
                     team = Team.objects.create(**team_kwargs)
                 else:

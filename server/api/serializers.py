@@ -2,6 +2,7 @@ from django.contrib.auth.models import User, Group
 from rest_framework import serializers
 
 from content.models import Content, Page, Member
+from football.models import Player, PlayerSeason, Season, Team
 
 
 class ContentSerializer(serializers.ModelSerializer):
@@ -67,3 +68,36 @@ class GroupSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Group
         fields = ['url', 'name']
+
+
+class PlayerSerializer(serializers.HyperlinkedModelSerializer):
+    image_url = serializers.SerializerMethodField('get_image_url')
+
+    class Meta:
+        model = Player
+        fields = ['name', 'image_url', 'nickname', 'position', 'image_url']
+
+    def get_image_url(self, obj):
+        return obj.get_image_url()
+
+
+class TeamSerializer(serializers.HyperlinkedModelSerializer):
+
+    class Meta:
+        model = Team
+        fields = '__all__'
+
+
+class SeasonSerializer(serializers.HyperlinkedModelSerializer):
+    teams = serializers.SerializerMethodField('get_teams')
+
+    class Meta:
+        model = Season
+        fields = ['year', 'teams']
+        extra_kwargs = {
+            'url': {'lookup_field': 'year'}
+        }
+
+    def get_teams(self, obj):
+        return obj.get_teams()
+

@@ -1,6 +1,14 @@
+import json
+import random
+import requests
+
 from django.db import models
 
 from content.models import Member
+
+
+GIS_ID = "cc646ee172e69377d"
+GOOGLE_SEARCH_API_KEY = "AIzaSyCknrR34a7r"
 
 
 class Season(models.Model):
@@ -13,6 +21,18 @@ class Season(models.Model):
     def __str__(self):
         return self.year
 
+    def get_teams(self):
+        return [
+            {
+                "id": team.id,
+                "name": team.name,
+                "image_url": team.logo_url,
+                "wins": team.wins,
+                "losses": team.losses,
+                "final_standing": team.final_standing
+            } for team in self.teams.all()
+        ]
+
 
 class Player(models.Model):
     name = models.CharField(max_length=100)
@@ -23,15 +43,29 @@ class Player(models.Model):
     def __str__(self):
         return self.name
 
+    def get_image_url(self):
+        url =  f'https://www.googleapis.com/customsearch/v1?q={self.name}&num=10&cx={GIS_ID}&searchType=image&key={GOOGLE_SEARCH_API_KEY}CP4PQ-z2IUhHouIR_GaLXFQ'
+        response = requests.get(url)
+
+        if response.status_code == 200:
+            content = json.loads(response.content)
+            if 'items' in content:
+                index = random.choice(range(len(content['items'])))
+                image_url = content['items'][index]['link']
+                return image_url
+
+        return None
+
 
 class Team(models.Model):
     name = models.CharField(max_length=50)
-    season = models.ForeignKey(Season, null=True, on_delete=models.SET_NULL)
+    season = models.ForeignKey(Season, null=True, on_delete=models.SET_NULL, related_name='teams')
     manager = models.ForeignKey(Member, null=True, on_delete=models.SET_NULL, related_name='teams')
     players = models.ManyToManyField(Player)
     wins = models.IntegerField()
     losses = models.IntegerField()
     ties = models.IntegerField()
+    standing = models.IntegerField()
     final_standing = models.IntegerField()
     logo_url = models.URLField()
 

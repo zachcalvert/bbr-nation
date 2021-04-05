@@ -13,6 +13,60 @@ from football.models import Player, PlayerSeason, Season, Team
 
 
 TEAM_USER_MAP = {
+    # 2014: {
+    #     1: 'calero',
+    #     2: 'frank',
+    #     3: 'pat',
+    #     4: 'shane',
+    #     5: 'greg',
+    #     6: 'jerad',
+    #     7: 'bry',
+    #     8: 'rene',
+    #     9: 'walsh',
+    #     10: 'shmads'
+    # },
+    2015: {
+        1: 'calero',
+        2: 'frank',
+        3: 'pat',
+        4: 'shane',
+        5: 'greg',
+        6: 'jerad',
+        7: 'bry',
+        8: 'rene',
+        9: 'walsh',
+        10: 'cam',
+        11: 'bk',
+        12: 'trav'
+    },
+    2016: {
+        1: 'calero',
+        2: 'frank',
+        3: 'pat',
+        4: 'shane',
+        5: 'greg',
+        6: 'jerad',
+        7: 'bry',
+        8: 'rene',
+        9: 'walsh',
+        10: 'cam',
+        11: 'bk',
+        12: 'trav'
+    },
+    2017: {
+        1: 'calero',
+        2: 'frank',
+        3: 'pat',
+        4: 'shane',
+        5: 'greg',
+        6: 'jerad',
+        7: 'bry',
+        8: 'rene',
+        9: 'walsh',
+        10: 'cam',
+        11: 'bk',
+        12: 'trav'
+    },
     2018: {
         1: 'calero',
         2: 'frank',
@@ -61,7 +115,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
 
-        years = [2018, 2019,2020]
+        years = [2015, 2016, 2017, 2018, 2019,2020]
 
         for year in years:
             print(year)
@@ -74,7 +128,7 @@ class Command(BaseCommand):
                     member = Member.objects.get(name=TEAM_USER_MAP[year][espn_team.team_id])
                     season.members.add(member)
                 except Member.DoesNotExist:
-                    print(vars(espn_team))
+                    member = Member.objects.create(name=TEAM_USER_MAP[year][espn_team.team_id])
                 if not Team.objects.filter(season=season, name=espn_team.team_name).exists():
                     team_kwargs = {
                         "name": espn_team.team_name,
@@ -118,7 +172,7 @@ class Command(BaseCommand):
                             "season": season,
                             "team": team,
                             "player": player,
-                            "position_rank": espn_player.posRank,
+                            "position_rank": espn_player.posRank if espn_player.posRank != [] else -1,
                             "total_points": espn_player.total_points
                         }
                         PlayerSeason.objects.create(**player_season_kwargs)

@@ -5,6 +5,22 @@ from django.dispatch import receiver
 from django.utils.text import slugify
 
 
+FINISH_PLACE_MAP = {
+    1: '1st',
+    2: '2nd',
+    3: '3rd',
+    4: '4th',
+    5: '5th',
+    6: '6th',
+    7: '7th',
+    8: '8th',
+    9: '9th',
+    10: '10th',
+    11: '11th',
+    12: '12th'
+}
+
+
 class Member(models.Model):
     name = models.CharField(max_length=50)
     groupme_id = models.CharField(max_length=50, null=True, blank=True)
@@ -23,7 +39,7 @@ class Member(models.Model):
             if team.final_standing < best:
                 best = team.final_standing
                 year = team.season.year
-        return {best: year}
+        return f'{FINISH_PLACE_MAP[best]} in {year}'
 
     def get_worst_finish(self):
         worst = 1
@@ -32,7 +48,8 @@ class Member(models.Model):
             if team.final_standing > worst:
                 worst = team.final_standing
                 year = team.season.year
-        return {worst: year}
+        return f'{FINISH_PLACE_MAP[worst]} in {year}'
+
 
 class Nickname(models.Model):
     nickname = models.CharField(max_length=100)

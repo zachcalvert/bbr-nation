@@ -9,7 +9,8 @@ import { MemberCareer } from '../Member/MemberCareer'
 const useStyles = makeStyles((theme) => ({
   leftAlign: {
     padding: '20px',
-    margin: 'auto auto auto 10px'
+    margin: 'auto auto auto 20px',
+    textAlign: 'left'
   },
   large: {
     width: theme.spacing(20),
@@ -58,12 +59,8 @@ export const Member = () => {
   const { name } = useParams();
   const DETAIL_URL = `${process.env.REACT_APP_API_URL}/members/${name}/`
   const MEMBER_CONTENT_URL = `${process.env.REACT_APP_API_URL}/content/${name}/member`
-  
-  const [avatarUrl, setAvatarUrl] = useState(null);
-  const [nicks, setNicks] = useState([]);
-  const nickname = nicks[Math.floor(Math.random() * nicks.length)];
+  const [member, setMember] = useState({});
   const [value, setValue] = React.useState(0);
-  const [teams, setTeams] = React.useState([]);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -82,9 +79,7 @@ export const Member = () => {
 
     async function fetchUserDetails() {
       const { data } = await axios.get(DETAIL_URL);
-      setAvatarUrl(data.avatar_url);
-      setNicks(data.nicks);
-      setTeams(data.teams);
+      setMember(data);
     }
     fetchUserDetails();
   }, [DETAIL_URL, name]);
@@ -94,11 +89,27 @@ export const Member = () => {
       <Paper className={classes.paper}>
         <Grid container spacing={1}>
           <Grid item>
-            <Avatar className={classes.large} alt={name} src={avatarUrl} />
+            <Avatar className={classes.large} alt={name} src={member.avatar_url} />
           </Grid>
           <Grid className={classes.leftAlign} item>
-            <Typography variant='h3'>{name}</Typography>
-            <Typography variant='h6'>aka {nickname}</Typography>
+            <Typography variant='h3'>{member.name}</Typography>
+            {member.champYears ? member.champYears.map((year) => (
+              <>
+                <Typography variant='h6'>🏆  {year} champion</Typography>
+              </>
+            )) : (
+              <Typography variant='h6'>Best finish: {member.best_finish}</Typography>
+            )}
+            {member.piercedYears ? member.piercedYears.map((year) => (
+              <>
+                <Typography variant='h6'>💍 Pierced in {year}</Typography>
+              </>
+            )) : (
+              <Typography variant='h6'>Worst finish: {member.worst_finish}</Typography>
+            )}
+          </Grid>
+          <Grid className={classes.leftAlign} item>
+            
           </Grid>
         </Grid>
       </Paper>
@@ -108,12 +119,11 @@ export const Member = () => {
         <Tab label="Content" {...a11yProps(1)} />
       </Tabs>
       <TabPanel value={value} index={0}>
-        <MemberCareer teams={teams} />
+        {member.teams && <MemberCareer teams={member.teams} />}
       </TabPanel>
       <TabPanel value={value} index={1}>
         <Feed url={MEMBER_CONTENT_URL} />
       </TabPanel>
-
     </>
   )
 }

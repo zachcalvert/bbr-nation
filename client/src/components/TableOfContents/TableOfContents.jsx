@@ -69,7 +69,7 @@ export const TableOfContents = () => {
         </AccordionSummary>
         <AccordionDetails>
           <List>
-            {members?.map((member, index) => (
+            {members?.filter(member => member.name != 'bbot').map((member, index) => (
               <MenuItem 
                 key={member.name} 
                 component={Link}

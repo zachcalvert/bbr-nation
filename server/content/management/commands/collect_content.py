@@ -74,7 +74,7 @@ class Command(BaseCommand):
                         try:
                             member = Member.objects.get(groupme_id=message['user_id'])
                         except Member.DoesNotExist:
-                            Member.objects.create(
+                            member = Member.objects.create(
                                 groupme_id=message['user_id'],
                                 name=message['name'],
                                 avatar_url=message['avatar_url']

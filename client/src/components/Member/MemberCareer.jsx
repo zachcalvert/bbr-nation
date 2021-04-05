@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from "axios"
 import { makeStyles } from '@material-ui/core/styles';
-import { Divider, Link, Table, Typography } from '@material-ui/core';
+import { Divider, Hidden, Link, Table, Typography } from '@material-ui/core';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme) => ({
     position: 'relative'
   },
   table: {
-    minWidth: 450,
+    minWidth: 400,
   },
 }));
 
@@ -39,8 +39,12 @@ export const MemberCareer = (props) => {
               <TableCell>Name</TableCell>
               <TableCell align="right">Final Standing</TableCell>
               <TableCell align="right">Record</TableCell>
+              <Hidden smDown>
               <TableCell align="right">Points Scored</TableCell>
+              </Hidden>
+              <Hidden smDown>
               <TableCell align="right">Points Against</TableCell>
+              </Hidden>
           </TableRow>
           </TableHead>
           <TableBody>
@@ -50,14 +54,18 @@ export const MemberCareer = (props) => {
                 {team.year}
               </TableCell>
               <TableCell component="th" scope="row">
-                <Link color='inherit' href={`/team/${team.id}`}>{team.name}</Link>
+                <Link color='inherit' href={`/season/${team.year}/team/${team.id}`}>{team.name}</Link>
               </TableCell>
               <TableCell align="right">
                 {team.final_standing}
               </TableCell>
               <TableCell align="right">{team.wins}-{team.losses}</TableCell>
-              <TableCell align="right">{team.points_for}</TableCell>
-              <TableCell align="right">{team.points_against}</TableCell>
+              <Hidden smDown>
+                <TableCell align="right">{team.points_for}</TableCell>
+              </Hidden>
+              <Hidden smDown>
+                <TableCell align="right">{team.points_against}</TableCell>
+              </Hidden>
             </TableRow>
           ))}
           </TableBody>

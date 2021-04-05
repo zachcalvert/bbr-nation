@@ -54,11 +54,13 @@ class MemberDetailsSerializer(serializers.HyperlinkedModelSerializer):
     nicks = serializers.SerializerMethodField('get_nicks')
     best_finish = serializers.SerializerMethodField('get_best_finish')
     worst_finish = serializers.SerializerMethodField('get_worst_finish')
+    champ_years = serializers.SerializerMethodField('get_champ_years')
+    pierced_years = serializers.SerializerMethodField('get_pierced_years')
     teams = serializers.SerializerMethodField('get_teams')
 
     class Meta:
         model = Member
-        fields = ['name', 'groupme_id', 'avatar_url', 'nicks', 'best_finish', 'worst_finish', 'teams']
+        fields = ['name', 'groupme_id', 'avatar_url', 'nicks', 'champ_years', 'pierced_years', 'best_finish', 'worst_finish', 'teams']
         extra_kwargs = {
             'url': {'lookup_field': 'name'}
         }
@@ -71,6 +73,12 @@ class MemberDetailsSerializer(serializers.HyperlinkedModelSerializer):
 
     def get_worst_finish(self, obj):
         return obj.get_worst_finish()
+    
+    def get_champ_years(self, obj):
+        return [s.year for s in Season.objects.filter(winner=obj)]
+    
+    def get_pierced_years(self, obj):
+        return [s.year for s in Season.objects.filter(piercee=obj)]
 
     def get_teams(self, obj):
         return [
@@ -82,7 +90,7 @@ class MemberDetailsSerializer(serializers.HyperlinkedModelSerializer):
                 "points_for": team.points_for,
                 "points_against": team.points_against,
                 "final_standing": team.final_standing,
-                "year": team.season.year
+                "year": team.season.year,
             } for team in obj.teams.all().order_by('-season__year')
         ]
 

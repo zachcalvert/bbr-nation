@@ -102,6 +102,7 @@ export const Team = () => {
         <Divider style={{ backgroundColor: 'transparent', clear: "both" }} />
         </div>
       </Paper>
+      <Divider />
       <TableContainer component={Paper}>
         <Table className={classes.table} aria-label="simple table">
           <TableHead>

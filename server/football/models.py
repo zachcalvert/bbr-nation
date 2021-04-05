@@ -17,6 +17,9 @@ class Season(models.Model):
     piercee = models.ForeignKey(Member, null=True, blank=True, on_delete=models.SET_NULL, related_name='piercee_season')
     complete = models.BooleanField(default=True)
 
+    class Meta:
+        ordering = ['-year']
+
     def __str__(self):
         return self.year
 

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from "axios"
-import { Avatar, Grid, makeStyles, Typography } from '@material-ui/core';
+import { Avatar, Divider, Grid, makeStyles, Paper, Typography } from '@material-ui/core';
 
 import { Feed } from '../Feed/Feed';
 
@@ -19,7 +19,7 @@ const useStyles = makeStyles((theme) => ({
     textAlign: 'center',
     color: theme.palette.text.secondary,
     height: "auto",
-    marginTop: theme.spacing(4),
+    marginTop: 0,
     position: 'relative'
   },
 }));
@@ -56,16 +56,17 @@ export const Member = () => {
 
   return (
     <>
-      <Grid container spacing={1}>
-        <Grid item>
-          <Avatar className={classes.large} alt={name} src={avatarUrl} />
+      <Paper className={classes.paper}>
+        <Grid container spacing={1}>
+          <Grid item>
+            <Avatar className={classes.large} alt={name} src={avatarUrl} />
+          </Grid>
+          <Grid className={classes.leftAlign} item>
+            <Typography variant='h3'>{name}</Typography>
+            <Typography variant='h6'>aka {nickname}</Typography>
+          </Grid>
         </Grid>
-        <Grid className={classes.leftAlign} item>
-          <Typography variant='h3'>{name}</Typography>
-          <Typography variant='h6'>aka {nickname}</Typography>
-        </Grid>
-      </Grid>
-
+      </Paper>
       {/* {nicks.map((nick) => (
         <Typography variant='subtitle1'>{nick}</Typography>
       ))} */}

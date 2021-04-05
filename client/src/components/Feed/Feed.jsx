@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useHistory, useLocation, useParams } from 'react-router-dom';
 import axios from "axios"
-import { makeStyles, Paper } from '@material-ui/core';
+import { Divider, makeStyles, Paper } from '@material-ui/core';
 import ZoomOutMapIcon from '@material-ui/icons/ZoomOutMap';
 
 import { Content } from '../Content/Content';
@@ -30,7 +30,7 @@ const useStyles = makeStyles((theme) => ({
     textAlign: 'center',
     color: theme.palette.text.secondary,
     height: "auto",
-    marginTop: theme.spacing(2),
+    marginTop: 0,
     position: 'relative'
   },
   date: {
@@ -156,10 +156,13 @@ export const Feed = (props) => {
   return (
     <>
       {content.map((c) => (
+        <>
+        <Divider />
         <Paper className={classes.paper}>
           <ZoomOutMapIcon className={classes.share} onClick={(e) => handleClick(c, e)} />
           <Content key={c.id} content={c} />
         </Paper>
+        </>
       ))}
       
       {open && activeContent && <ContentModal open={open} handleClose={handleClose} activeContent={activeContent} />}

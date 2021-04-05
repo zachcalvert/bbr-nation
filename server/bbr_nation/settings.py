@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'corsheaders',
 
     'api',
-    'content'
+    'content',
+    'football',
 ]
 
 MIDDLEWARE = [

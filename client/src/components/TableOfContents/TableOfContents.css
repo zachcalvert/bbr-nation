@@ -1,10 +1,14 @@
-::-webkit-scrollbar {
+.MuiDrawer-paper ::-webkit-scrollbar {
     background: #424242;
     z-index: -1;
   }
-  ::-webkit-scrollbar-track {
+.MuiDrawer-paper  ::-webkit-scrollbar-track {
     background: #424242;
   }
-  ::-webkit-scrollbar-corner {
+.MuiDrawer-paper ::-webkit-scrollbar-corner {
     background: #424242;
   }
+
+/* .MuiAccordionSummary-content {
+  display: flex!important;
+} */

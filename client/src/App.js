@@ -14,14 +14,18 @@ import Typography from '@material-ui/core/Typography';
 import { Page } from "./components/Page/Page";
 import { TableOfContents } from './components/TableOfContents/TableOfContents';
 import { Member } from './components/Member/Member';
+import { Player } from './components/Player/Player';
+import { Season } from './components/Season/Season';
+import { Team } from './components/Team/Team';
 
-const drawerWidth = 240;
+const drawerWidth = 250;
 
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
   },
   appBar: {
+    background: '#607B8B',
     zIndex: theme.zIndex.drawer + 1,
     [theme.breakpoints.up('sm')]: {
       width: '100%',
@@ -131,14 +135,15 @@ export const App = (props) => {
       <main className={classes.content}>
         <div className={classes.toolbar} />
         <Grid className={classes.container} container spacing={1}>
-
-            <Grid item xs={12}>
-              <Route path="/u/:name" component={Member} />
-              <Route path="/content/:slug" component={Page} />
-              <Route path="/" exact component={Page} />
-            </Grid>
-
+          <Grid item xs={12}>
+            <Route path="/u/:name" component={Member} />
+            <Route path="/content/:slug" component={Page} />
+            <Route path="/season/:year/team/:id" component={Team} />
+            <Route path="/season/:year" exact component={Season} />
+            <Route path="/player/:id" exact component={Player} />
+            <Route path="/" exact component={Page} />
           </Grid>
+        </Grid>
       </main>
     </div>
     </ThemeProvider>

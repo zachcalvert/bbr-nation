@@ -14,6 +14,7 @@ from rest_framework.response import Response
 
 from api import serializers
 from content.models import Content, Page, Member
+from football.models import Player, PlayerSeason, Season, Team
 
 
 BASE_URL = "https://api.groupme.com/v3/"
@@ -105,7 +106,7 @@ class ContentViewSet(viewsets.ModelViewSet):
         """
         Return content for a given member, used by the member page
         """
-        return Content.objects.filter(pages__slug=name).order_by('-likes')
+        return Content.objects.filter(pages__slug=name)
 
     @paginate
     @action(detail=True)
@@ -159,3 +160,58 @@ class PageViewSet(viewsets.ModelViewSet):
     queryset = Page.objects.all()
     serializer_class = serializers.PageSerializer
     lookup_field = 'slug'
+
+
+class PlayerViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows groups to be viewed or edited.
+    """
+    queryset = Player.objects.all()
+    serializer_class = serializers.PlayerSerializer
+
+    def retrieve(self, request, *args, **kwargs):
+        self.serializer_class = serializers.PlayerDetailsSerializer
+        return super(PlayerViewSet, self).retrieve(request, *args, **kwargs)
+
+
+
+class PlayerSeasonViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows groups to be viewed or edited.
+    """
+    queryset = PlayerSeason.objects.all()
+    serializer_class = serializers.PlayerSeasonSerializer
+
+    def get_queryset(self):
+        """
+        Optionally restricts the returned purchases to a given user,
+        by filtering against a `username` query parameter in the URL.
+        """
+        queryset = PlayerSeason.objects.all()
+        team = self.request.query_params.get('team')
+        if team is not None:
+            queryset = queryset.filter(team_id=team)
+        else:
+            queryset = queryset.order_by('-year')
+        return queryset
+
+
+class SeasonViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows groups to be viewed or edited.
+    """
+    queryset = Season.objects.all()
+    serializer_class = serializers.SeasonSerializer
+    lookup_field = 'year'
+
+
+class TeamViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows groups to be viewed or edited.
+    """
+    queryset = Team.objects.all()
+    serializer_class = serializers.TeamSerializer
+
+    def retrieve(self, request, *args, **kwargs):
+        self.serializer_class = serializers.TeamDetailsSerializer
+        return super(TeamViewSet, self).retrieve(request, *args, **kwargs)

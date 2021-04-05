@@ -42,7 +42,6 @@ export const Page = () => {
           <Typography variant='h4'>{name}</Typography>
         </Grid>
         <Grid className={classes.leftAlign} item>
-          <Typography variant='h6'>aka</Typography>
         </Grid>
       </Grid>
 

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from "axios"
 import { makeStyles } from '@material-ui/core/styles';
-import { Link, Table, Typography } from '@material-ui/core';
+import { Divider, Link, Table, Typography } from '@material-ui/core';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
@@ -17,7 +17,7 @@ const useStyles = makeStyles((theme) => ({
     textAlign: 'center',
     color: theme.palette.text.secondary,
     height: "auto",
-    marginTop: theme.spacing(4),
+    marginTop: 0,
     position: 'relative'
   },
   table: {
@@ -51,6 +51,7 @@ export const Season = () => {
       <Typography variant='h6'>Champ: <Link color='inherit' href={`/u/${winner}`}>{winner}</Link></Typography>
       <Typography variant='h6'>Pierced: <Link color='inherit' href={`/u/${pierced}`}>{pierced}</Link></Typography>
     </Paper>
+    <Divider />
     <TableContainer component={Paper}>
       <Table className={classes.table} aria-label="simple table">
           <TableHead>

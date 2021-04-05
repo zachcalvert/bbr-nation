@@ -51,7 +51,7 @@ export const TableOfContents = () => {
     <>
       <List>
         <Typography className={classes.menuHeader} variant='h5'>Content</Typography>
-        {pages.map((page) => (
+        {pages.filter(page => page.slug !== 'home').map((page) => (
           <MenuItem 
             key={page.slug} 
             component={Link}
@@ -87,13 +87,13 @@ export const TableOfContents = () => {
           expandIcon={<ExpandMoreIcon />}
           aria-controls="panel1a-content"
           id="panel1a-header">
-          <Typography variant='h5'>Seasons</Typography>
+          <Typography variant='h5'>History</Typography>
         </AccordionSummary>
         <AccordionDetails>
           <List>
             {seasons?.map((season, index) => (
               <MenuItem 
-                key={season.year} 
+                key={season.year}
                 component={Link}
                 to={`/season/${season.year}`}>
                   <Typography className={classes.memberName} variant='h6'>{season.year}</Typography>

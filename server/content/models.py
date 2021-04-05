@@ -16,6 +16,23 @@ class Member(models.Model):
     def get_nicks(self):
         return [n.nickname for n in Nickname.objects.filter(member=self)]
 
+    def get_best_finish(self):
+        best = 13
+        year = None
+        for team in self.teams.all():
+            if team.final_standing < best:
+                best = team.final_standing
+                year = team.season.year
+        return {best: year}
+
+    def get_worst_finish(self):
+        worst = 1
+        year = None
+        for team in self.teams.all():
+            if team.final_standing > worst:
+                worst = team.final_standing
+                year = team.season.year
+        return {worst: year}
 
 class Nickname(models.Model):
     nickname = models.CharField(max_length=100)

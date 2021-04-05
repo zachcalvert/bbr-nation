@@ -18,11 +18,14 @@ const useStyles = makeStyles((theme) => ({
     textAlign: 'center',
     color: theme.palette.text.secondary,
     height: "auto",
-    marginTop: theme.spacing(4),
+    marginTop: 0,
     position: 'relative'
   },
   table: {
     minWidth: 450,
+  },
+  smallText: {
+    fontSize: '14px',
   },
   large: {
     width: theme.spacing(20),
@@ -51,6 +54,11 @@ export const Team = () => {
   const [losses, setLosses] = useState(0);
   const [finalStanding, setFinalStanding] = useState(1);
   const [standing, setStanding] = useState(1);
+  const [allTimeRank, setAllTimeRank] = useState(null);
+  const [unlucky, setUnlucky] = useState(null);
+  const [pointsFor, setPointsFor] = useState(null);
+  const [pointsAgainst, setPointsAgainst] = useState(null);
+
   
   useEffect(() => {
     async function fetchTeam() {
@@ -63,11 +71,16 @@ export const Team = () => {
       setLosses(data.losses);
       setStanding(data.standing);
       setFinalStanding(data.standing);
+      setAllTimeRank(data.all_time_rank);
+      setUnlucky(data.unlucky);
+      setPointsFor(data.points_for);
+      setPointsAgainst(data.points_against);
     }
 
     async function fetchPlayerSeasons() {
       const { data } = await axios.get(PLAYER_SEASONS_URL);
       setPlayers(data.results);
+      console.log(data)
     }
 
     fetchPlayerSeasons();
@@ -82,7 +95,9 @@ export const Team = () => {
         <div className={classes.teamInfo}>
           <Typography variant='h4'>{name}</Typography>
           <Typography variant='h6'>Manager: <Link color='inherit' href={`/u/${manager}`}>{manager}</Link></Typography>
-          <Typography variant='h6'> Record: {wins}-{losses}</Typography>
+          <Typography variant='subtitle1'>Record: {wins}-{losses}</Typography>
+          <Typography variant='subtitle1'>All Time Rank: {allTimeRank} <span className={classes.smallText}>({pointsFor} points scored)</span></Typography>
+          <Typography variant='subtitle1'>Unlucky Rank: {unlucky} <span className={classes.smallText}>({pointsAgainst} points against)</span></Typography>
         </div>
         <Divider style={{ backgroundColor: 'transparent', clear: "both" }} />
         </div>
@@ -101,7 +116,7 @@ export const Team = () => {
           {players.map((player) => (
             <TableRow key={player.name}>
               <TableCell component="th" scope="row">
-                {player.name}
+                <Link color='inherit' href={`/player/${player.player_id}`}>{player.name}</Link>
               </TableCell>
               <TableCell align="right">{player.position}</TableCell>
               <TableCell align="right">{player.position_rank}</TableCell>

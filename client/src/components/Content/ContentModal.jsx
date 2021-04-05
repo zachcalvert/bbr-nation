@@ -186,7 +186,8 @@ export const ContentModal = (props) => {
             <AccordionSummary
               expandIcon={<ExpandMoreRoundedIcon fontSize='large' />}
               aria-controls="panel2a-content"
-              id="panel2a-header">
+              id="panel2a-header"
+              className="modalAccordion">>
             </AccordionSummary>
             <AccordionDetails>
               {ensuingConversation && ensuingConversation.map((message, index) => (

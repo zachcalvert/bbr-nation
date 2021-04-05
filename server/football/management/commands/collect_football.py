@@ -85,7 +85,10 @@ class Command(BaseCommand):
                         "ties": espn_team.ties,
                         "logo_url": espn_team.logo_url,
                         "final_standing": espn_team.final_standing,
-                        "standing": espn_team.standing
+                        "standing": espn_team.standing,
+                        "points_for": espn_team.points_for,
+                        "points_against": espn_team.points_against,
+                        "games_played": len(espn_team.scores)
                     }
                     team = Team.objects.create(**team_kwargs)
                 else:

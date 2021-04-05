@@ -106,7 +106,7 @@ class ContentViewSet(viewsets.ModelViewSet):
         """
         Return content for a given member, used by the member page
         """
-        return Content.objects.filter(pages__slug=name).order_by('-likes')
+        return Content.objects.filter(pages__slug=name)
 
     @paginate
     @action(detail=True)
@@ -169,6 +169,11 @@ class PlayerViewSet(viewsets.ModelViewSet):
     queryset = Player.objects.all()
     serializer_class = serializers.PlayerSerializer
 
+    def retrieve(self, request, *args, **kwargs):
+        self.serializer_class = serializers.PlayerDetailsSerializer
+        return super(PlayerViewSet, self).retrieve(request, *args, **kwargs)
+
+
 
 class PlayerSeasonViewSet(viewsets.ModelViewSet):
     """
@@ -186,6 +191,8 @@ class PlayerSeasonViewSet(viewsets.ModelViewSet):
         team = self.request.query_params.get('team')
         if team is not None:
             queryset = queryset.filter(team_id=team)
+        else:
+            queryset = queryset.order_by('-year')
         return queryset
 
 
@@ -204,3 +211,7 @@ class TeamViewSet(viewsets.ModelViewSet):
     """
     queryset = Team.objects.all()
     serializer_class = serializers.TeamSerializer
+
+    def retrieve(self, request, *args, **kwargs):
+        self.serializer_class = serializers.TeamDetailsSerializer
+        return super(TeamViewSet, self).retrieve(request, *args, **kwargs)

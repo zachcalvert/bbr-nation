@@ -54,10 +54,11 @@ class MemberDetailsSerializer(serializers.HyperlinkedModelSerializer):
     nicks = serializers.SerializerMethodField('get_nicks')
     best_finish = serializers.SerializerMethodField('get_best_finish')
     worst_finish = serializers.SerializerMethodField('get_worst_finish')
+    teams = serializers.SerializerMethodField('get_teams')
 
     class Meta:
         model = Member
-        fields = ['name', 'groupme_id', 'avatar_url', 'nicks', 'best_finish', 'worst_finish']
+        fields = ['name', 'groupme_id', 'avatar_url', 'nicks', 'best_finish', 'worst_finish', 'teams']
         extra_kwargs = {
             'url': {'lookup_field': 'name'}
         }
@@ -70,6 +71,20 @@ class MemberDetailsSerializer(serializers.HyperlinkedModelSerializer):
 
     def get_worst_finish(self, obj):
         return obj.get_worst_finish()
+
+    def get_teams(self, obj):
+        return [
+            {
+                "id": team.id,
+                "name": team.name,
+                "wins": team.wins,
+                "losses": team.losses,
+                "points_for": team.points_for,
+                "points_against": team.points_against,
+                "final_standing": team.final_standing,
+                "year": team.season.year
+            } for team in obj.teams.all().order_by('-season__year')
+        ]
 
 
 class GroupSerializer(serializers.HyperlinkedModelSerializer):

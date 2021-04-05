@@ -28,6 +28,7 @@ class PlayerSeasonAdmin(admin.ModelAdmin):
     fields = ('player', 'season', 'team', 'position_rank', 'total_points')
     readonly_fields = fields
 
+
 admin.site.register(Season, SeasonAdmin)
 admin.site.register(Team, TeamAdmin)
 admin.site.register(Player, PlayerAdmin)

@@ -174,7 +174,6 @@ class PlayerViewSet(viewsets.ModelViewSet):
         return super(PlayerViewSet, self).retrieve(request, *args, **kwargs)
 
 
-
 class PlayerSeasonViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows groups to be viewed or edited.

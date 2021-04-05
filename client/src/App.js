@@ -25,7 +25,7 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
   },
   appBar: {
-    background: '#607B8B',
+    background: '#4E78A0',
     zIndex: theme.zIndex.drawer + 1,
     [theme.breakpoints.up('sm')]: {
       width: '100%',

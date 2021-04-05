@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from "axios"
-import { Avatar, Divider, Grid, makeStyles, Paper, Typography } from '@material-ui/core';
+import { Avatar, Box, Divider, Grid, makeStyles, Paper, Tab, Tabs, Typography } from '@material-ui/core';
 
 import { Feed } from '../Feed/Feed';
+import { MemberCareer } from '../Member/MemberCareer'
 
 const useStyles = makeStyles((theme) => ({
   leftAlign: {
@@ -24,6 +25,33 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+function TabPanel(props) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
+      {value === index && (
+        <Box p={3}>
+          <Typography>{children}</Typography>
+        </Box>
+      )}
+    </div>
+  );
+}
+
+function a11yProps(index) {
+  return {
+    id: `simple-tab-${index}`,
+    'aria-controls': `simple-tabpanel-${index}`,
+  };
+}
+
 export const Member = () => {
   const classes = useStyles();
 
@@ -34,6 +62,12 @@ export const Member = () => {
   const [avatarUrl, setAvatarUrl] = useState(null);
   const [nicks, setNicks] = useState([]);
   const nickname = nicks[Math.floor(Math.random() * nicks.length)];
+  const [value, setValue] = React.useState(0);
+  const [teams, setTeams] = React.useState([]);
+
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+  };
 
   useEffect(() => {
     try {
@@ -50,6 +84,7 @@ export const Member = () => {
       const { data } = await axios.get(DETAIL_URL);
       setAvatarUrl(data.avatar_url);
       setNicks(data.nicks);
+      setTeams(data.teams);
     }
     fetchUserDetails();
   }, [DETAIL_URL, name]);
@@ -67,11 +102,18 @@ export const Member = () => {
           </Grid>
         </Grid>
       </Paper>
-      {/* {nicks.map((nick) => (
-        <Typography variant='subtitle1'>{nick}</Typography>
-      ))} */}
+      <Divider />
+      <Tabs value={value} onChange={handleChange} centered aria-label="member tabs">
+        <Tab label="Career" {...a11yProps(0)} />
+        <Tab label="Content" {...a11yProps(1)} />
+      </Tabs>
+      <TabPanel value={value} index={0}>
+        <MemberCareer teams={teams} />
+      </TabPanel>
+      <TabPanel value={value} index={1}>
+        <Feed url={MEMBER_CONTENT_URL} />
+      </TabPanel>
 
-      <Feed url={MEMBER_CONTENT_URL} />
     </>
   )
 }

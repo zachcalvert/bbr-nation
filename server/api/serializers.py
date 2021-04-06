@@ -110,20 +110,24 @@ class PlayerSerializer(serializers.HyperlinkedModelSerializer):
 
 class PlayerSeasonSerializer(serializers.HyperlinkedModelSerializer):
     season = serializers.SerializerMethodField('get_season')
-    team = serializers.SerializerMethodField('get_team')
+    team_id = serializers.SerializerMethodField('get_team_id')
+    team_name = serializers.SerializerMethodField('get_team_name')
     name = serializers.SerializerMethodField('get_player_name')
     player_id = serializers.SerializerMethodField('get_player_id')
     position = serializers.SerializerMethodField('get_player_position')
 
     class Meta:
         model = PlayerSeason
-        fields = ['season', 'player', 'name', 'player_id', 'position', 'team', 'position_rank', 'total_points']
+        fields = ['season', 'player', 'name', 'player_id', 'position', 'team_id', 'team_name', 'position_rank', 'total_points']
 
     def get_season(self, obj):
         return obj.season.year
 
-    def get_team(self, obj):
+    def get_team_id(self, obj):
         return obj.team.id
+
+    def get_team_name(self, obj):
+        return obj.team.name
 
     def get_player_id(self, obj):
         return obj.player.id
@@ -152,13 +156,17 @@ class PlayerDetailsSerializer(serializers.HyperlinkedModelSerializer):
 
 class TeamSerializer(serializers.HyperlinkedModelSerializer):
     manager = serializers.SerializerMethodField('get_manager_name')
+    year = serializers.SerializerMethodField()
     
     class Meta:
         model = Team
-        fields = ['id', 'name', 'manager', 'wins', 'losses', 'points_for', 'points_against']
+        fields = ['id', 'name', 'manager', 'wins', 'losses', 'points_for', 'points_against', 'year']
 
     def get_manager_name(self, obj):
         return obj.manager.name
+
+    def get_year(self, obj):
+        return obj.season.year
 
 
 class TeamDetailsSerializer(serializers.HyperlinkedModelSerializer):

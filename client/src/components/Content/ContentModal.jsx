@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 import axios from "axios"
 import ExpandLessRoundedIcon from '@material-ui/icons/ExpandLessRounded';
 import ExpandMoreRoundedIcon from '@material-ui/icons/ExpandMoreRounded';
-import EditRoundedIcon from '@material-ui/icons/EditRounded';
 import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
 import ShareIcon from '@material-ui/icons/Share';
 import { useSpring, animated } from 'react-spring/web.cjs';

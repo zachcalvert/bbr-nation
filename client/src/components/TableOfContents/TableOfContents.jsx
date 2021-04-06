@@ -45,7 +45,7 @@ export const TableOfContents = () => {
     fetchPages();
     fetchMembers();
     fetchSeasons();
-  }, [PAGES_URL, MEMBERS_URL, SEASONS_URL]);
+  }, []);
 
   return (
     <>
@@ -99,6 +99,12 @@ export const TableOfContents = () => {
                   <Typography className={classes.memberName} variant='h6'>{season.year}</Typography>
               </MenuItem>
             ))}
+            <MenuItem 
+              key='all-time-ranks'
+              component={Link}
+              to={`/all-time-ranks/`}>
+                <Typography className={classes.memberName} variant='h6'>All Time</Typography>
+            </MenuItem>
           </List>
         </AccordionDetails>
       </Accordion>

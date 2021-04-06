@@ -1,10 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { BrowserRouter, Route } from 'react-router-dom';
-import { createMuiTheme, CssBaseline, Grid, Hidden, Link, ThemeProvider, makeStyles, useTheme } from '@material-ui/core';
+import { createMuiTheme, CssBaseline, Grid, Hidden, Link, ThemeProvider, makeStyles } from '@material-ui/core';
 
 import AppBar from '@material-ui/core/AppBar';
-import Divider from '@material-ui/core/Divider';
 import Drawer from '@material-ui/core/Drawer';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
@@ -15,6 +14,7 @@ import { Page } from "./components/Page/Page";
 import { TableOfContents } from './components/TableOfContents/TableOfContents';
 import { Member } from './components/Member/Member';
 import { Player } from './components/Player/Player';
+import { AllSeasons } from './components/Season/AllSeasons';
 import { Season } from './components/Season/Season';
 import { Team } from './components/Team/Team';
 
@@ -141,6 +141,7 @@ export const App = (props) => {
             <Route path="/season/:year/team/:id" component={Team} />
             <Route path="/season/:year" exact component={Season} />
             <Route path="/player/:id" exact component={Player} />
+            <Route path="/all-time-ranks/" exact component={AllSeasons} />
             <Route path="/" exact component={Page} />
           </Grid>
         </Grid>

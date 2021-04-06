@@ -117,7 +117,7 @@ class Command(BaseCommand):
 
         years = [2015, 2016, 2017, 2018, 2019,2020]
 
-        for year in years:
+        for year in [2015]:
             print(year)
             wrapper = ESPNWrapper(year=year)
             espn_season = wrapper.league
@@ -156,6 +156,7 @@ class Command(BaseCommand):
                     season.save()
 
                 for espn_player in espn_team.roster:
+                    print(vars(espn_player))
                     if not Player.objects.filter(name=espn_player.name).exists():
                         player, _ = Player.objects.get_or_create(
                             name=espn_player.name,

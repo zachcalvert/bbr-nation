@@ -8,7 +8,7 @@ from django.contrib.auth.models import User, Group
 from django.contrib.auth import authenticate
 from django.db.models import QuerySet
 from django.shortcuts import render
-from rest_framework import generics, permissions, viewsets
+from rest_framework import generics, pagination, permissions, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
@@ -191,7 +191,7 @@ class PlayerSeasonViewSet(viewsets.ModelViewSet):
         if team is not None:
             queryset = queryset.filter(team_id=team)
         else:
-            queryset = queryset.order_by('-year')
+            queryset = queryset.exclude(total_points__gt=700).order_by('-total_points')
         return queryset
 
 
@@ -210,7 +210,13 @@ class TeamViewSet(viewsets.ModelViewSet):
     """
     queryset = Team.objects.all()
     serializer_class = serializers.TeamSerializer
+    pagination.PageNumberPagination.page_size = 100 
 
     def retrieve(self, request, *args, **kwargs):
         self.serializer_class = serializers.TeamDetailsSerializer
         return super(TeamViewSet, self).retrieve(request, *args, **kwargs)
+
+    @paginate
+    @action(detail=False)
+    def all(self, request):
+        return Team.objects.all().order_by('-points_for')

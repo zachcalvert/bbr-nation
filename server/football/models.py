@@ -113,7 +113,7 @@ class PlayerSeason(models.Model):
     total_points = models.IntegerField()
 
     class Meta:
-        ordering = ['position_rank']
+        ordering = ['position_rank', '-total_points']
 
     def __str__(self):
         return f'{self.season} {self.player.name}'

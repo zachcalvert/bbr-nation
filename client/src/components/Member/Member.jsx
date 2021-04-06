@@ -55,7 +55,6 @@ function a11yProps(index) {
 
 export const Member = () => {
   const classes = useStyles();
-
   const { name } = useParams();
   const DETAIL_URL = `${process.env.REACT_APP_API_URL}/members/${name}/`
   const MEMBER_CONTENT_URL = `${process.env.REACT_APP_API_URL}/content/${name}/member`
@@ -95,14 +94,14 @@ export const Member = () => {
             <Typography variant='h3'>{member.name}</Typography>
             {member.champYears ? member.champYears.map((year) => (
               <>
-                <Typography variant='h6'>🏆  {year} champion</Typography>
+                <Typography variant='h6'><span role='img'>🏆</span>  {year} champion</Typography>
               </>
             )) : (
               <Typography variant='h6'>Best finish: {member.best_finish}</Typography>
             )}
             {member.piercedYears ? member.piercedYears.map((year) => (
               <>
-                <Typography variant='h6'>💍 Pierced in {year}</Typography>
+                <Typography variant='h6'><span role='img'>💍</span> Pierced in {year}</Typography>
               </>
             )) : (
               <Typography variant='h6'>Worst finish: {member.worst_finish}</Typography>

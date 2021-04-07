@@ -9,7 +9,7 @@ from django.contrib.auth import authenticate
 from django.db.models import QuerySet
 from django.shortcuts import render
 from rest_framework import generics, pagination, permissions, viewsets
-from rest_framework.decorators import action
+from rest_framework.decorators import action, api_view
 from rest_framework.response import Response
 
 from api import serializers
@@ -52,6 +52,15 @@ def paginate(func):
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
     return inner
+
+
+@api_view(['GET'])
+def current_user(request):
+    """
+    Determine the current user by their token, and return their data
+    """
+    serializer = serializers.UserSerializer(request.user)
+    return Response(serializer.data)
 
 
 class MemberViewSet(viewsets.ModelViewSet):

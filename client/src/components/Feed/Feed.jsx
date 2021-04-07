@@ -57,15 +57,17 @@ export const Feed = (props) => {
   const [content, setContent] = useState([]);
   const [activeContent, setActiveContent] = React.useState(null);
   const [open, setOpen] = React.useState(false);
-  const [sort, setSort] = useState(null);
-  const [filter, setFilter] = useState(null);
 
   const [nextUrl, setNexUrl] = useState(null);
   const [isBottom, setIsBottom] = useState(false);
   const [keepScrolling, setKeepScrolling] = useState(true);
 
   async function fetchContent(url, append=true) {
-    const { data } = await axios.get(url);
+    const { data } = await axios.get(url, {
+      headers: {
+        Authorization: `JWT ${localStorage.getItem('token')}`
+      }
+    });
     
     if (!append) {
       setContent([]);
@@ -83,7 +85,11 @@ export const Feed = (props) => {
   }
 
   async function fetchContentDetails(name) {
-    const { data } = await axios.get(`${CONTENT_URL}/${name}`);
+    const { data } = await axios.get(`${CONTENT_URL}/${name}`, {
+      headers: {
+        Authorization: `JWT ${localStorage.getItem('token')}`
+      }
+    });
     setActiveContent(data);
   }
 
@@ -156,13 +162,13 @@ export const Feed = (props) => {
   return (
     <>
       {content.map((c) => (
-        <>
-        <Divider />
-        <Paper className={classes.paper}>
-          <ZoomOutMapIcon className={classes.share} onClick={(e) => handleClick(c, e)} />
-          <Content key={c.id} content={c} />
-        </Paper>
-        </>
+        <div className='content' key={c.name}>
+          <Divider />
+          <Paper className={classes.paper}>
+            <ZoomOutMapIcon className={classes.share} onClick={(e) => handleClick(c, e)} />
+            <Content key={c.id} content={c} />
+          </Paper>
+        </div>
       ))}
       
       {open && activeContent && <ContentModal open={open} handleClose={handleClose} activeContent={activeContent} />}

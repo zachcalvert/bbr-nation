@@ -1,16 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from "axios"
-import { makeStyles } from '@material-ui/core/styles';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import Paper from '@material-ui/core/Paper';
+import { makeStyles, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@material-ui/core';
 import { Avatar, Divider, Link, Typography } from '@material-ui/core';
-
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -44,43 +36,28 @@ const useStyles = makeStyles((theme) => ({
 export const Team = () => {
   const classes = useStyles();
   const { year, id } = useParams();
-  const TEAM_URL = `${process.env.REACT_APP_API_URL}/teams/${id}/`
-  const PLAYER_SEASONS_URL = `${process.env.REACT_APP_API_URL}/playerseasons/?team=${id}`
-  const [name, setName] = useState('');
-  const [manager, setManager] = useState('');
-  const [logoUrl, setLogoUrl] = useState('');
+  const TEAM_URL = `${process.env.REACT_APP_API_URL}/teams/${id}/`;
+  const PLAYER_SEASONS_URL = `${process.env.REACT_APP_API_URL}/playerseasons/?team=${id}`;
+  const [team, setTeam] = useState({});
   const [players, setPlayers] = useState([]);
-  const [wins, setWins] = useState(0);
-  const [losses, setLosses] = useState(0);
-  const [finalStanding, setFinalStanding] = useState(1);
-  const [standing, setStanding] = useState(1);
-  const [allTimeRank, setAllTimeRank] = useState(null);
-  const [unlucky, setUnlucky] = useState(null);
-  const [pointsFor, setPointsFor] = useState(null);
-  const [pointsAgainst, setPointsAgainst] = useState(null);
-
   
   useEffect(() => {
     async function fetchTeam() {
-      const { data } = await axios.get(TEAM_URL);
-      console.log(data)
-      setName(data.name);
-      setManager(data.manager);
-      setLogoUrl(data.logo_url);
-      setWins(data.wins);
-      setLosses(data.losses);
-      setStanding(data.standing);
-      setFinalStanding(data.standing);
-      setAllTimeRank(data.all_time_rank);
-      setUnlucky(data.unlucky);
-      setPointsFor(data.points_for);
-      setPointsAgainst(data.points_against);
+      const { data } = await axios.get(TEAM_URL, {
+        headers: {
+          Authorization: `JWT ${localStorage.getItem('token')}`
+        }
+      });
+      setTeam(data);
     }
 
     async function fetchPlayerSeasons() {
-      const { data } = await axios.get(PLAYER_SEASONS_URL);
+      const { data } = await axios.get(PLAYER_SEASONS_URL, {
+        headers: {
+          Authorization: `JWT ${localStorage.getItem('token')}`
+        }
+      });
       setPlayers(data.results);
-      console.log(data)
     }
 
     fetchPlayerSeasons();
@@ -91,13 +68,13 @@ export const Team = () => {
     <>
       <Paper className={classes.paper}>
         <div className={classes.teamHeader}>
-        <Avatar className={classes.large} src={logoUrl} />
+        <Avatar className={classes.large} src={team.logoUrl} />
         <div className={classes.teamInfo}>
-          <Typography variant='h4'>{name}</Typography>
-          <Typography variant='h6'>Manager: <Link color='inherit' href={`/u/${manager}`}>{manager}</Link></Typography>
-          <Typography variant='subtitle1'>Record: {wins}-{losses}</Typography>
-          <Typography variant='subtitle1'>All Time Rank: {allTimeRank} <span className={classes.smallText}>({pointsFor} points scored)</span></Typography>
-          <Typography variant='subtitle1'>Unlucky Rank: {unlucky} <span className={classes.smallText}>({pointsAgainst} points against)</span></Typography>
+          <Typography variant='h4'>{team.name}</Typography>
+          <Typography variant='h6'>Manager: <Link color='inherit' href={`/u/${team.manager}`}>{team.manager}</Link></Typography>
+          <Typography variant='subtitle1'>Record: {team.wins}-{team.losses}</Typography>
+          <Typography variant='subtitle1'>{team.points_for} points scored <span className={classes.smallText}>(#{team.all_time_rank} all time)</span></Typography>
+          <Typography variant='subtitle1'>{team.points_against} points against <span className={classes.smallText}>(#{team.unlucky} all time)</span></Typography>
         </div>
         <Divider style={{ backgroundColor: 'transparent', clear: "both" }} />
         </div>

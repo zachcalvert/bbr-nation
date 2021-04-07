@@ -88,10 +88,18 @@ export const ContentModal = (props) => {
 
   async function fetchConversation(name, ensuing=false) {
     if (ensuing) {
-      const { data } = await axios.get(`${CONTENT_URL}/${name}/conversation/?ensuing=true`)
+      const { data } = await axios.get(`${CONTENT_URL}/${name}/conversation/?ensuing=true`, {
+        headers: {
+          Authorization: `JWT ${localStorage.getItem('token')}`
+        }
+      })
       setEnsuingConversation(data);
     } else {
-      const { data } = await axios.get(`${CONTENT_URL}/${name}/conversation/`)
+      const { data } = await axios.get(`${CONTENT_URL}/${name}/conversation/`, {
+        headers: {
+          Authorization: `JWT ${localStorage.getItem('token')}`
+        }
+      })
       setPrecedingConversation(data);
     }
 
@@ -174,7 +182,7 @@ export const ContentModal = (props) => {
                 </div>
               )}
               {activeContent.kind === 'VIDEO' && (
-                <iframe id={activeContent.name} type="text/html" class='framed-video' src={activeContent.media_url} frameborder="0"></iframe>
+                <iframe id={activeContent.name} type="text/html" class='framed-video' src={activeContent.media_url} frameBorder="0"></iframe>
               )}
               {activeContent.text && <Typography variant='h6'>{activeContent.text}</Typography>}
             </Grid>

@@ -31,15 +31,27 @@ export const TableOfContents = () => {
 
   useEffect(() => {
     async function fetchPages() {
-      const { data } = await axios.get(PAGES_URL);
+      const { data } = await axios.get(PAGES_URL, {
+        headers: {
+          Authorization: `JWT ${localStorage.getItem('token')}`
+        }
+      });
       setPages(data.results);        
     }
     async function fetchMembers() {
-      const { data } = await axios.get(MEMBERS_URL);
+      const { data } = await axios.get(MEMBERS_URL, {
+        headers: {
+          Authorization: `JWT ${localStorage.getItem('token')}`
+        }
+      });
       setMembers(data.results);        
     }
     async function fetchSeasons() {
-      const { data } = await axios.get(SEASONS_URL);
+      const { data } = await axios.get(SEASONS_URL, {
+        headers: {
+          Authorization: `JWT ${localStorage.getItem('token')}`
+        }
+      });
       setSeasons(data.results);
     }
     fetchPages();

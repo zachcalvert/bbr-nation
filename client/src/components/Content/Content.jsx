@@ -18,7 +18,7 @@ export const Content = (props) => {
         </div>
       )}
       {kind === 'VIDEO' && (
-        <iframe id={content.name} type="text/html" className='framed-video' src={content.media_url} frameborder="0"></iframe>
+        <iframe id={content.name} type="text/html" className='framed-video' src={content.media_url} frameBorder="0"></iframe>
       )}
       {kind === 'TEXT' && (
         <div className='bbr-quote'>

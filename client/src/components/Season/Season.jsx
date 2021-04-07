@@ -35,7 +35,11 @@ export const Season = () => {
 
   useEffect(() => {
     async function fetchSeason() {
-      const { data } = await axios.get(DETAIL_URL);
+      const { data } = await axios.get(DETAIL_URL, {
+        headers: {
+          Authorization: `JWT ${localStorage.getItem('token')}`
+        }
+      });
       console.log(data);
       setTeams(data.teams);
       setWinner(data.winner);

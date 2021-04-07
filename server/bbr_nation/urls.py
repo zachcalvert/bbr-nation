@@ -3,6 +3,7 @@ from django.urls import include, path
 from django.conf import settings
 from django.conf.urls.static import static
 from rest_framework import routers
+from rest_framework_jwt.views import obtain_jwt_token
 
 from api import views
 
@@ -22,7 +23,9 @@ router.register(r'teams', views.TeamViewSet)
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls')),
-    path('api/', include(router.urls))
+    path('api/', include(router.urls)),
+    path('token-auth/', obtain_jwt_token),
+    path('current_user/', views.current_user),
 ]
 
 if settings.DEBUG:

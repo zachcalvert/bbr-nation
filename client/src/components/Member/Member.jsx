@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import axios from "axios"
+import axios from "axios";
 import { Avatar, Box, Divider, Grid, makeStyles, Paper, Tab, Tabs, Typography } from '@material-ui/core';
 
 import { Feed } from '../Feed/Feed';
-import { MemberCareer } from '../Member/MemberCareer'
+import { MemberCareer } from '../Member/MemberCareer';
+import './Member.css';
 
 const useStyles = makeStyles((theme) => ({
   leftAlign: {
@@ -77,7 +78,11 @@ export const Member = () => {
     }
 
     async function fetchUserDetails() {
-      const { data } = await axios.get(DETAIL_URL);
+      const { data } = await axios.get(DETAIL_URL, {
+        headers: {
+          Authorization: `JWT ${localStorage.getItem('token')}`
+        }
+      });
       setMember(data);
     }
     fetchUserDetails();

@@ -40,55 +40,29 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-export default function ToggleButtons() {
-  const [filter, setFilter] = React.useState('ALL');
-
-  const handleFilter = (event, newFilter) => {
-    setFilter(newFilter);
-  };
-
-  return (
-    <ToggleButtonGroup
-      value={filter}
-      exclusive
-      onChange={handleFilter}
-      aria-label="position-filter"
-    >
-      <ToggleButton value="ALL" aria-label="left aligned">
-        <Typography variant='h6'>All</Typography>
-      </ToggleButton>
-      <ToggleButton value="QB" aria-label="centered">
-      <Typography variant='h6'>QB</Typography>
-      </ToggleButton>
-      <ToggleButton value="RB" aria-label="right aligned">
-      <Typography variant='h6'>RB</Typography>
-      </ToggleButton>
-      <ToggleButton value="WR" aria-label="justified" disabled>
-        <Typography variant='h6'>WR</Typography>
-      </ToggleButton>
-    </ToggleButtonGroup>
-  );
-}
-
 export const AllPlayers = () => {
   const classes = useStyles();
   const PLAYERS_URL = `${process.env.REACT_APP_API_URL}/playerseasons/`
   const [playerSeasons, setPlayerSeasons] = React.useState([]);
-  const [filter, setFilter] = React.useState('ALL');
+  const [filter, setFilter] = React.useState('all');
 
   const handleFilter = (event, newFilter) => {
-    setFilter(newFilter);
+    setFilter(newFilter)
   };
-
+  
+  async function fetchPlayerSeasons(filter) {
+    let url = PLAYERS_URL;
+    setPlayerSeasons([])
+    if (filter) {
+      url = `${PLAYERS_URL}?position=${filter}`
+    }
+    const { data } = await axios.get(url);
+    setPlayerSeasons(data.results);
+  }
 
   React.useEffect(() => {
-    async function fetchPlayerSeasons() {
-      const { data } = await axios.get(PLAYERS_URL);
-      console.log(data.results);
-      setPlayerSeasons(data.results);
-    }
-    fetchPlayerSeasons();
-  }, []);
+    fetchPlayerSeasons(filter);
+  }, [filter]);
   
   return (
     <>
@@ -98,17 +72,26 @@ export const AllPlayers = () => {
         onChange={handleFilter}
         aria-label="position-filter"
       >
-        <ToggleButton value="ALL" aria-label="left aligned">
+        <ToggleButton value="all" aria-label="left aligned">
           <Typography variant='h6'>All</Typography>
         </ToggleButton>
-        <ToggleButton value="QB" aria-label="centered">
+        <ToggleButton value="qb" aria-label="centered">
         <Typography variant='h6'>QB</Typography>
         </ToggleButton>
-        <ToggleButton value="RB" aria-label="right aligned">
+        <ToggleButton value="rb" aria-label="right aligned">
         <Typography variant='h6'>RB</Typography>
         </ToggleButton>
-        <ToggleButton value="WR" aria-label="justified" disabled>
+        <ToggleButton value="wr" aria-label="justified">
           <Typography variant='h6'>WR</Typography>
+        </ToggleButton>
+        <ToggleButton value="te" aria-label="justified">
+          <Typography variant='h6'>TE</Typography>
+        </ToggleButton>
+        <ToggleButton value="dst" aria-label="justified">
+          <Typography variant='h6'>D/ST</Typography>
+        </ToggleButton>
+        <ToggleButton value="k" aria-label="justified">
+          <Typography variant='h6'>K</Typography>
         </ToggleButton>
       </ToggleButtonGroup>
       <Divider />
@@ -116,6 +99,7 @@ export const AllPlayers = () => {
         <Table className={classes.table} aria-label="simple table">
           <TableHead>
             <TableRow>
+            <TableCell>Rank</TableCell>
             <TableCell>Name</TableCell>
             <TableCell align="right">Year</TableCell>
             <TableCell align="right">Team</TableCell>
@@ -125,8 +109,9 @@ export const AllPlayers = () => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {playerSeasons.map((playerSeason) => (
+          {playerSeasons.map((playerSeason, index) => (
             <TableRow key={playerSeason.name}>
+              <TableCell>{index + 1}</TableCell>
               <TableCell component="th" scope="row">
                 <Link color='inherit' href={`/player/${playerSeason.player_id}`}>{playerSeason.name}</Link>
               </TableCell>
@@ -144,5 +129,5 @@ export const AllPlayers = () => {
       </TableContainer>
     </>
   );
-  }
+}
 

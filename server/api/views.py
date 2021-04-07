@@ -27,6 +27,15 @@ SHOUTOUT_IDS = [
     '160879271942474197'
 ]
 
+POSITIONS_MAP = {
+    'qb': 'QB',
+    'rb': 'RB',
+    'wr': 'WR',
+    'te': 'TE',
+    'dst': 'D/ST',
+    'k': 'K'
+}
+
 
 def paginate(func):
 
@@ -186,12 +195,22 @@ class PlayerSeasonViewSet(viewsets.ModelViewSet):
         Optionally restricts the returned purchases to a given user,
         by filtering against a `username` query parameter in the URL.
         """
-        queryset = PlayerSeason.objects.all()
+        queryset = PlayerSeason.objects.exclude(total_points__gt=700)
+        
         team = self.request.query_params.get('team')
         if team is not None:
             queryset = queryset.filter(team_id=team)
-        else:
-            queryset = queryset.exclude(total_points__gt=700).order_by('-total_points')
+        
+        position = self.request.query_params.get('position')
+        if position is not None:
+            if position == 'all':
+                return queryset
+            elif position == 'dst':
+                position = 'D/ST'
+            else:
+                position = position.upper()
+            queryset = queryset.filter(player__position=position)
+
         return queryset
 
 

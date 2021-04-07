@@ -62,7 +62,11 @@ export const Team = () => {
   
   useEffect(() => {
     async function fetchTeam() {
-      const { data } = await axios.get(TEAM_URL);
+      const { data } = await axios.get(TEAM_URL, {
+        headers: {
+          Authorization: `JWT ${localStorage.getItem('token')}`
+        }
+      });
       console.log(data)
       setName(data.name);
       setManager(data.manager);
@@ -78,7 +82,11 @@ export const Team = () => {
     }
 
     async function fetchPlayerSeasons() {
-      const { data } = await axios.get(PLAYER_SEASONS_URL);
+      const { data } = await axios.get(PLAYER_SEASONS_URL, {
+        headers: {
+          Authorization: `JWT ${localStorage.getItem('token')}`
+        }
+      });
       setPlayers(data.results);
       console.log(data)
     }

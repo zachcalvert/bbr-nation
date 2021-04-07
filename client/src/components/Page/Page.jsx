@@ -5,7 +5,6 @@ import { Grid, makeStyles, Typography } from '@material-ui/core';
 
 import { Feed } from '../Feed/Feed';
 
-
 const API_URL = `${process.env.REACT_APP_API_URL}`
 let PAGE_URL;
 
@@ -29,7 +28,11 @@ export const Page = () => {
 
   React.useEffect(() => {
     async function fetchPage() {
-      const { data } = await axios.get(`${API_URL}/pages/${slug}`);
+      const { data } = await axios.get(`${API_URL}/pages/${slug}`, {
+        headers: {
+          Authorization: `JWT ${localStorage.getItem('token')}`
+        }
+      });
       setName(data.name);
     }
     fetchPage();

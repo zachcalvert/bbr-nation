@@ -30,14 +30,11 @@ class PageSerializer(serializers.HyperlinkedModelSerializer):
         }
 
 
-class UserSerializer(serializers.HyperlinkedModelSerializer):
+class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['url', 'username', 'email', 'groups']
-        extra_kwargs = {
-            'url': {'lookup_field': 'username'}
-        }
+        fields = ('username',)
 
 
 class MemberSerializer(serializers.HyperlinkedModelSerializer):

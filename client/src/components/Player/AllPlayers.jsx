@@ -57,7 +57,11 @@ export const AllPlayers = () => {
     if (filter) {
       url = `${PLAYERS_URL}?position=${filter}`
     }
-    const { data } = await axios.get(url);
+    const { data } = await axios.get(url, {
+      headers: {
+        Authorization: `JWT ${localStorage.getItem('token')}`
+      }
+    });
     setPlayerSeasons(data.results);
   }
 

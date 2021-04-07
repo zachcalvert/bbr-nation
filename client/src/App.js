@@ -2,13 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { BrowserRouter, Route } from 'react-router-dom';
 import { createMuiTheme, CssBaseline, Grid, Hidden, Link, ThemeProvider, makeStyles } from '@material-ui/core';
-
-import AppBar from '@material-ui/core/AppBar';
-import Drawer from '@material-ui/core/Drawer';
-import IconButton from '@material-ui/core/IconButton';
+import { AppBar, Button, Drawer, Fab, IconButton, TextField, Toolbar, Typography } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
 
 import { Page } from "./components/Page/Page";
 import { TableOfContents } from './components/TableOfContents/TableOfContents';
@@ -17,8 +12,10 @@ import { Player } from './components/Player/Player';
 import { AllSeasons } from './components/Season/AllSeasons';
 import { Season } from './components/Season/Season';
 import { Team } from './components/Team/Team';
+import axios from 'axios';
 
 const drawerWidth = 250;
+const LOGIN_URL = `http://localhost:8000/token-auth/`
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -37,6 +34,13 @@ const useStyles = makeStyles((theme) => ({
       width: drawerWidth,
       flexShrink: 0,
     },
+  },
+  loginForm: {
+    margin: '150px auto',
+    display: 'grid'
+  },
+  logout: {
+    marginLeft: 'auto'
   },
   menuButton: {
     marginRight: theme.spacing(2),
@@ -68,6 +72,9 @@ export const App = (props) => {
     [],
   );
   const [mobileOpen, setMobileOpen] = React.useState(false);
+  const [loggedIn, setLoggedIn] = React.useState(false);
+  const [username, setUsername] = React.useState('');
+  const [password, setPassword] = React.useState('');
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -81,6 +88,47 @@ export const App = (props) => {
   );
 
   const container = window !== undefined ? () => window().document.body : undefined;
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    setLoggedIn(false);
+    setUsername('');
+  };
+
+  const handleLogin = (e) => {
+    e.preventDefault();
+    fetch(LOGIN_URL, {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        "username": username,
+        "password": password
+      })
+      })
+      .then(res => res.json())
+      .then(json => {
+          localStorage.setItem('token', json.token);
+          setUsername(json.user.username);
+          setLoggedIn(true);
+      });
+  };
+
+  React.useEffect(() => {
+    if (localStorage.getItem('token')) {
+      fetch('http://localhost:8000/current_user/', {
+        headers: {
+          Authorization: `JWT ${localStorage.getItem('token')}`
+        }
+      })
+      .then(res => res.json())
+      .then(json => {
+        setUsername(json.username);
+        setLoggedIn(true);
+      });
+    }
+  }, [])
 
   return (
     <BrowserRouter>
@@ -99,53 +147,81 @@ export const App = (props) => {
             <MenuIcon />
           </IconButton>
           <Link color="inherit" href="/"><Typography variant='h5'>BBR Nation</Typography></Link>
+          
+          { loggedIn && <Button className={classes.logout} onClick={handleLogout} color="inherit">Logout</Button>}
+          
         </Toolbar>
       </AppBar>
-      <nav className={classes.drawer} aria-label="mailbox folders">
-        {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
-        <Hidden smUp implementation="css">
-          <Drawer
-            container={container}
-            variant="temporary"
-            anchor='left'
-            open={mobileOpen}
-            onClose={handleDrawerToggle}
-            classes={{
-              paper: classes.drawerPaper,
-            }}
-            ModalProps={{
-              keepMounted: true, // Better open performance on mobile.
-            }}
-          >
-            {drawer}
-          </Drawer>
-        </Hidden>
-        <Hidden xsDown implementation="css">
-          <Drawer
-            classes={{
-              paper: classes.drawerPaper,
-            }}
-            variant="permanent"
-            open
-          >
-            {drawer}
-          </Drawer>
-        </Hidden>
-      </nav>
-      <main className={classes.content}>
-        <div className={classes.toolbar} />
-        <Grid className={classes.container} container spacing={1}>
-          <Grid item xs={12}>
-            <Route path="/u/:name" component={Member} />
-            <Route path="/content/:slug" component={Page} />
-            <Route path="/season/:year/team/:id" component={Team} />
-            <Route path="/season/:year" exact component={Season} />
-            <Route path="/player/:id" exact component={Player} />
-            <Route path="/all-time-ranks/" exact component={AllSeasons} />
-            <Route path="/" exact component={Page} />
+      {loggedIn && 
+        <nav className={classes.drawer}>
+          <Hidden smUp implementation="css">
+            <Drawer
+              container={container}
+              variant="temporary"
+              anchor='left'
+              open={mobileOpen}
+              onClose={handleDrawerToggle}
+              classes={{
+                paper: classes.drawerPaper,
+              }}
+              ModalProps={{
+                keepMounted: true, // Better open performance on mobile.
+              }}
+            >
+              {drawer}
+            </Drawer>
+          </Hidden>
+          <Hidden xsDown implementation="css">
+            <Drawer
+              classes={{
+                paper: classes.drawerPaper,
+              }}
+              variant="permanent"
+              open
+            >
+              {drawer}
+            </Drawer>
+          </Hidden>
+        </nav>
+      }
+      {loggedIn ? 
+        <main className={classes.content}>
+          <div className={classes.toolbar} />
+          <Grid className={classes.container} container spacing={1}>
+            <Grid item xs={12}>
+              <Route path="/u/:name" component={Member} />
+              <Route path="/content/:slug" component={Page} />
+              <Route path="/season/:year/team/:id" component={Team} />
+              <Route path="/season/:year" exact component={Season} />
+              <Route path="/player/:id" exact component={Player} />
+              <Route path="/all-time-ranks/" exact component={AllSeasons} />
+              <Route path="/" exact component={Page} />
+            </Grid>
           </Grid>
-        </Grid>
-      </main>
+        </main>
+      : 
+        <form className={classes.loginForm} onSubmit={event => handleLogin(event)}>
+          <TextField
+              id="username"
+              helperText="username"
+              autoFocus={true}
+              onChange={e => setUsername(e.target.value.trim())}
+              value={username}  />
+          <TextField
+              id="password"
+              onChange={e => setPassword(e.target.value.trim())}
+              helperText="password"
+              type="password"
+              onChange={e => setPassword(e.target.value.trim())}
+              value={password}  />
+          <Fab variant="extended"
+              style={{ padding: '20px', margin: '20px' }}
+              color="primary"
+              type="submit">
+              Login
+          </Fab>
+        </form>
+      }   
     </div>
     </ThemeProvider>
     </BrowserRouter>

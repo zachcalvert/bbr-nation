@@ -57,15 +57,17 @@ export const Feed = (props) => {
   const [content, setContent] = useState([]);
   const [activeContent, setActiveContent] = React.useState(null);
   const [open, setOpen] = React.useState(false);
-  const [sort, setSort] = useState(null);
-  const [filter, setFilter] = useState(null);
 
   const [nextUrl, setNexUrl] = useState(null);
   const [isBottom, setIsBottom] = useState(false);
   const [keepScrolling, setKeepScrolling] = useState(true);
 
   async function fetchContent(url, append=true) {
-    const { data } = await axios.get(url);
+    const { data } = await axios.get(url, {
+      headers: {
+        Authorization: `JWT ${localStorage.getItem('token')}`
+      }
+    });
     
     if (!append) {
       setContent([]);
@@ -83,7 +85,11 @@ export const Feed = (props) => {
   }
 
   async function fetchContentDetails(name) {
-    const { data } = await axios.get(`${CONTENT_URL}/${name}`);
+    const { data } = await axios.get(`${CONTENT_URL}/${name}`, {
+      headers: {
+        Authorization: `JWT ${localStorage.getItem('token')}`
+      }
+    });
     setActiveContent(data);
   }
 

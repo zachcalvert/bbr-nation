@@ -88,10 +88,18 @@ export const ContentModal = (props) => {
 
   async function fetchConversation(name, ensuing=false) {
     if (ensuing) {
-      const { data } = await axios.get(`${CONTENT_URL}/${name}/conversation/?ensuing=true`)
+      const { data } = await axios.get(`${CONTENT_URL}/${name}/conversation/?ensuing=true`, {
+        headers: {
+          Authorization: `JWT ${localStorage.getItem('token')}`
+        }
+      })
       setEnsuingConversation(data);
     } else {
-      const { data } = await axios.get(`${CONTENT_URL}/${name}/conversation/`)
+      const { data } = await axios.get(`${CONTENT_URL}/${name}/conversation/`, {
+        headers: {
+          Authorization: `JWT ${localStorage.getItem('token')}`
+        }
+      })
       setPrecedingConversation(data);
     }
 

@@ -111,16 +111,26 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.BasicAuthentication',
-    ],
+    ),
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 17
 }
 
-CORS_ALLOWED_ORIGINS = ['http://localhost', 'http://localhost:3000', 'http://bbrnation.com', 'https://bbrnation.com']
-CSRF_COOKIE_SECURE = False
-SESSION_COOKIE_SECURE = False
+CORS_ORIGIN_WHITELIST = (
+    'http://localhost:3000',
+    'http://bbrnation.com'
+)
+
+JWT_AUTH = {
+    'JWT_RESPONSE_PAYLOAD_HANDLER': 'bbr_nation.utils.my_jwt_response_handler'
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/

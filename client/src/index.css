@@ -22,6 +22,10 @@ body {
     color: white;
 }
 
+.logoutButton {
+  display: inline-block;
+}
+
 @media only screen and (max-width: 500px) {
   body {
     padding: 0!important;

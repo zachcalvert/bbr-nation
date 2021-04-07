@@ -24,7 +24,7 @@ const useStyles = makeStyles((theme) => ({
     position: 'relative'
   },
   table: {
-    minWidth: 450,
+    minWidth: 350,
   },
   smallText: {
     fontSize: '14px',
@@ -107,7 +107,6 @@ export const AllPlayers = () => {
             <TableCell>Name</TableCell>
             <TableCell align="right">Year</TableCell>
             <TableCell align="right">Team</TableCell>
-            <TableCell align="right">Position</TableCell>
             <TableCell align="right">Total Points</TableCell>
           </TableRow>
         </TableHead>
@@ -122,7 +121,6 @@ export const AllPlayers = () => {
               <TableCell align="right" component="th" scope="row">
                 <Link color='inherit' href={`/season/${playerSeason.season}/team/${playerSeason.team_id}`}>{playerSeason.team_name}</Link>
               </TableCell>
-              <TableCell align="right">{playerSeason.position}</TableCell>
               <TableCell align="right">{playerSeason.total_points}</TableCell>
             </TableRow>
           ))}

@@ -4,7 +4,8 @@ import axios from "axios";
 import { Avatar, Box, Divider, Grid, makeStyles, Paper, Tab, Tabs, Typography } from '@material-ui/core';
 
 import { Feed } from '../Feed/Feed';
-import { MemberCareer } from '../Member/MemberCareer'
+import { MemberCareer } from '../Member/MemberCareer';
+import './Member.css';
 
 const useStyles = makeStyles((theme) => ({
   leftAlign: {

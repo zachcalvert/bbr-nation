@@ -12,7 +12,6 @@ import { Player } from './components/Player/Player';
 import { AllSeasons } from './components/Season/AllSeasons';
 import { Season } from './components/Season/Season';
 import { Team } from './components/Team/Team';
-import axios from 'axios';
 
 const drawerWidth = 250;
 const LOGIN_URL = `http://localhost:8000/token-auth/`
@@ -36,7 +35,7 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   loginForm: {
-    margin: '150px auto',
+    margin: '200px auto',
     display: 'grid'
   },
   logout: {
@@ -75,6 +74,7 @@ export const App = (props) => {
   const [loggedIn, setLoggedIn] = React.useState(false);
   const [username, setUsername] = React.useState('');
   const [password, setPassword] = React.useState('');
+  const [loginError, setLoginError] = React.useState(false);
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -112,6 +112,12 @@ export const App = (props) => {
           localStorage.setItem('token', json.token);
           setUsername(json.user.username);
           setLoggedIn(true);
+      })
+      .catch((error) => {
+        setLoginError(true);
+        setTimeout(() => setLoginError(false), 2000);
+        setLoggedIn(false);
+        localStorage.removeItem('token');
       });
   };
 
@@ -126,6 +132,9 @@ export const App = (props) => {
       .then(json => {
         setUsername(json.username);
         setLoggedIn(true);
+      })
+      .catch((error) => {
+        setLoggedIn(false);
       });
     }
   }, [])
@@ -147,7 +156,6 @@ export const App = (props) => {
             <MenuIcon />
           </IconButton>
           <Link color="inherit" href="/"><Typography variant='h5'>BBR Nation</Typography></Link>
-          
           { loggedIn && <Button className={classes.logout} onClick={handleLogout} color="inherit">Logout</Button>}
           
         </Toolbar>
@@ -206,22 +214,24 @@ export const App = (props) => {
               helperText="username"
               autoFocus={true}
               onChange={e => setUsername(e.target.value.trim())}
-              value={username}  />
+              value={username}
+              fullWidth  />
           <TextField
               id="password"
               onChange={e => setPassword(e.target.value.trim())}
               helperText="password"
               type="password"
               onChange={e => setPassword(e.target.value.trim())}
-              value={password}  />
+              value={password}
+              fullWidth  />
           <Fab variant="extended"
               style={{ padding: '20px', margin: '20px' }}
               color="primary"
               type="submit">
               Login
           </Fab>
-        </form>
-      }   
+          {loginError && <img width="150px" src="/dikembe.gif" />}
+        </form>}
     </div>
     </ThemeProvider>
     </BrowserRouter>

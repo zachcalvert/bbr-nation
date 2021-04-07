@@ -182,7 +182,7 @@ export const ContentModal = (props) => {
                 </div>
               )}
               {activeContent.kind === 'VIDEO' && (
-                <iframe id={activeContent.name} type="text/html" class='framed-video' src={activeContent.media_url} frameborder="0"></iframe>
+                <iframe id={activeContent.name} type="text/html" class='framed-video' src={activeContent.media_url} frameBorder="0"></iframe>
               )}
               {activeContent.text && <Typography variant='h6'>{activeContent.text}</Typography>}
             </Grid>

@@ -60,7 +60,7 @@ export const GroupMeMessage = (props) => {
                   <img alt='bbr-content' src={imageUrl} />
                 </div>}
 
-                { videoUrl && <iframe id={message.id} type="text/html" class='framed-video' src={videoUrl} frameborder="0"></iframe>}
+                { videoUrl && <iframe id={message.id} type="text/html" class='framed-video' src={videoUrl} frameBorder="0"></iframe>}
 
                 {message.text && <Typography variant='subtitle1'>{message.text}</Typography>}
               </>

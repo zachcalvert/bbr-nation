@@ -71,7 +71,7 @@ class Player(models.Model):
                 "team_id": ps.team.id,
                 "team_name": ps.team.name,
                 "owner": ps.team.manager.name
-            } for ps in self.seasons.all()
+            } for ps in self.seasons.order_by('-season__year')
         ]
 
 

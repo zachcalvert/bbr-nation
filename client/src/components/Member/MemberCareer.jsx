@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme) => ({
     position: 'relative'
   },
   table: {
-    minWidth: 400,
+    minWidth: 350,
   },
 }));
 
@@ -36,9 +36,9 @@ export const MemberCareer = (props) => {
           <TableHead>
           <TableRow>
               <TableCell>Year</TableCell>
-              <TableCell>Name</TableCell>
-              <TableCell align="right">Final Standing</TableCell>
+              <TableCell>Team</TableCell>
               <TableCell align="right">Record</TableCell>
+              <TableCell align="right">Final Standing</TableCell>
               <Hidden smDown>
               <TableCell align="right">Points Scored</TableCell>
               </Hidden>
@@ -56,10 +56,10 @@ export const MemberCareer = (props) => {
               <TableCell component="th" scope="row">
                 <Link color='inherit' href={`/season/${team.year}/team/${team.id}`}>{team.name}</Link>
               </TableCell>
+              <TableCell align="right">{team.wins}-{team.losses}</TableCell>
               <TableCell align="right">
                 {team.final_standing}
               </TableCell>
-              <TableCell align="right">{team.wins}-{team.losses}</TableCell>
               <Hidden smDown>
                 <TableCell align="right">{team.points_for}</TableCell>
               </Hidden>

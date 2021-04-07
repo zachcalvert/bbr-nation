@@ -31,7 +31,11 @@ export const AllTeams = () => {
 
   useEffect(() => {
     async function fetchTeams() {
-      const { data } = await axios.get(DETAIL_URL);
+      const { data } = await axios.get(DETAIL_URL, {
+        headers: {
+          Authorization: `JWT ${localStorage.getItem('token')}`
+        }
+      });
       setTeams(data.results);
     }
     fetchTeams();
@@ -39,8 +43,8 @@ export const AllTeams = () => {
   
   return (
     <>
-    <TableContainer component={Paper}>
-      <Table className={classes.table} aria-label="simple table">
+      <TableContainer component={Paper}>
+        <Table className={classes.table} aria-label="simple table">
           <TableHead>
           <TableRow>
               <TableCell>Rank</TableCell>
@@ -81,8 +85,8 @@ export const AllTeams = () => {
             </TableRow>
           ))}
           </TableBody>
-      </Table>
-    </TableContainer>
+        </Table>
+      </TableContainer>
     </>
   );
 }

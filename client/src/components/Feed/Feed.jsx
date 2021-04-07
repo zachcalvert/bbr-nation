@@ -162,13 +162,13 @@ export const Feed = (props) => {
   return (
     <>
       {content.map((c) => (
-        <>
-        <Divider />
-        <Paper className={classes.paper}>
-          <ZoomOutMapIcon className={classes.share} onClick={(e) => handleClick(c, e)} />
-          <Content key={c.id} content={c} />
-        </Paper>
-        </>
+        <div className='content' key={c.name}>
+          <Divider />
+          <Paper className={classes.paper}>
+            <ZoomOutMapIcon className={classes.share} onClick={(e) => handleClick(c, e)} />
+            <Content key={c.id} content={c} />
+          </Paper>
+        </div>
       ))}
       
       {open && activeContent && <ContentModal open={open} handleClose={handleClose} activeContent={activeContent} />}

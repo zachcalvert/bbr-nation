@@ -12,3 +12,7 @@
 /* .MuiAccordionSummary-content {
   display: flex!important;
 } */
+
+.accordion-details {
+  padding: 0!important;
+}

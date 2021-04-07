@@ -67,7 +67,7 @@ export const TableOfContents = () => {
           id="panel1a-header">
           <Typography variant='h5'>Members</Typography>
         </AccordionSummary>
-        <AccordionDetails>
+        <AccordionDetails className='accordion-details'>
           <List>
             {members?.filter(member => member.name != 'bbot').map((member, index) => (
               <MenuItem 
@@ -89,7 +89,7 @@ export const TableOfContents = () => {
           id="panel1a-header">
           <Typography variant='h5'>History</Typography>
         </AccordionSummary>
-        <AccordionDetails>
+        <AccordionDetails className='accordion-details'>
           <List>
             {seasons?.map((season, index) => (
               <MenuItem 

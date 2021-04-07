@@ -147,7 +147,7 @@ export const ContentModal = (props) => {
             <Grid item xs={12}>
               <div class='copy-link'>
                 <input ref={clipboard.target} value={window.location.href} readOnly hidden />
-                <Link href={`${ADMIN_URL}content/content/${activeContent.id}/change`} style={{cursor: 'pointer'}}>Admin</Link>
+                <Link href={`${ADMIN_URL}content/content/${activeContent.id}/change`} target="_blank" style={{cursor: 'pointer'}}>Admin</Link>
 
                 <ShareIcon onClick={handleShareClick} style={{cursor: 'pointer'}} />
                 <Snackbar

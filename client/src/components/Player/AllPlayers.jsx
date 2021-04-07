@@ -12,6 +12,8 @@ import { Divider, Link, Typography } from '@material-ui/core';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 
+const PLAYERS_URL = `${process.env.REACT_APP_API_URL}/playerseasons/`
+
 const useStyles = makeStyles((theme) => ({
   paper: {
     padding: theme.spacing(2),
@@ -42,7 +44,6 @@ const useStyles = makeStyles((theme) => ({
 
 export const AllPlayers = () => {
   const classes = useStyles();
-  const PLAYERS_URL = `${process.env.REACT_APP_API_URL}/playerseasons/`
   const [playerSeasons, setPlayerSeasons] = React.useState([]);
   const [filter, setFilter] = React.useState('all');
 
@@ -70,8 +71,7 @@ export const AllPlayers = () => {
         value={filter}
         exclusive
         onChange={handleFilter}
-        aria-label="position-filter"
-      >
+        aria-label="position-filter">
         <ToggleButton value="all" aria-label="left aligned">
           <Typography variant='h6'>All</Typography>
         </ToggleButton>
@@ -104,7 +104,6 @@ export const AllPlayers = () => {
             <TableCell align="right">Year</TableCell>
             <TableCell align="right">Team</TableCell>
             <TableCell align="right">Position</TableCell>
-            <TableCell align="right">Position Rank</TableCell>
             <TableCell align="right">Total Points</TableCell>
           </TableRow>
         </TableHead>
@@ -120,7 +119,6 @@ export const AllPlayers = () => {
                 <Link color='inherit' href={`/season/${playerSeason.season}/team/${playerSeason.team_id}`}>{playerSeason.team_name}</Link>
               </TableCell>
               <TableCell align="right">{playerSeason.position}</TableCell>
-              <TableCell align="right">{playerSeason.position_rank}</TableCell>
               <TableCell align="right">{playerSeason.total_points}</TableCell>
             </TableRow>
           ))}

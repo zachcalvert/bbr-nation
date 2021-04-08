@@ -33,6 +33,14 @@ services:
       - static_volume:/app/backend/django_static
     expose:
       - 8000
+  db:
+    image: postgres
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - pgdata:/var/lib/postgresql/data/
 
 volumes:
   pgdata:

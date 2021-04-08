@@ -115,10 +115,9 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
 
-        years = [2015, 2016, 2017, 2018, 2019,2020]
+        years = [2016, 2017, 2018, 2019,2020]
 
-        for year in [2015]:
-            print(year)
+        for year in years:
             wrapper = ESPNWrapper(year=year)
             espn_season = wrapper.league
             season, _ = Season.objects.get_or_create(year=year)

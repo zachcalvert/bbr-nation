@@ -26,7 +26,7 @@ SECRET_KEY = 'y6t#17tny_q$f%ts6*o1#&t2t5cx=e4sbks8q%b0&_9j1zaldd'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '143.198.238.73']
+ALLOWED_HOSTS = ['localhost', 'bbrnation.com', 'www.bbrnation.com']
 
 
 # Application definition
@@ -126,9 +126,9 @@ REST_FRAMEWORK = {
 
 CORS_ORIGIN_WHITELIST = (
     'http://localhost:3000',
-    'http://0.0.0.0',
-    'http://bbrnation.com',
-    'https://bbrnation.com'
+    'http://locahost',
+    'https://bbrnation.com',
+    'https://www.bbrnation.com'
 )
 
 JWT_AUTH = {

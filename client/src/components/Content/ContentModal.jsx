@@ -178,11 +178,11 @@ export const ContentModal = (props) => {
               <Divider style={{ backgroundColor: 'transparent', clear: "both" }} />
               {activeContent.kind === 'IMAGE' && (
                 <div className='bbr-modal-image'>
-                  <img alt='bbr-content' src={activeContent.media_url} />
+                  <img src={activeContent.upload} />
                 </div>
               )}
               {activeContent.kind === 'VIDEO' && (
-                <iframe id={activeContent.name} type="text/html" class='framed-video' src={activeContent.media_url} frameBorder="0"></iframe>
+                <video className='bbr-video' controls><source src={activeContent.upload} type="video/mp4" /></video>
               )}
               {activeContent.text && <Typography variant='h6'>{activeContent.text}</Typography>}
             </Grid>

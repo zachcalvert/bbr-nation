@@ -66,10 +66,6 @@ class Command(BaseCommand):
 
             for message in message_list:
                 try:
-                    if Content.objects.filter(name=message['id']).exists():
-                        print('seen this message before, continuing on')
-                        continue
-
                     if message['attachments'] and len(message['favorited_by']) > 1:
                         try:
                             member = Member.objects.get(groupme_id=message['user_id'])
@@ -90,6 +86,7 @@ class Command(BaseCommand):
 
                         attachment = message['attachments'][0]
                         url = attachment.get('url') or attachment.get('source_url') or attachment.get('preview_url')
+                        print(url)
                         if url:
                             file_type = self.get_file_type(url)
                             if file_type:
@@ -97,26 +94,40 @@ class Command(BaseCommand):
                                     kind = 'VIDEO'
                                 else:
                                     kind = 'IMAGE'
+                                print(file_type)
+
+                                file_name = '{}{}'.format(message['id'], file_type)
+                                response = requests.get(url, stream=True)
+
+                                if response.status_code != 200:
+                                    continue
+
+                                lf = tempfile.NamedTemporaryFile()
+                                for block in response.iter_content(1024 * 8):
+                                    if not block:
+                                        break
+                                    lf.write(block)
 
                                 kwargs = {
-                                    "avatar_url": message['avatar_url'],
+                                    "create_date": datetime.datetime.fromtimestamp(message['created_at']),
                                     "creator": member,
                                     "creator_nickname": message['name'],
-                                    "create_date": datetime.datetime.fromtimestamp(message['created_at']),
                                     "kind": kind,
                                     "likes": len(message['favorited_by']),
-                                    "media_url": url,
                                     "name": message['id'],
-                                    "text": self.strip_urls(message['text'])
-
+                                    "text": self.strip_urls(message['text']),
                                 }
-                                content = Content.objects.create(**kwargs)
+
+                                content = Content(**kwargs)
+                                content.upload.save(file_name, files.File(lf))
+
 
                         else:
                             print(message)
                             print('found new url type, in above message')
 
-                    elif not message['attachments'] and len(message['favorited_by']) > 1:
+
+                    elif not message['attachments'] and len(message['favorited_by']) > 2:
                         try:
                             member = Member.objects.get(groupme_id=message['user_id'])
                         except Member.DoesNotExist:

@@ -33,7 +33,7 @@ class ContentAdmin(admin.ModelAdmin):
         'display_name',
         'description',
         'create_date',
-        'media_url',
+        'upload',
         'text',
         'likes',
     )

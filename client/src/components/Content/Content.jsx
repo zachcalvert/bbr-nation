@@ -13,12 +13,15 @@ export const Content = (props) => {
       {content.display_name && <Typography style={{textAlign: 'left'}} variant='h5'>{content.display_name}</Typography>}
       {kind === 'IMAGE' && (
         <div className='bbr-image'>
-          <img alt='bbr-content' src={content.media_url} />
+          <img src={content.upload} />
           {content.text && <Typography variant='h6'>"{content.text}"</Typography>}
+          <Typography variant='subtitle1'>{content.creator} - {content.create_date}</Typography>
         </div>
       )}
       {kind === 'VIDEO' && (
-        <iframe id={content.name} type="text/html" className='framed-video' src={content.media_url} frameBorder="0"></iframe>
+        <div className='bbr-video'>
+          <video controls><source src={content.upload} type="video/mp4" /></video>
+        </div>
       )}
       {kind === 'TEXT' && (
         <div className='bbr-quote'>

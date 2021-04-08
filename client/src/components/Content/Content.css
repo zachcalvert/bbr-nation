@@ -11,12 +11,19 @@
 }
 
 .bbr-image img {
-    margin: auto;
-    height: auto;
-    width: auto;
-    max-height: 500px;
-    max-width: -webkit-fill-available;
-    text-align: center;
+  margin: auto;
+  height: auto;
+  width: auto;
+  max-height: 500px;
+  max-width: -webkit-fill-available;
+  text-align: center;
+}
+
+.bbr-video video {
+  width: auto;
+  max-height: 500px;
+  max-width: -webkit-fill-available;
+  text-align: center;
 }
 
 .framed-video {

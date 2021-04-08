@@ -36,8 +36,8 @@ const useStyles = makeStyles((theme) => ({
 export const Team = () => {
   const classes = useStyles();
   const { year, id } = useParams();
-  const TEAM_URL = `${process.env.REACT_APP_API_URL}/teams/${id}/`;
-  const PLAYER_SEASONS_URL = `${process.env.REACT_APP_API_URL}/playerseasons/?team=${id}`;
+  const TEAM_URL = `/api/teams/${id}/`;
+  const PLAYER_SEASONS_URL = `/api/playerseasons/?team=${id}`;
   const [team, setTeam] = useState({});
   const [players, setPlayers] = useState([]);
   

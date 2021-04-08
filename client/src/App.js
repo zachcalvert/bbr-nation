@@ -14,7 +14,6 @@ import { Season } from './components/Season/Season';
 import { Team } from './components/Team/Team';
 
 const drawerWidth = 250;
-const LOGIN_URL = `http://localhost:8000/token-auth/`
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -97,7 +96,7 @@ export const App = (props) => {
 
   const handleLogin = (e) => {
     e.preventDefault();
-    fetch(LOGIN_URL, {
+    fetch(`/token-auth/`, {
       method: 'POST',
       headers: {
           'Content-Type': 'application/json'
@@ -123,7 +122,7 @@ export const App = (props) => {
 
   React.useEffect(() => {
     if (localStorage.getItem('token')) {
-      fetch('http://localhost:8000/current_user/', {
+      fetch(`/current_user/`, {
         headers: {
           Authorization: `JWT ${localStorage.getItem('token')}`
         }

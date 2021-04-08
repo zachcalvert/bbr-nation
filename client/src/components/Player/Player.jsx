@@ -32,7 +32,7 @@ export const Player = () => {
   const classes = useStyles();
 
   const { id } = useParams();
-  const DETAIL_URL = `${process.env.REACT_APP_API_URL}/players/${id}/`
+  const DETAIL_URL = `/api/players/${id}/`
   const [player, setPlayer] = useState({})
 
   useEffect(() => {

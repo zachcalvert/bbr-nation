@@ -24,11 +24,11 @@ export const Page = () => {
     slug = 'home'
   } 
 
-  PAGE_URL = `${API_URL}/content/${slug}/page`
+  PAGE_URL = `/api/content/${slug}/page`
 
   React.useEffect(() => {
     async function fetchPage() {
-      const { data } = await axios.get(`${API_URL}/pages/${slug}`, {
+      const { data } = await axios.get(`/api/pages/${slug}`, {
         headers: {
           Authorization: `JWT ${localStorage.getItem('token')}`
         }

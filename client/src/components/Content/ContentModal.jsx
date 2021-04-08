@@ -13,8 +13,8 @@ import { GroupMeMessage } from '../Content/GroupMeMessage'
 import { FormattedTime } from '../Common'
 import './ContentModal.css'
 
-const CONTENT_URL = `${process.env.REACT_APP_API_URL}/content`
-const ADMIN_URL = `${process.env.REACT_APP_ADMIN_URL}`
+const CONTENT_URL = `/api/content`
+const ADMIN_URL = `/admin/`
 
 const useStyles = makeStyles((theme) => ({
     modal: {

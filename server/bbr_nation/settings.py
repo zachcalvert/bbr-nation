@@ -26,7 +26,7 @@ SECRET_KEY = 'y6t#17tny_q$f%ts6*o1#&t2t5cx=e4sbks8q%b0&_9j1zaldd'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '143.198.238.73']
+ALLOWED_HOSTS = ['localhost', 'bbrnation.com', 'www.bbrnation.com']
 
 
 # Application definition
@@ -126,7 +126,9 @@ REST_FRAMEWORK = {
 
 CORS_ORIGIN_WHITELIST = (
     'http://localhost:3000',
-    'http://bbrnation.com'
+    'http://locahost',
+    'https://bbrnation.com',
+    'https://www.bbrnation.com'
 )
 
 JWT_AUTH = {
@@ -151,10 +153,6 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
-STATIC_URL = '/static/'
-
-# Base url to serve media files
 MEDIA_URL = '/media/'
-
-# Path where media is stored
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+STATIC_URL = '/django_static/' 
+STATIC_ROOT = BASE_DIR / 'django_static'

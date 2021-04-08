@@ -14,8 +14,6 @@ export const Content = (props) => {
       {kind === 'IMAGE' && (
         <div className='bbr-image'>
           <img src={content.upload} />
-          {content.text && <Typography variant='h6'>"{content.text}"</Typography>}
-          <Typography variant='subtitle1'>{content.creator} - {content.create_date}</Typography>
         </div>
       )}
       {kind === 'VIDEO' && (

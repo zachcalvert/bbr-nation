@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useHistory, useLocation, useParams } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 import axios from "axios"
 import { Divider, makeStyles, Paper } from '@material-ui/core';
 import ZoomOutMapIcon from '@material-ui/icons/ZoomOutMap';
@@ -8,7 +8,7 @@ import { Content } from '../Content/Content';
 import { ContentModal } from '../Content/ContentModal';
 import './Feed.css'
 
-const CONTENT_URL = `${process.env.REACT_APP_API_URL}/content`
+const CONTENT_URL = `/api/content`
 
 const useStyles = makeStyles((theme) => ({
   modal: {

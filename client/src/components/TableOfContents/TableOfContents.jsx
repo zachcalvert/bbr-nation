@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import axios from "axios"
-import { Accordion, AccordionDetails, AccordionSummary, Avatar, Divider, List, MenuItem, Typography, makeStyles } from '@material-ui/core';
+import { Accordion, AccordionDetails, AccordionSummary, Avatar, List, MenuItem, Typography, makeStyles } from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
 import './TableOfContents.css';
 
-const PAGES_URL = `${process.env.REACT_APP_API_URL}/pages/`
-const MEMBERS_URL = `${process.env.REACT_APP_API_URL}/members/`
-const SEASONS_URL = `${process.env.REACT_APP_API_URL}/seasons/`
+const PAGES_URL = `/api/pages/`
+const MEMBERS_URL = `/api/members/`
+const SEASONS_URL = `/api/seasons/`
 
 const useStyles = makeStyles((theme) => ({
   memberName: {

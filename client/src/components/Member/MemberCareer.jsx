@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import axios from "axios"
 import { makeStyles } from '@material-ui/core/styles';
-import { Divider, Hidden, Link, Table, Typography } from '@material-ui/core';
+import { Hidden, Link, Table } from '@material-ui/core';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';

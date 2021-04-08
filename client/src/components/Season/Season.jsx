@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
 export const Season = () => {
   const classes = useStyles();
   const { year } = useParams();
-  const DETAIL_URL = `${process.env.REACT_APP_API_URL}/seasons/${year}/`
+  const DETAIL_URL = `/api/seasons/${year}/`
   const [teams, setTeams] = useState([]);
   const [winner, setWinner] = useState('');
   const [pierced, setPierced] = useState('');

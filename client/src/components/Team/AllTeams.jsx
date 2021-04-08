@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from "axios"
 import { makeStyles } from '@material-ui/core/styles';
-import { Divider, Hidden, Link, Table, Typography } from '@material-ui/core';
+import { Hidden, Link, Table } from '@material-ui/core';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
@@ -26,7 +26,7 @@ const useStyles = makeStyles((theme) => ({
 
 export const AllTeams = () => {
   const classes = useStyles();
-  const DETAIL_URL = `${process.env.REACT_APP_API_URL}/teams/all/`
+  const DETAIL_URL = `/api/teams/all/`
   const [teams, setTeams] = useState([]);
 
   useEffect(() => {

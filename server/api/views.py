@@ -27,15 +27,6 @@ SHOUTOUT_IDS = [
     '160879271942474197'
 ]
 
-POSITIONS_MAP = {
-    'qb': 'QB',
-    'rb': 'RB',
-    'wr': 'WR',
-    'te': 'TE',
-    'dst': 'D/ST',
-    'k': 'K'
-}
-
 
 def paginate(func):
 
@@ -163,12 +154,6 @@ class ContentViewSet(viewsets.ModelViewSet):
             messages.reverse()
 
         return Response(messages)
-
-    @paginate
-    @action(detail=False)
-    def watch(self, request):
-        return Content.objects.filter(kind='VIDEO').order_by('?')
-
 
 
 class PageViewSet(viewsets.ModelViewSet):

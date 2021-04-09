@@ -1,31 +1,6 @@
 version: '3.7'
 
 services:
-  nginx: 
-    restart: unless-stopped
-    build:
-      context: .
-      dockerfile: ./docker/nginx/Dockerfile
-    ports:
-      - 80:80
-    volumes:
-      - static_volume:/app/backend/django_static
-      - media_volume:/app/backend/media
-      - ./docker/nginx/development:/etc/nginx/conf.d
-    depends_on: 
-      - backend
-  backend:
-    restart: unless-stopped
-    build:
-      context: .
-      dockerfile: ./docker/backend/Dockerfile
-    volumes:   
-    entrypoint: /app/docker/backend/wsgi-entrypoint.sh
-    volumes:
-      - static_volume:/app/backend/django_static
-      - media_volume:/app/backend/media
-    expose:
-      - 8000
   db:
     image: postgres
     environment:
@@ -33,9 +8,28 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
     volumes:
-      - pgdata:/var/lib/postgresql/data/        
-
+      - pgdata:/var/lib/postgresql/data/
+  django:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./server:/code
+    ports:
+      - 8000:8000
+    depends_on:
+      - db
+  react:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    volumes:
+      - ./client/:/code
+    ports:
+      - 3000:3000
+    depends_on:
+      - django
+    tty: true
 volumes:
   pgdata:
-  static_volume: {}
-  media_volume: {}

@@ -85,7 +85,7 @@ export const Feed = (props) => {
   }
 
   async function fetchContentDetails(name) {
-    const { data } = await axios.get(`${CONTENT_URL}/${name}`, {
+    const { data } = await axios.get(`${CONTENT_URL}/${name}/`, {
       headers: {
         Authorization: `JWT ${localStorage.getItem('token')}`
       }

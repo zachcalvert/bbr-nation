@@ -182,7 +182,9 @@ export const ContentModal = (props) => {
                 </div>
               )}
               {activeContent.kind === 'VIDEO' && (
-                <video className='bbr-video' controls><source src={activeContent.upload} type="video/mp4" /></video>
+                <div className='bbr-video'>
+                  <video controls><source src={activeContent.upload} type="video/mp4" /></video>
+                </div>
               )}
               {activeContent.text && <Typography variant='h6'>{activeContent.text}</Typography>}
             </Grid>

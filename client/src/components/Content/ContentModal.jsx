@@ -183,7 +183,7 @@ export const ContentModal = (props) => {
               )}
               {activeContent.kind === 'VIDEO' && (
                 <div className='bbr-video'>
-                  <video controls autoplay loop muted playsInLine><source src={activeContent.upload} type="video/mp4" /></video>
+                  <video controls autoplay loop muted playsInline><source src={activeContent.upload} type="video/mp4" /></video>
                 </div>
               )}
               {activeContent.text && <Typography variant='h6'>{activeContent.text}</Typography>}

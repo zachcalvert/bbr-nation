@@ -18,7 +18,7 @@ export const Content = (props) => {
       )}
       {kind === 'VIDEO' && (
         <div className='bbr-video'>
-          <video controls><source src={content.upload} type="video/mp4" /></video>
+          <video playsInLine controls><source src={content.upload} type="video/mp4" /></video>
         </div>
       )}
       {kind === 'TEXT' && (

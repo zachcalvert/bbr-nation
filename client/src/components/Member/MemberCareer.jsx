@@ -17,10 +17,7 @@ const useStyles = makeStyles((theme) => ({
     height: "auto",
     marginTop: 0,
     position: 'relative'
-  },
-  table: {
-    minWidth: 350,
-  },
+  }
 }));
 
 export const MemberCareer = (props) => {

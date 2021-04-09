@@ -28,7 +28,7 @@ export const Page = () => {
 
   React.useEffect(() => {
     async function fetchPage() {
-      const { data } = await axios.get(`/api/pages/${slug}`, {
+      const { data } = await axios.get(`/api/pages/${slug}/`, {
         headers: {
           Authorization: `JWT ${localStorage.getItem('token')}`
         }

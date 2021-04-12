@@ -129,6 +129,8 @@ REST_FRAMEWORK = {
 
 CORS_ORIGIN_WHITELIST = (
     'http://localhost:3000',
+    'http://bbrnation.com',
+    'http://www.bbrnation.com',
     'https://bbrnation.com',
     'https://www.bbrnation.com'
 )
@@ -162,4 +164,3 @@ else:
     MEDIA_ROOT = os.path.join(BASE_DIR, "media")
     STATIC_URL = '/django_static/'
     STATIC_ROOT = BASE_DIR / 'django_static'
-    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')

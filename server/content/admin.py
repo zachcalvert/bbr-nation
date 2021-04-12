@@ -46,8 +46,6 @@ class ContentAdmin(admin.ModelAdmin):
         'likes',)
 
 
-
-
 class PageAdmin(admin.ModelAdmin):
     list_display = ['name']
 

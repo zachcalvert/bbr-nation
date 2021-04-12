@@ -24,7 +24,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'y6t#17tny_q$f%ts6*o1#&t2t5cx=e4sbks8q%b0&_9j1zaldd'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+if os.environ.get('DJANGO_ENVIRONMENT') == 'local':
+    DEBUG = True
+else:
+    DEBUG = False
 
 ALLOWED_HOSTS = ['localhost', 'bbrnation.com', 'www.bbrnation.com']
 
@@ -150,10 +153,13 @@ USE_L10N = True
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/3.1/howto/static-files/
-
-MEDIA_URL = 'https://bbrnation.com/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, "media")
-STATIC_URL = '/django_static/' 
-STATIC_ROOT = BASE_DIR / 'django_static'
+environment = os.environ.get('DJANGO_ENVIRONMENT')
+if environment == 'local':
+    MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+    MEDIA_URL = '/media/'
+    STATIC_URL = '/static/'
+else:
+    MEDIA_URL = 'https://bbrnation.com/media/'
+    MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+    STATIC_URL = '/django_static/'
+    STATIC_ROOT = BASE_DIR / 'django_static'

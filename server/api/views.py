@@ -95,19 +95,7 @@ class ContentViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.ContentSerializer
     lookup_field = 'name'
     queryset = Content.objects.all()
-
-    def get_queryset(self):
-        queryset = super(ContentViewSet, self).get_queryset()
-
-        sort = self.request.query_params.get('sort', '')
-        print(sort)
-        if sort:
-            order_by_name = sort.split(' ')[0]
-            order_by_sign = sort.split(' ')[1]
-            order_by_sign = '' if order_by_sign == 'asc' else '-'
-            queryset = queryset.order_by(order_by_sign + order_by_name)
-
-        return queryset
+    pagination.PageNumberPagination.page_size = 6
 
     @paginate
     @action(detail=True)
@@ -183,6 +171,7 @@ class PlayerSeasonViewSet(viewsets.ModelViewSet):
     """
     queryset = PlayerSeason.objects.all()
     serializer_class = serializers.PlayerSeasonSerializer
+    pagination.PageNumberPagination.page_size = 50
 
     def get_queryset(self):
         """

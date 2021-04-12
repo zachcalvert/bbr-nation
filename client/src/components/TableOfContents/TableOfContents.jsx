@@ -6,9 +6,9 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
 import './TableOfContents.css';
 
-const PAGES_URL = `/api/pages/`
-const MEMBERS_URL = `/api/members/`
-const SEASONS_URL = `/api/seasons/`
+const PAGES_URL = `${process.env.REACT_APP_DJANGO_URL}api/pages/`
+const MEMBERS_URL = `${process.env.REACT_APP_DJANGO_URL}api/members/`
+const SEASONS_URL = `${process.env.REACT_APP_DJANGO_URL}api/seasons/`
 
 const useStyles = makeStyles((theme) => ({
   memberName: {
@@ -81,7 +81,7 @@ export const TableOfContents = () => {
         </AccordionSummary>
         <AccordionDetails className='accordion-details'>
           <List>
-            {members?.filter(member => member.name != 'bbot').map((member, index) => (
+            {members?.filter(member => member.name !== 'bbot').map((member, index) => (
               <MenuItem 
                 key={member.name} 
                 component={Link}

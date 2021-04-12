@@ -12,7 +12,7 @@ import { Divider, Link, Typography } from '@material-ui/core';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 
-const PLAYERS_URL = `/api/playerseasons/`
+const PLAYERS_URL = `${process.env.REACT_APP_DJANGO_URL}api/playerseasons/`
 
 const useStyles = makeStyles((theme) => ({
   paper: {

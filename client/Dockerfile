@@ -6,10 +6,8 @@ WORKDIR /code
 
 # add `/app/node_modules/.bin` to $PATH
 ENV PATH /code/node_modules/.bin:$PATH
-ARG REACT_APP_API_URL
-ENV REACT_APP_API_URL http://localhost:8000/api
-ARG REACT_APP_ADMIN_URL
-ENV REACT_APP_ADMIN_URL http://localhost:8000/admin/
+ARG REACT_APP_DJANGO_URL
+ENV REACT_APP_DJANGO_URL http://localhost:8000/
 # install app dependencies
 COPY package.json ./
 COPY package-lock.json ./

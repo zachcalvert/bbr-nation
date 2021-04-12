@@ -57,8 +57,8 @@ function a11yProps(index) {
 export const Member = () => {
   const classes = useStyles();
   const { name } = useParams();
-  const DETAIL_URL = `/api/members/${name}/`
-  const MEMBER_CONTENT_URL = `/api/content/${name}/member/`
+  const DETAIL_URL = `${process.env.REACT_APP_DJANGO_URL}api/members/${name}/`
+  const MEMBER_CONTENT_URL = `${process.env.REACT_APP_DJANGO_URL}api/content/${name}/member/`
   const [member, setMember] = useState({});
   const [value, setValue] = React.useState(0);
 

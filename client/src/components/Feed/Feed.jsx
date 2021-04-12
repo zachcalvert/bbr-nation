@@ -8,7 +8,7 @@ import { Content } from '../Content/Content';
 import { ContentModal } from '../Content/ContentModal';
 import './Feed.css'
 
-const CONTENT_URL = `/api/content`
+const CONTENT_URL = `${process.env.REACT_APP_DJANGO_URL}api/content`
 
 const useStyles = makeStyles((theme) => ({
   modal: {

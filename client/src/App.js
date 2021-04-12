@@ -96,7 +96,7 @@ export const App = (props) => {
 
   const handleLogin = (e) => {
     e.preventDefault();
-    fetch(`/token-auth/`, {
+    fetch(`${process.env.REACT_APP_DJANGO_URL}token-auth/`, {
       method: 'POST',
       headers: {
           'Content-Type': 'application/json'
@@ -122,7 +122,7 @@ export const App = (props) => {
 
   React.useEffect(() => {
     if (localStorage.getItem('token')) {
-      fetch(`/current_user/`, {
+      fetch(`${process.env.REACT_APP_DJANGO_URL}current_user/`, {
         headers: {
           Authorization: `JWT ${localStorage.getItem('token')}`
         }

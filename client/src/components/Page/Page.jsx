@@ -5,9 +5,6 @@ import { Grid, makeStyles, Typography } from '@material-ui/core';
 
 import { Feed } from '../Feed/Feed';
 
-const API_URL = `${process.env.REACT_APP_API_URL}`
-let PAGE_URL;
-
 const useStyles = makeStyles((theme) => ({
   leftAlign: {
     padding: '20px',
@@ -24,7 +21,7 @@ export const Page = () => {
     slug = 'home'
   } 
 
-  PAGE_URL = `/api/content/${slug}/page`
+  const PAGE_URL = `${process.env.REACT_APP_DJANGO_URL}api/content/${slug}/page`
 
   React.useEffect(() => {
     async function fetchPage() {

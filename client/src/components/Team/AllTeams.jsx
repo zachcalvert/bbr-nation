@@ -26,7 +26,7 @@ const useStyles = makeStyles((theme) => ({
 
 export const AllTeams = () => {
   const classes = useStyles();
-  const DETAIL_URL = `/api/teams/all/`
+  const DETAIL_URL = `${process.env.REACT_APP_DJANGO_URL}api/teams/all/`
   const [teams, setTeams] = useState([]);
 
   useEffect(() => {

@@ -19,7 +19,6 @@ export const GroupMeMessage = (props) => {
   const [fromGroupMe, setFromGroupMe] = React.useState(false);
 
   React.useEffect(() => {
-    console.log(message)
 
     if (message.attachments && message.attachments.length > 0) {
 

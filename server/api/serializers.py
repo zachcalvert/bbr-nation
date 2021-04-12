@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User, Group
+from django.core.paginator import Paginator
 from rest_framework import serializers
 
 from content.models import Content, Page, Member
@@ -21,6 +22,7 @@ class ContentSerializer(serializers.ModelSerializer):
 
 class PageSerializer(serializers.HyperlinkedModelSerializer):
     # contents = ContentSerializer(read_only=True, many=True)
+    # content_set = serializers.SerializerMethodField('paginated_contents')
 
     class Meta:
         model = Page
@@ -28,6 +30,16 @@ class PageSerializer(serializers.HyperlinkedModelSerializer):
         extra_kwargs = {
             'url': {'lookup_field': 'slug'}
         }
+
+    # def paginated_contents(self, obj):
+    #     page_size = self.context['request'].query_params.get('size') or 10
+    #     paginator = Paginator(obj.contents.all(), page_size)
+    #     page = self.context['request'].query_params.get('page') or 1
+
+    #     contents = paginator.page(page)
+    #     serializer = ContentSerializer(contents, many=True)
+
+    #     return serializer.data
 
 
 class UserSerializer(serializers.ModelSerializer):

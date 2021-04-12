@@ -21,7 +21,7 @@ export const Page = () => {
     slug = 'home'
   } 
 
-  const PAGE_URL = `${process.env.REACT_APP_DJANGO_URL}api/content/${slug}/page`
+  const PAGE_URL = `${process.env.REACT_APP_DJANGO_URL}api/content/${slug}/page_contents`
 
   React.useEffect(() => {
     async function fetchPage() {

@@ -95,11 +95,10 @@ class ContentViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.ContentSerializer
     lookup_field = 'name'
     queryset = Content.objects.all()
-    pagination.PageNumberPagination.page_size = 6
 
     @paginate
     @action(detail=True)
-    def page(self, request, name, **kwargs):
+    def page_contents(self, request, name, **kwargs):
         """
         Return content for a given member, used by the member page
         """

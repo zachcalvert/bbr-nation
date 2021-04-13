@@ -1,4 +1,5 @@
 from django.contrib import admin
+from adminsortable2.admin import SortableInlineAdminMixin
 
 from content.models import Content, Page, Member, Nickname
 
@@ -13,7 +14,6 @@ class MemberAdmin(admin.ModelAdmin):
         'avatar_url',
     )
     readonly_fields = ('groupme_id',)
-
 
 
 class PageInline(admin.TabularInline):
@@ -46,8 +46,15 @@ class ContentAdmin(admin.ModelAdmin):
         'likes',)
 
 
+class ContentTabularInline(SortableInlineAdminMixin, admin.TabularInline):
+    model = Page.contents.through
+    extra = 0
+
+
 class PageAdmin(admin.ModelAdmin):
     list_display = ['name']
+    fields = ['name', 'slug']
+    inlines = (ContentTabularInline,)
 
 
 admin.site.register(Member, MemberAdmin)

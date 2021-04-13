@@ -89,10 +89,23 @@ class Content(models.Model):
 class Page(models.Model):
     name = models.CharField(max_length=100, null=True, blank=True)
     slug = models.SlugField(null=True, blank=True)
-    contents = models.ManyToManyField(Content, null=True, blank=True, related_name='pages')
+    contents = models.ManyToManyField(Content, null=True, blank=True, related_name='pages', through='PageContents')
 
     class Meta:
         ordering = ['name']
 
     def __str__(self):
         return str(self.name)
+
+
+class PageContents(models.Model):
+    """This is a junction table model that also stores the button order for a panel."""
+    page = models.ForeignKey(Page, null=True, on_delete=models.SET_NULL)
+    content = models.ForeignKey(Content, null=True, on_delete=models.SET_NULL)
+    content_order = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ('content_order',)
+
+    def __str__(self):
+        return self.content.display_name or self.content.name

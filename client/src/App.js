@@ -4,6 +4,7 @@ import { BrowserRouter, Route } from 'react-router-dom';
 import { createMuiTheme, CssBaseline, Grid, Hidden, Link, ThemeProvider, makeStyles } from '@material-ui/core';
 import { AppBar, Button, Drawer, Fab, IconButton, TextField, Toolbar, Typography } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
+import HomeRoundedIcon from '@material-ui/icons/HomeRounded';
 
 import { Page } from "./components/Page/Page";
 import { TableOfContents } from './components/TableOfContents/TableOfContents';
@@ -154,7 +155,9 @@ export const App = (props) => {
           >
             <MenuIcon />
           </IconButton>
-          <Link color="inherit" href="/"><Typography variant='h5'>BBR Nation</Typography></Link>
+          <Link color="inherit" href="/">
+            <HomeRoundedIcon />
+          </Link>
           { loggedIn && <Button className={classes.logout} onClick={handleLogout} color="inherit">Logout</Button>}
           
         </Toolbar>

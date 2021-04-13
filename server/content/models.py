@@ -106,6 +106,7 @@ class PageContents(models.Model):
 
     class Meta:
         ordering = ('content_order',)
+        verbose_name_plural = 'Page Contents'
 
     def __str__(self):
         return self.content.display_name or self.content.name

@@ -14,7 +14,7 @@ const useStyles = makeStyles((theme) => ({
     position: 'relative'
   },
   table: {
-    minWidth: 450,
+    minWidth: 350,
   },
   smallText: {
     fontSize: '14px',

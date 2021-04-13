@@ -22,7 +22,7 @@ const useStyles = makeStyles((theme) => ({
     border: '2px solid #000',
     boxShadow: theme.shadows[5],
     padding: theme.spacing(2),
-    minWidth: '400px',
+    minWidth: '350px',
     borderRadius: '4px'
   },
   paper: {

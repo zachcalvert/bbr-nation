@@ -98,6 +98,14 @@ class ContentViewSet(viewsets.ModelViewSet):
 
     @paginate
     @action(detail=True)
+    def all(self, request, name, **kwargs):
+        """
+        Return content for a given member, used by the member page
+        """
+        return Content.objects.all().order_by('-likes')
+
+    @paginate
+    @action(detail=True)
     def member(self, request, name, **kwargs):
         """
         Return content for a given member, used by the member page
@@ -110,7 +118,7 @@ class ContentViewSet(viewsets.ModelViewSet):
         """
         Return content for a given member, used by the member page
         """
-        return Content.objects.filter(pages__slug=name)
+        return PageContent.objects.filter(page__slug=name)
 
     @action(detail=True)
     def conversation(self, request, name, **kwargs):

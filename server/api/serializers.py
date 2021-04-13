@@ -21,25 +21,14 @@ class ContentSerializer(serializers.ModelSerializer):
 
 
 class PageSerializer(serializers.HyperlinkedModelSerializer):
-    # contents = ContentSerializer(read_only=True, many=True)
-    # content_set = serializers.SerializerMethodField('paginated_contents')
+    contents = ContentSerializer(many=True, read_only=True)
 
     class Meta:
         model = Page
-        fields = ['id', 'name', 'slug']
+        fields = ['id', 'name', 'slug', 'contents']
         extra_kwargs = {
             'url': {'lookup_field': 'slug'}
         }
-
-    # def paginated_contents(self, obj):
-    #     page_size = self.context['request'].query_params.get('size') or 10
-    #     paginator = Paginator(obj.contents.all(), page_size)
-    #     page = self.context['request'].query_params.get('page') or 1
-
-    #     contents = paginator.page(page)
-    #     serializer = ContentSerializer(contents, many=True)
-
-    #     return serializer.data
 
 
 class UserSerializer(serializers.ModelSerializer):

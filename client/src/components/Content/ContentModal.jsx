@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { Accordion, AccordionDetails, AccordionSummary, Avatar, Backdrop, Dialog, Divider, Grid, Link, makeStyles, Slide, Snackbar, Typography } from '@material-ui/core';
 import PropTypes from 'prop-types';
 import axios from "axios"
+import EditRoundedIcon from '@material-ui/icons/EditRounded';
 import ExpandLessRoundedIcon from '@material-ui/icons/ExpandLessRounded';
 import ExpandMoreRoundedIcon from '@material-ui/icons/ExpandMoreRounded';
 import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
@@ -153,9 +154,11 @@ export const ContentModal = (props) => {
 
           <Grid container>
             <Grid item xs={12}>
-              <div class='copy-link'>
+              <div className='copy-link'>
                 <input ref={clipboard.target} value={window.location.href} readOnly hidden />
-                <Link href={`${ADMIN_URL}content/content/${activeContent.id}/change`} target="_blank" style={{cursor: 'pointer'}}>Admin</Link>
+                <Link color='inherit' href={`${ADMIN_URL}content/content/${activeContent.id}/change`} target="_blank" style={{cursor: 'pointer'}}>
+                  <EditRoundedIcon />
+                </Link>
 
                 <ShareIcon onClick={handleShareClick} style={{cursor: 'pointer'}} />
                 <Snackbar

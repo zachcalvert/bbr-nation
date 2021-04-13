@@ -98,14 +98,6 @@ class ContentViewSet(viewsets.ModelViewSet):
 
     @paginate
     @action(detail=True)
-    def page_contents(self, request, name, **kwargs):
-        """
-        Return content for a given member, used by the member page
-        """
-        return Content.objects.filter(pages__slug=name)
-
-    @paginate
-    @action(detail=True)
     def member(self, request, name, **kwargs):
         """
         Return content for a given member, used by the member page

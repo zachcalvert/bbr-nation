@@ -21,11 +21,11 @@ export const Page = () => {
     slug = 'home'
   } 
 
-  const PAGE_URL = `${process.env.REACT_APP_DJANGO_URL}api/pages/${slug}/`
+  const PAGE_URL = `${process.env.REACT_APP_DJANGO_URL}api/content/${slug}/page_contents`
 
   React.useEffect(() => {
     async function fetchPage() {
-      const { data } = await axios.get(PAGE_URL, {
+      const { data } = await axios.get(`${process.env.REACT_APP_DJANGO_URL}api/pages/${slug}/`, {
         headers: {
           Authorization: `JWT ${localStorage.getItem('token')}`
         }

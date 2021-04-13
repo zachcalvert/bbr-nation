@@ -71,13 +71,9 @@ export const Feed = (props) => {
     
     if (!append) {
       setContent([]);
-      data.contents ? 
-        setContent(data.contents)
-        : setContent(data.results)
+      setContent(data.results)
     } else {
-      data.contents ?
-        setContent([...content, ...data.contents])
-        : setContent([...content, ...data.results]);
+      setContent([...content, ...data.results]);
     }
     setIsBottom(false);
     

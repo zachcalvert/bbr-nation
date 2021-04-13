@@ -104,6 +104,14 @@ class ContentViewSet(viewsets.ModelViewSet):
         """
         return Content.objects.filter(creator__name=name).order_by('-likes')
 
+    @paginate
+    @action(detail=True)
+    def page_contents(self, request, name, **kwargs):
+        """
+        Return content for a given member, used by the member page
+        """
+        return Content.objects.filter(pages__slug=name)
+
     @action(detail=True)
     def conversation(self, request, name, **kwargs):
         """

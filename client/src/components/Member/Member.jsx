@@ -95,22 +95,22 @@ export const Member = () => {
           <Grid item>
             <Avatar className={classes.large} alt={name} src={member.avatar_url} />
           </Grid>
+          <Grid item>
+            
+          </Grid>
           <Grid className={classes.leftAlign} item>
             <Typography variant='h3'>{member.name}</Typography>
-            {member.champYears ? member.champYears.map((year) => (
+            {member.champ_years && member.champ_years.map((year) => (
               <>
-                <Typography variant='h6'><span role='img'>🏆</span>  {year} champion</Typography>
+                <Typography variant='h6'><span role='img'>🏆</span> {year}</Typography>
               </>
-            )) : (
-              <Typography variant='h6'>Best finish: {member.best_finish}</Typography>
-            )}
-            {member.piercedYears ? member.piercedYears.map((year) => (
+            ))}
+            
+            {member.pierced_years && member.pierced_years.map((year) => (
               <>
-                <Typography variant='h6'><span role='img'>💍</span> Pierced in {year}</Typography>
+                <Typography variant='h6'><span role='img'>💍</span> {year}</Typography>
               </>
-            )) : (
-              <Typography variant='h6'>Worst finish: {member.worst_finish}</Typography>
-            )}
+            ))}
           </Grid>
           <Grid className={classes.leftAlign} item>
             
@@ -123,7 +123,8 @@ export const Member = () => {
         <Tab label="Content" {...a11yProps(1)} />
       </Tabs>
       <TabPanel value={value} index={0}>
-        {member.teams && <MemberCareer teams={member.teams} />}
+        {member.name !== 'bbot' && member.teams && <MemberCareer teams={member.teams} />}
+        {member.name === 'bbot' && <Typography variant='h6'>Bbot has no fantasy statistics</Typography>}
       </TabPanel>
       <TabPanel value={value} index={1}>
         <Feed url={MEMBER_CONTENT_URL} />

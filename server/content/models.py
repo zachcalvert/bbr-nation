@@ -48,6 +48,10 @@ class Member(models.Model):
             if team.final_standing > worst:
                 worst = team.final_standing
                 year = team.season.year
+
+        if year == None:
+            return None
+
         return f'{FINISH_PLACE_MAP[worst]} in {year}'
 
 

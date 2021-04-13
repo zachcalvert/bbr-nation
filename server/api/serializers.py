@@ -66,10 +66,16 @@ class MemberDetailsSerializer(serializers.HyperlinkedModelSerializer):
         return obj.get_nicks()
 
     def get_best_finish(self, obj):
-        return obj.get_best_finish()
+        try:
+            return obj.get_best_finish()
+        except KeyError:
+            return []
 
     def get_worst_finish(self, obj):
-        return obj.get_worst_finish()
+        try:
+            return obj.get_worst_finish()
+        except KeyError:
+            return []
     
     def get_champ_years(self, obj):
         return [s.year for s in Season.objects.filter(winner=obj)]

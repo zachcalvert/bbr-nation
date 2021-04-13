@@ -118,7 +118,7 @@ class ContentViewSet(viewsets.ModelViewSet):
         """
         Return content for a given member, used by the member page
         """
-        return PageContent.objects.filter(page__slug=name)
+        return Content.objects.filter(pages__slug=name).order_by('pagecontents')
 
     @action(detail=True)
     def conversation(self, request, name, **kwargs):

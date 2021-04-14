@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from "axios";
-import { Avatar, Box, Divider, Grid, makeStyles, Paper, Tab, Tabs, Typography } from '@material-ui/core';
+import { Avatar, Box, Divider, makeStyles, Tab, Tabs, Typography } from '@material-ui/core';
+import Card from '@material-ui/core/Card';
+import CardActions from '@material-ui/core/CardActions';
+import CardContent from '@material-ui/core/CardContent';
 
 import { Feed } from '../Feed/Feed';
 import { MemberCareer } from '../Member/MemberCareer';
@@ -9,22 +12,32 @@ import './Member.css';
 
 const useStyles = makeStyles((theme) => ({
   leftAlign: {
-    padding: '20px',
-    margin: 'auto auto auto 20px',
-    textAlign: 'left'
+    padding: '10px',
+    margin: 'auto auto auto 10px',
+    
   },
   large: {
-    width: theme.spacing(20),
-    height: theme.spacing(20),
+    width: theme.spacing(16),
+    height: theme.spacing(16),
   },
-  paper: {
-    padding: theme.spacing(3),
-    textAlign: 'center',
-    color: theme.palette.text.secondary,
-    height: "auto",
-    marginTop: 0,
-    position: 'relative'
+  card: {
+    padding: '0',
   },
+  title: {
+    fontSize: 14,
+  },
+  actions: {
+    paddingLeft: '20px'
+  },
+  cardContent: {
+    display: 'flex',
+    margin: 'auto'
+  },
+  playerBio: {
+    margin: 'auto auto auto 20px',
+    display: 'block',
+
+  }
 }));
 
 function TabPanel(props) {
@@ -98,41 +111,45 @@ export const Member = () => {
 
   return (
     <>
-      <Paper className={classes.paper} variant="outlined">
-        <Grid container spacing={1}>
-          <Grid item>
-            <Avatar className={classes.large} alt={name} src={member.avatar_url} />
-          </Grid>
-          <Grid item>
+      <Card className={classes.card} variant="outlined">
+        <CardContent className={classes.cardContent}>
+          {member.avatar_url && <Avatar className={classes.large} src={member.avatar_url} />}
             
-          </Grid>
-          <Grid className={classes.leftAlign} item>
-            <Typography variant='h3'>{member.name}</Typography>
-            <Typography variant='subtitle1'>aka {nick}</Typography>
+            <div className={classes.playerBio}>
+              <Typography variant="h5" component="h2">
+                {member.name}
+              </Typography>
+              <Divider />
+              <Typography className={classes.title} color="textSecondary" gutterBottom>
+                aka {nick}
+              </Typography>
+              
+              {lastYear === '2020' ? (
+                <Typography color="textSecondary" className={classes.pos} >Since {firstYear}</Typography>
+              ) : (
+                <Typography color="textSecondary" className={classes.pos} >Career: {firstYear} - {lastYear}</Typography>
+              )}
 
-            <Divider />
-            {lastYear === '2020' ? (
-              <Typography variant='h6'>Sweatin' since {firstYear}</Typography>
-            ) : (
-              <Typography variant='h6'>Career: {firstYear} - {lastYear}</Typography>
-            )}
-            {member.champ_years && member.champ_years.map((year) => (
-              <>
-                <Typography variant='h6'><span role='img'>🏆</span> {year}</Typography>
-              </>
-            ))}
-            
-            {member.pierced_years && member.pierced_years.map((year) => (
-              <>
-                <Typography variant='h6'><span role='img'>💍</span> {year}</Typography>
-              </>
-            ))}
-          </Grid>
-          <Grid className={classes.leftAlign} item>
-            
-          </Grid>
-        </Grid>
-      </Paper>
+            </div>
+          
+          
+        </CardContent>
+
+        
+        <CardActions className={classes.actions}>
+          {member.champ_years && member.champ_years.map((year) => (
+            <>
+              <Typography style={{ padding: '0 10px' }} variant='h6'><span role='img'>🏆</span> {year}</Typography>
+            </>
+          ))}
+          {member.pierced_years && member.pierced_years.map((year) => (
+            <>
+              <Typography style={{ padding: '0 10px' }} variant='h6'><span role='img'>💍</span> {year}</Typography>
+            </>
+          ))}
+        </CardActions>
+  
+      </Card>
 
       <Tabs value={value} onChange={handleChange} centered aria-label="member tabs">
         <Tab label="Career" {...a11yProps(0)} />

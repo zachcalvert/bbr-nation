@@ -61,6 +61,9 @@ export const Member = () => {
   const MEMBER_CONTENT_URL = `${process.env.REACT_APP_DJANGO_URL}api/content/${name}/member/`
   const [member, setMember] = useState({});
   const [value, setValue] = React.useState(0);
+  const [firstYear, setFirstYear] = React.useState('2015')
+  const [lastYear, setLastYear] = React.useState('2020')
+
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -77,6 +80,7 @@ export const Member = () => {
       window.scrollTo(0, 0);
     }
 
+    setMember({});
     async function fetchUserDetails() {
       const { data } = await axios.get(DETAIL_URL, {
         headers: {
@@ -84,6 +88,8 @@ export const Member = () => {
         }
       });
       setMember(data);
+      setFirstYear(data.teams.slice(-1)[0].year)
+      setLastYear(data.teams[0].year)
     }
     fetchUserDetails();
   }, [DETAIL_URL, name]);
@@ -100,6 +106,12 @@ export const Member = () => {
           </Grid>
           <Grid className={classes.leftAlign} item>
             <Typography variant='h3'>{member.name}</Typography>
+            <Divider />
+            {lastYear === '2020' ? (
+              <Typography variant='h6'>Sweatin' since {firstYear}</Typography>
+            ) : (
+              <Typography variant='h6'>Career: {firstYear} - {lastYear}</Typography>
+            )}
             {member.champ_years && member.champ_years.map((year) => (
               <>
                 <Typography variant='h6'><span role='img'>🏆</span> {year}</Typography>

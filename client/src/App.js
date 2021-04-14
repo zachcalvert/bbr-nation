@@ -156,7 +156,7 @@ export const App = (props) => {
             <MenuIcon />
           </IconButton>
           <Link color="inherit" href="/">
-            <HomeRoundedIcon />
+            <HomeRoundedIcon fontSize='large' />
           </Link>
           { loggedIn && <Button className={classes.logout} onClick={handleLogout} color="inherit">Logout</Button>}
           

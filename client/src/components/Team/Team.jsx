@@ -22,12 +22,15 @@ const useStyles = makeStyles((theme) => ({
   large: {
     width: theme.spacing(20),
     height: theme.spacing(20),
+    margin: 'auto 0',
+    padding: '20px'
   },
   teamHeader: {
     display: 'flex',
   },
   teamInfo: {
-    margin: 'auto',
+    padding: '20px',
+    margin: 'auto auto auto 20px',
     textAlign: 'left'
   }
 }));

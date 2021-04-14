@@ -36,7 +36,6 @@ const useStyles = makeStyles((theme) => ({
   playerBio: {
     margin: 'auto auto auto 20px',
     display: 'block',
-
   }
 }));
 

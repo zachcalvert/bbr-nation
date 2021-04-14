@@ -7,7 +7,10 @@ import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import { Avatar, Divider, Grid, makeStyles, Paper, Typography } from '@material-ui/core';
+import { Avatar, Divider, Grid, Link, makeStyles, Paper, Typography } from '@material-ui/core';
+import Card from '@material-ui/core/Card';
+import CardActions from '@material-ui/core/CardActions';
+import CardContent from '@material-ui/core/CardContent';
 
 const useStyles = makeStyles((theme) => ({
   leftAlign: {
@@ -15,8 +18,8 @@ const useStyles = makeStyles((theme) => ({
     margin: 'auto auto auto 10px'
   },
   large: {
-    width: theme.spacing(20),
-    height: theme.spacing(20),
+    width: theme.spacing(14),
+    height: theme.spacing(14),
   },
   paper: {
     padding: theme.spacing(3),
@@ -26,13 +29,30 @@ const useStyles = makeStyles((theme) => ({
     marginTop: 0,
     position: 'relative'
   },
+  card: {
+    padding: '0',
+    marginBottom: '10px'
+  },
+  title: {
+    fontSize: 14,
+  },
+  actions: {
+    paddingLeft: '20px'
+  },
+  cardContent: {
+    display: 'flex',
+    margin: 'auto'
+  },
+  playerBio: {
+    margin: 'auto auto auto 20px',
+    display: 'block',
+  }
 }));
 
 export const Player = () => {
   const classes = useStyles();
-
   const { id } = useParams();
-  const DETAIL_URL = `/api/players/${id}/`
+  const DETAIL_URL = `${process.env.REACT_APP_DJANGO_URL}api/players/${id}/`;
   const [player, setPlayer] = useState({})
 
   useEffect(() => {
@@ -59,36 +79,54 @@ export const Player = () => {
 
   return (
     <>
-      <Paper className={classes.paper}>
-      <Grid container spacing={1}>
-        <Grid item>
-          <Avatar className={classes.large} alt={player.name} src={player.image_url} />
-        </Grid>
-        <Grid className={classes.leftAlign} item>
-          <Typography variant='h3'>{player.name}</Typography>
-        </Grid>
-      </Grid>
-      </Paper>
-      <Divider color='transparent' />
+      <Card className={classes.card} variant="outlined">
+        <CardContent className={classes.cardContent}>
+          <Avatar className={classes.large} src={player.image_url} />
+
+          <div className={classes.playerBio}>
+            <Typography variant="h5" component="h2">
+              {player.name}
+            </Typography>
+            <Divider />
+            <Typography variant="p" color="textSecondary">{player.position}</Typography>
+          </div>
+        </CardContent>
+
+        <CardActions className={classes.actions}>
+          {player.champ_years && player.champ_years.map((year) => (
+            <>
+              <Typography style={{ padding: '0 10px' }} variant='h6'><span role='img'>🏆</span> {year}</Typography>
+            </>
+          ))}
+          {player.pierced_years && player.pierced_years.map((year) => (
+            <>
+              <Typography style={{ padding: '0 10px' }} variant='h6'><span role='img'>💍</span> {year}</Typography>
+            </>
+          ))}
+        </CardActions>
+  
+      </Card>
       <TableContainer component={Paper}>
         <Table className={classes.table} aria-label="simple table">
           <TableHead>
             <TableRow>
             <TableCell>Season</TableCell>
-            <TableCell align="right">Position Rank</TableCell>
+            <TableCell align="right">PRK</TableCell>
             <TableCell align="right">Total Points</TableCell>
             <TableCell align="right">Team</TableCell>
-            <TableCell align="right">Owner</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {player.seasons?.map((season) => (
             <TableRow key={season.year}>
-              <TableCell component="th" scope="row">{season.year}</TableCell>
+              <TableCell component="th" scope="row">
+                <Link color='inherit' href={`/season/${season.year}`}>{season.year}</Link>
+              </TableCell>
               <TableCell align="right">{season.position_rank}</TableCell>
               <TableCell align="right">{season.points_scored}</TableCell>
-              <TableCell align="right">{season.team_name}</TableCell>
-              <TableCell align="right">{season.owner}</TableCell>
+              <TableCell align="right">
+                <Link color='inherit' href={`/season/${season.year}/team/${season.team_id}`}>{season.team_name}</Link>
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>

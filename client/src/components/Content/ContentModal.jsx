@@ -5,11 +5,11 @@ import axios from "axios"
 import EditRoundedIcon from '@material-ui/icons/EditRounded';
 import ExpandLessRoundedIcon from '@material-ui/icons/ExpandLessRounded';
 import ExpandMoreRoundedIcon from '@material-ui/icons/ExpandMoreRounded';
-import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
 import ShareIcon from '@material-ui/icons/Share';
 import { useSpring, animated } from 'react-spring/web.cjs';
 import { useClipboard } from 'use-clipboard-copy';
 
+import { Content } from './Content'
 import { GroupMeMessage } from '../Content/GroupMeMessage'
 import { FormattedTime } from '../Common'
 import './ContentModal.css'
@@ -25,13 +25,16 @@ const useStyles = makeStyles((theme) => ({
       overflow:'scroll',
     },
     modalPaper: {
-      backgroundColor: theme.palette.background.paper,
+      backgroundColor: '#303030',
       boxShadow: theme.shadows[5],
       paddingBottom: theme.spacing(1),
       paddingLeft: theme.spacing(3),
       paddingRight: theme.spacing(3),
       paddingTop: theme.spacing(1),
       borderRadius: '4px'
+    },
+    accordion: {
+      background: '#303030'
     },
     date: {
       textAlign: 'right'
@@ -138,7 +141,7 @@ export const ContentModal = (props) => {
       <div className={classes.modalPaper}>
         {activeContent && (
           <>
-          <Accordion>
+          <Accordion className={classes.accordion}>
             <AccordionSummary
               expandIcon={<ExpandLessRoundedIcon fontSize='large' />}
               aria-controls="panel2a-content"
@@ -160,7 +163,7 @@ export const ContentModal = (props) => {
                   <EditRoundedIcon />
                 </Link>
 
-                <ShareIcon onClick={handleShareClick} style={{cursor: 'pointer'}} />
+                <ShareIcon onClick={handleShareClick} style={{marginLeft: '10px', cursor: 'pointer'}} />
                 <Snackbar
                   anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
                   open={snackBarOpen}
@@ -170,36 +173,16 @@ export const ContentModal = (props) => {
                   key='link-copied-snackbar'
                 />
               </div>
-              <div className='creator'>
-                <Link href={`/u/${activeContent.creator_name}`}><Avatar alt={activeContent.name} src={avatarUrl} /></Link>
-                <Typography className={classes.creatorName} variant='subtitle1'>{activeContent.creator_nickname}</Typography>
-              </div>
-              <div className='likes'>
-                <Typography style={{ color: '#FFAEB9' }} variant='h5'>{activeContent.likes}</Typography>
-                <FavoriteBorderIcon style={{ color: '#FFAEB9', marginTop: '4px' }} />
-              </div>
-              <Divider style={{ backgroundColor: 'transparent', clear: "both" }} />
-              {activeContent.kind === 'IMAGE' && (
-                <div className='bbr-modal-image'>
-                  <img src={activeContent.upload} />
-                </div>
-              )}
-              {activeContent.kind === 'VIDEO' && (
-                <div className='bbr-video'>
-                  <video controls autoplay loop muted playsInline><source src={activeContent.upload} type="video/mp4" /></video>
-                </div>
-              )}
-              {activeContent.text && <Typography variant='h6'>{activeContent.text}</Typography>}
+              <Content key={activeContent.id} content={activeContent} showLikes={true} />
             </Grid>
           </Grid>
-          <Typography className={classes.date} variant='subtitle2'>{FormattedTime(activeContent.create_date)}</Typography>
 
-          <Accordion>
+          <Accordion className={classes.accordion}>
             <AccordionSummary
               expandIcon={<ExpandMoreRoundedIcon fontSize='large' />}
               aria-controls="panel2a-content"
               id="panel2a-header"
-              className="modalAccordion">>
+              className="modalAccordion">
             </AccordionSummary>
             <AccordionDetails>
               {ensuingConversation && ensuingConversation.map((message, index) => (

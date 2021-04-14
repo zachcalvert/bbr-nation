@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import axios from "axios"
 import { Button, Divider, makeStyles, Paper } from '@material-ui/core';
-import ZoomOutMapIcon from '@material-ui/icons/ZoomOutMap';
+import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 
 import { Content } from '../Content/Content';
 import { ContentModal } from '../Content/ContentModal';
@@ -28,7 +28,8 @@ const useStyles = makeStyles((theme) => ({
   content: {
     padding: theme.spacing(2),
     height: "auto",
-    position: 'relative'
+    position: 'relative',
+    maxWidth: `90vw`
   },
   date: {
     textAlign: 'right'
@@ -39,8 +40,8 @@ const useStyles = makeStyles((theme) => ({
   },
   seeMore: {
     position: 'absolute',
-    bottom: '20px',
-    right: '20px'
+    bottom: '15px',
+    right: '5px'
   }
 }));
 
@@ -161,7 +162,7 @@ export const Feed = (props) => {
       {content.map((c) => (
         <div className={classes.content} key={c.name}>
           <Button size="small" className={classes.seeMore} onClick={(e) => handleClick(c, e)}>
-            See More
+            <MoreHorizIcon />
           </Button>
           <Content key={c.id} content={c} />
         </div>

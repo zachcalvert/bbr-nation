@@ -1,10 +1,11 @@
 import React from 'react';
-import { Typography } from '@material-ui/core';
+import { Avatar, Divider, Typography } from '@material-ui/core';
 
 import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
+import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
 
 import { FormattedDate } from '../Common'
 import './Content.css';
@@ -19,14 +20,19 @@ const useStyles = makeStyles({
     fontSize: 24,
   },
   pos: {
-    marginBottom: 12,
+    margin: 'auto 10px',
   },
+  likes: {
+    display: 'flex',
+    marginLeft: 'auto!important'
+  }
 });
 
 export const Content = (props) => {
   const classes = useStyles();
   const { content } = props;
   const { kind } = content;
+  const { showLikes } = props;
 
   return (
 
@@ -58,12 +64,23 @@ export const Content = (props) => {
       
     </CardContent>
     <CardActions>
-    <Typography className={classes.pos} color="textSecondary">
-        {content.creator_nickname}, {FormattedDate(content.create_date)}
-      </Typography>
+      <div style={{'display': 'flex'}}>
+        {content.avatar_url && <Avatar src={content.avatar_url} />}
+        <Typography className={classes.pos} color="textSecondary">
+          {content.creator_nickname}, {FormattedDate(content.create_date)}
+        </Typography>
+      </div>
+      
       <Typography variant="body2" component="p">
         {content.description}
       </Typography>
+      
+      {showLikes && 
+        <div className={classes.likes}>
+          <Typography style={{ color: '#FFAEB9' }} variant='h5'>{content.likes}</Typography>
+          <FavoriteBorderIcon style={{ color: '#FFAEB9', marginTop: '4px' }} />
+        </div>
+      }
     </CardActions>
     </Card>
   )

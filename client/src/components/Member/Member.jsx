@@ -60,6 +60,7 @@ export const Member = () => {
   const DETAIL_URL = `${process.env.REACT_APP_DJANGO_URL}api/members/${name}/`
   const MEMBER_CONTENT_URL = `${process.env.REACT_APP_DJANGO_URL}api/content/${name}/member/`
   const [member, setMember] = useState({});
+  const [nick, setNick] = useState(null);
   const [value, setValue] = React.useState(0);
   const [firstYear, setFirstYear] = React.useState('2015')
   const [lastYear, setLastYear] = React.useState('2020')
@@ -88,8 +89,9 @@ export const Member = () => {
         }
       });
       setMember(data);
-      setFirstYear(data.teams.slice(-1)[0].year)
-      setLastYear(data.teams[0].year)
+      setFirstYear(data.teams.slice(-1)[0]?.year)
+      setLastYear(data.teams[0]?.year)
+      setNick(data.nicks[Math.floor(Math.random() * data.nicks.length)])
     }
     fetchUserDetails();
   }, [DETAIL_URL, name]);
@@ -106,6 +108,8 @@ export const Member = () => {
           </Grid>
           <Grid className={classes.leftAlign} item>
             <Typography variant='h3'>{member.name}</Typography>
+            <Typography variant='subtitle1'>aka {nick}</Typography>
+
             <Divider />
             {lastYear === '2020' ? (
               <Typography variant='h6'>Sweatin' since {firstYear}</Typography>

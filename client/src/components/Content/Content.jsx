@@ -41,6 +41,15 @@ export const Content = (props) => {
         <Typography className={classes.title} color="textSecondary" gutterBottom>
           {content.display_name}
         </Typography>
+
+        {content.description && 
+          <>
+          <Typography variant="body2" component="p">
+            {content.description}
+          </Typography>
+          <Divider />
+          </>
+        }
       
         {kind === 'IMAGE' && (
           <div className='bbr-image'>
@@ -70,10 +79,6 @@ export const Content = (props) => {
           {content.creator_nickname}, {FormattedDate(content.create_date)}
         </Typography>
       </div>
-      
-      <Typography variant="body2" component="p">
-        {content.description}
-      </Typography>
       
       {showLikes && 
         <div className={classes.likes}>

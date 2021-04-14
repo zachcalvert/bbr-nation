@@ -113,28 +113,24 @@ export const Member = () => {
       <Card className={classes.card} variant="outlined">
         <CardContent className={classes.cardContent}>
           {member.avatar_url && <Avatar className={classes.large} src={member.avatar_url} />}
-            
-            <div className={classes.playerBio}>
-              <Typography variant="h5" component="h2">
-                {member.name}
-              </Typography>
-              <Divider />
-              <Typography className={classes.title} color="textSecondary" gutterBottom>
-                aka {nick}
-              </Typography>
-              
-              {lastYear === '2020' ? (
-                <Typography color="textSecondary" className={classes.pos} >Since {firstYear}</Typography>
-              ) : (
-                <Typography color="textSecondary" className={classes.pos} >Career: {firstYear} - {lastYear}</Typography>
-              )}
 
-            </div>
-          
-          
+          <div className={classes.playerBio}>
+            <Typography variant="h5" component="h2">
+              {member.name}
+            </Typography>
+            <Divider />
+            <Typography className={classes.title} color="textSecondary" gutterBottom>
+              aka {nick}
+            </Typography>
+            
+            {lastYear === '2020' ? (
+              <Typography color="textSecondary" className={classes.pos} >since {firstYear}</Typography>
+            ) : (
+              <Typography color="textSecondary" className={classes.pos} >career: {firstYear} - {lastYear}</Typography>
+            )}
+          </div>
         </CardContent>
 
-        
         <CardActions className={classes.actions}>
           {member.champ_years && member.champ_years.map((year) => (
             <>
@@ -147,7 +143,6 @@ export const Member = () => {
             </>
           ))}
         </CardActions>
-  
       </Card>
 
       <Tabs value={value} onChange={handleChange} centered aria-label="member tabs">

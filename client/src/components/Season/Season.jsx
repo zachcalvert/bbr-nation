@@ -9,20 +9,35 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
-
+import Card from '@material-ui/core/Card';
+import CardContent from '@material-ui/core/CardContent';
 
 const useStyles = makeStyles((theme) => ({
-  paper: {
-    padding: theme.spacing(2),
-    textAlign: 'center',
-    color: theme.palette.text.secondary,
-    height: "auto",
-    marginTop: 0,
-    position: 'relative'
-  },
   table: {
-    minWidth: 350,
+    minWidth: 300,
   },
+  card: {
+    padding: '0',
+    marginBottom: theme.spacing(2)
+  },
+  title: {
+    fontSize: 14,
+  },
+  actions: {
+    paddingLeft: '20px'
+  },
+  cardContent: {
+    display: 'flex',
+    margin: 'auto'
+  },
+  seasonBio: {
+    margin: 'auto auto auto 20px',
+    display: 'block',
+  },
+  pos: {
+    padding: '5px',
+    fontSize: 16
+  }
 }));
 
 export const Season = () => {
@@ -50,38 +65,45 @@ export const Season = () => {
   
   return (
     <>
-    <Paper className={classes.paper}>
-      <Typography variant='h4'>The {year} BBR Season</Typography>
-      <Typography variant='h6'>Champ: <Link color='inherit' href={`/u/${winner}`}>{winner}</Link></Typography>
-      <Typography variant='h6'>Pierced: <Link color='inherit' href={`/u/${pierced}`}>{pierced}</Link></Typography>
-    </Paper>
-    <Divider />
-    <TableContainer component={Paper}>
-      <Table className={classes.table} aria-label="simple table">
-          <TableHead>
-          <TableRow>
-              <TableCell>Team</TableCell>
-              <TableCell align="right">Manager</TableCell>
-              <TableCell align="right">Wins</TableCell>
-              <TableCell align="right">Losses</TableCell>
-          </TableRow>
-          </TableHead>
-          <TableBody>
-          {teams.map((team) => (
-            <TableRow key={team.name}>
-              <TableCell component="th" scope="row">
-                <Link color='inherit' href={`/season/${year}/team/${team.id}`}>{team.name}</Link>
-              </TableCell>
-              <TableCell align="right">
-                <Link color='inherit' href={`/u/${team.manager}/`}>{team.manager}</Link>
-              </TableCell>
-              <TableCell align="right">{team.wins}</TableCell>
-              <TableCell align="right">{team.losses}</TableCell>
+      <Card className={classes.card} variant="outlined">
+        <CardContent className={classes.cardContent}>
+          <div className={classes.seasonBio}>
+            <Typography variant="h5" component="h2">
+              The {year} BBR Season
+            </Typography>
+            <Divider />
+            <Typography color="textSecondary" className={classes.pos} >🏆 &nbsp;&nbsp;<Link color='inherit' href={`/u/${winner}`}>{winner}</Link></Typography>
+            <Typography color="textSecondary" className={classes.pos} >💍 &nbsp;&nbsp;<Link color='inherit' href={`/u/${pierced}`}>{pierced}</Link></Typography>
+          </div>
+        </CardContent>
+      </Card>
+
+      <TableContainer component={Paper}>
+        <Table className={classes.table} aria-label="simple table">
+            <TableHead>
+            <TableRow>
+                <TableCell>Team</TableCell>
+                <TableCell align="right">Manager</TableCell>
+                <TableCell align="right">W</TableCell>
+                <TableCell align="right">L</TableCell>
             </TableRow>
-          ))}
-          </TableBody>
-      </Table>
-    </TableContainer>
+            </TableHead>
+            <TableBody>
+            {teams.map((team) => (
+              <TableRow key={team.name}>
+                <TableCell component="th" scope="row">
+                  <Link color='inherit' href={`/season/${year}/team/${team.id}`}>{team.name}</Link>
+                </TableCell>
+                <TableCell align="right">
+                  <Link color='inherit' href={`/u/${team.manager}/`}>{team.manager}</Link>
+                </TableCell>
+                <TableCell align="right">{team.wins}</TableCell>
+                <TableCell align="right">{team.losses}</TableCell>
+              </TableRow>
+            ))}
+            </TableBody>
+        </Table>
+      </TableContainer>
     </>
   );
   }

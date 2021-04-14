@@ -100,7 +100,7 @@ export const Team = () => {
             <TableRow>
             <TableCell>Player</TableCell>
             <TableCell align="right">Position</TableCell>
-            <TableCell align="right">Position Rank</TableCell>
+            <TableCell align="right">PRK</TableCell>
             <TableCell align="right">Total Points</TableCell>
           </TableRow>
         </TableHead>

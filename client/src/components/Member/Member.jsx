@@ -98,7 +98,7 @@ export const Member = () => {
 
   return (
     <>
-      <Paper className={classes.paper}>
+      <Paper className={classes.paper} variant="outlined">
         <Grid container spacing={1}>
           <Grid item>
             <Avatar className={classes.large} alt={name} src={member.avatar_url} />
@@ -133,7 +133,7 @@ export const Member = () => {
           </Grid>
         </Grid>
       </Paper>
-      <Divider />
+
       <Tabs value={value} onChange={handleChange} centered aria-label="member tabs">
         <Tab label="Career" {...a11yProps(0)} />
         <Tab label="Content" {...a11yProps(1)} />

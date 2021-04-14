@@ -4,34 +4,28 @@ import axios from "axios"
 import { makeStyles, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@material-ui/core';
 import { Avatar, Divider, Link, Typography } from '@material-ui/core';
 
+import Card from '@material-ui/core/Card';
+import CardActions from '@material-ui/core/CardActions';
+import CardContent from '@material-ui/core/CardContent';
+
 const useStyles = makeStyles((theme) => ({
-  paper: {
-    padding: theme.spacing(2),
-    textAlign: 'center',
-    color: theme.palette.text.secondary,
-    height: "auto",
-    marginTop: 0,
-    position: 'relative'
-  },
   table: {
     minWidth: 350,
   },
-  smallText: {
-    fontSize: '14px',
-  },
   large: {
-    width: theme.spacing(20),
-    height: theme.spacing(20),
-    margin: 'auto 0',
-    padding: '20px'
+    width: theme.spacing(16),
+    height: theme.spacing(16),
+    margin: '10px 0',
   },
-  teamHeader: {
-    display: 'flex',
+  card: {
+    padding: '0 15px 10px',
+    marginBottom: theme.spacing(2) 
   },
-  teamInfo: {
-    padding: '20px',
-    margin: 'auto auto auto 20px',
-    textAlign: 'left'
+  title: {
+    fontSize: 14,
+  },
+  actions: {
+    paddingLeft: '20px'
   }
 }));
 
@@ -69,25 +63,42 @@ export const Team = () => {
   
   return (
     <>
-      <Paper className={classes.paper}>
-        <div className={classes.teamHeader}>
-        <Avatar className={classes.large} src={team.logoUrl} />
-        <div className={classes.teamInfo}>
-          <Typography variant='h4'>{team.name}</Typography>
-          <Typography variant='h6'>Manager: <Link color='inherit' href={`/u/${team.manager}`}>{team.manager}</Link></Typography>
-          <Typography variant='subtitle1'>Record: {team.wins}-{team.losses}</Typography>
-          <Typography variant='subtitle1'>{team.points_for} points scored <span className={classes.smallText}>(#{team.all_time_rank} all time)</span></Typography>
-          <Typography variant='subtitle1'>{team.points_against} points against <span className={classes.smallText}>(#{team.unlucky} all time)</span></Typography>
-        </div>
-        <Divider style={{ backgroundColor: 'transparent', clear: "both" }} />
-        </div>
-      </Paper>
-      <Divider />
-      <TableContainer component={Paper}>
+      <Card className={classes.card} variant="outlined">
+
+        <CardContent>
+          <Typography className={classes.title} color="textSecondary" gutterBottom>
+            {team.year}
+          </Typography>
+          <Typography variant="h5" component="h2">
+            {team.name}
+          </Typography>
+          {team.logo_url && <Avatar className={classes.large} src={team.logo_url} />}
+          
+          <Typography className={classes.pos} >
+            <Typography variant='subtitle1'>Manager: <Link color='inherit' href={`/u/${team.manager}`}>{team.manager}</Link></Typography>
+          </Typography>
+          
+          <Typography variant="body2" component="p" color="textSecondary">
+            Record: {team.wins}-{team.losses}<br />
+            {team.points_for} points scored <span className={classes.smallText}>(#{team.all_time_rank} all time)</span><br />
+            {team.points_against} points against <span className={classes.smallText}>(#{team.unlucky} all time)</span>
+          </Typography>
+
+        </CardContent>
+
+        {(team.champ || team.pierced) &&
+          <CardActions className={classes.actions}>
+            {team.champ && <Typography>🏆 &nbsp;League Champ</Typography>}
+            {team.pierced && <Typography>💍 &nbsp;Pierced</Typography>}
+          </CardActions>
+        }
+    </Card>
+
+      <TableContainer component={Paper} variant='outlined'>
         <Table className={classes.table} aria-label="simple table">
           <TableHead>
             <TableRow>
-            <TableCell>Name</TableCell>
+            <TableCell>Player</TableCell>
             <TableCell align="right">Position</TableCell>
             <TableCell align="right">Position Rank</TableCell>
             <TableCell align="right">Total Points</TableCell>

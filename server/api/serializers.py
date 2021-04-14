@@ -180,7 +180,24 @@ class TeamDetailsSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Team
-        fields = ['id', 'name', 'players', 'logo_url', 'manager', 'wins', 'losses', 'standing', 'final_standing', 'all_time_rank', 'unlucky', 'points_for', 'points_against']
+        fields = [
+            'id',
+            'name',
+            'players',
+            'logo_url',
+            'manager',
+            'wins',
+            'losses',
+            'standing',
+            'final_standing',
+            'all_time_rank',
+            'unlucky',
+            'points_for',
+            'points_against',
+            'champ',
+            'pierced',
+            'year'
+        ]
 
     def get_manager_name(self, obj):
         return obj.manager.name

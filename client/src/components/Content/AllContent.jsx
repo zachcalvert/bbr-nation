@@ -1,5 +1,5 @@
 import React from 'react';
-import { Divider, Typography } from '@material-ui/core';
+import Typography from '@material-ui/core/Typography';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import WhatshotIcon from '@material-ui/icons/Whatshot';
@@ -13,8 +13,8 @@ const CONTENT_URL = `${process.env.REACT_APP_DJANGO_URL}api/content/`;
 
 
 export const AllContent = () => {
-  const [url, setUrl] = React.useState(CONTENT_URL);
   const [order, setOrder] = React.useState('?');
+  const [url, setUrl] = React.useState(CONTENT_URL);
 
   const handleOrderingChange = (event, newOrder) => {
     setOrder(newOrder);
@@ -28,18 +28,23 @@ export const AllContent = () => {
         exclusive
         onChange={handleOrderingChange}
         aria-label="content-sorter">
-        <ToggleButton value="?" aria-label="left aligned">
+
+        <ToggleButton value="?" aria-label="random order">
           <Typography variant='h6'><HelpRoundedIcon /></Typography>
         </ToggleButton>
-        <ToggleButton value="-likes" aria-label="centered">
-        <Typography variant='h6'><WhatshotIcon /></Typography>
+
+        <ToggleButton value="-likes" aria-label="most popular">
+          <Typography variant='h6'><WhatshotIcon /></Typography>
         </ToggleButton>
-        <ToggleButton value="-create_date" aria-label="right aligned">
-        <Typography variant='h6'><UpdateRoundedIcon /></Typography>
+
+        <ToggleButton value="-create_date" aria-label="most recent">
+          <Typography variant='h6'><UpdateRoundedIcon /></Typography>
         </ToggleButton>
-        <ToggleButton value="create_date" aria-label="justified">
+
+        <ToggleButton value="create_date" aria-label="earliest">
           <Typography variant='h6'><RestoreRoundedIcon /></Typography>
         </ToggleButton>
+
       </ToggleButtonGroup>
       
       <Feed url={url}/>

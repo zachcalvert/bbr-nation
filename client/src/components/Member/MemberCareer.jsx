@@ -26,7 +26,7 @@ export const MemberCareer = (props) => {
   
   return (
     <>
-    <TableContainer component={Paper}>
+    <TableContainer component={Paper} variant="outlined">
       <Table className={classes.table} aria-label="simple table">
           <TableHead>
           <TableRow>

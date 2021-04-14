@@ -104,6 +104,18 @@ class Team(models.Model):
     def all_time_unluckiest(self):
         return Team.objects.filter(points_against__gt=self.points_against).count() + 1
 
+    @property
+    def champ(self):
+        return self.season.winner_id == self.manager.id
+
+    @property
+    def pierced(self):
+        return self.season.piercee_id == self.manager.id
+
+    @property
+    def year(self):
+        return self.season.year
+
 
 class PlayerSeason(models.Model):
     season = models.ForeignKey(Season, null=True, on_delete=models.SET_NULL)

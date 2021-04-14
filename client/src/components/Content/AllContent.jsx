@@ -41,7 +41,6 @@ export const AllContent = () => {
           <Typography variant='h6'><RestoreRoundedIcon /></Typography>
         </ToggleButton>
       </ToggleButtonGroup>
-      <Divider />
       
       <Feed url={url}/>
     </>

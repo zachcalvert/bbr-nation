@@ -6,6 +6,7 @@ import { AppBar, Button, Drawer, Fab, IconButton, TextField, Toolbar, Typography
 import MenuIcon from '@material-ui/icons/Menu';
 import HomeRoundedIcon from '@material-ui/icons/HomeRounded';
 
+import { AllContent } from "./components/Content/AllContent";
 import { Page } from "./components/Page/Page";
 import { TableOfContents } from './components/TableOfContents/TableOfContents';
 import { Member } from './components/Member/Member';
@@ -200,6 +201,7 @@ export const App = (props) => {
           <Grid className={classes.container} container spacing={1}>
             <Grid item xs={12}>
               <Route path="/u/:name" component={Member} />
+              <Route path="/content" exact component={AllContent} />
               <Route path="/content/:slug" component={Page} />
               <Route path="/season/:year/team/:id" component={Team} />
               <Route path="/season/:year" exact component={Season} />

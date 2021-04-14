@@ -8,7 +8,7 @@ from django.contrib.auth.models import User, Group
 from django.contrib.auth import authenticate
 from django.db.models import QuerySet
 from django.shortcuts import render
-from rest_framework import generics, pagination, permissions, viewsets
+from rest_framework import filters, generics, pagination, permissions, viewsets
 from rest_framework.decorators import action, api_view
 from rest_framework.response import Response
 
@@ -95,14 +95,8 @@ class ContentViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.ContentSerializer
     lookup_field = 'name'
     queryset = Content.objects.all()
-
-    @paginate
-    @action(detail=True)
-    def all(self, request, name, **kwargs):
-        """
-        Return content for a given member, used by the member page
-        """
-        return Content.objects.all().order_by('-likes')
+    filter_backends = [filters.OrderingFilter]
+    ordering_fields = ['likes', 'create_date']
 
     @paginate
     @action(detail=True)

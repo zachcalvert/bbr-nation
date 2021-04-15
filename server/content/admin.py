@@ -28,6 +28,7 @@ class ContentAdmin(admin.ModelAdmin):
     search_fields = ['name',]
 
     fields = (
+        'name',
         'creator',
         'creator_nickname',
         'display_name',
@@ -35,6 +36,9 @@ class ContentAdmin(admin.ModelAdmin):
         'create_date',
         'upload',
         'text',
+        'likes',
+    )
+    readonly_fields = (
         'likes',
     )
 

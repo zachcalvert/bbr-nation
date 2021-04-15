@@ -1,12 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
 import { BrowserRouter, Route } from 'react-router-dom';
 import { createMuiTheme, CssBaseline, Grid, Hidden, Link, ThemeProvider, makeStyles } from '@material-ui/core';
-import { AppBar, Button, Drawer, Fab, IconButton, TextField, Toolbar } from '@material-ui/core';
+import { AppBar, Button, Drawer, Fab, IconButton, Switch, TextField, Toolbar, Typography } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
 import HomeRoundedIcon from '@material-ui/icons/HomeRounded';
+import NightsStayRoundedIcon from '@material-ui/icons/NightsStayRounded';
+import WbSunnyRoundedIcon from '@material-ui/icons/WbSunnyRounded';
 
 import { AllContent } from "./components/Content/AllContent";
+import { AntSwitch } from "./components/AntSwitch/AntSwitch";
 import { Page } from "./components/Page/Page";
 import { TableOfContents } from './components/TableOfContents/TableOfContents';
 import { Member } from './components/Member/Member';
@@ -29,6 +33,9 @@ const useStyles = makeStyles((theme) => ({
       marginLeft: drawerWidth,
     },
   },
+  darkModeToggle: {
+    marginLeft: 'auto'
+  },
   drawer: {
     [theme.breakpoints.up('sm')]: {
       width: drawerWidth,
@@ -38,9 +45,6 @@ const useStyles = makeStyles((theme) => ({
   loginForm: {
     margin: '200px auto',
     display: 'grid'
-  },
-  logout: {
-    marginLeft: 'auto'
   },
   menuButton: {
     marginRight: theme.spacing(2),
@@ -67,15 +71,12 @@ const useStyles = makeStyles((theme) => ({
 export const App = (props) => {
   const { window } = props;
   const classes = useStyles();
-  const theme = React.useMemo(
-    () =>
-      createMuiTheme({
-        palette: {
-          type: 'dark',
-        },
-      }),
-    [],
-  );
+  const [prefersDarkMode, setPrefersDarkMode] = React.useState(useMediaQuery('(prefers-color-scheme: dark)'));
+  const theme = createMuiTheme({
+    palette: {
+      type: prefersDarkMode ? 'dark' : 'light',
+    },
+  });
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [loggedIn, setLoggedIn] = React.useState(false);
   const [username, setUsername] = React.useState('');
@@ -94,6 +95,10 @@ export const App = (props) => {
   );
 
   const container = window !== undefined ? () => window().document.body : undefined;
+
+  const handleDarkModeChange = () => {
+    setPrefersDarkMode(!prefersDarkMode);
+  }
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -164,6 +169,16 @@ export const App = (props) => {
           <Link color="inherit" href="/">
             <HomeRoundedIcon fontSize='large' />
           </Link>
+
+          <Typography className={classes.darkModeToggle} component="div">
+            <Grid component="label" container alignItems="center" spacing={1}>
+              <Grid item><NightsStayRoundedIcon /></Grid>
+              <Grid item>
+                <AntSwitch checked={prefersDarkMode} onChange={handleDarkModeChange} name="darkModeSwitch" />
+              </Grid>
+              <Grid item><WbSunnyRoundedIcon /></Grid>
+            </Grid>
+          </Typography>
           { loggedIn && <Button className={classes.logout} onClick={handleLogout} color="inherit">Logout</Button>}
           
         </Toolbar>

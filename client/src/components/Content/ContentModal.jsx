@@ -27,7 +27,7 @@ const useStyles = makeStyles((theme) => ({
       overflow:'scroll',
     },
     modalPaper: {
-      backgroundColor: '#303030',
+      backgroundColor: theme.palette.background.default,
       boxShadow: theme.shadows[5],
       paddingBottom: theme.spacing(1),
       paddingLeft: theme.spacing(3),
@@ -36,7 +36,7 @@ const useStyles = makeStyles((theme) => ({
       borderRadius: '4px'
     },
     accordion: {
-      background: '#303030'
+      background: theme.palette.background.default,
     },
     date: {
       textAlign: 'right'

@@ -37,13 +37,6 @@ class ContentAdmin(admin.ModelAdmin):
         'text',
         'likes',
     )
-    readonly_fields = (
-        'creator',
-        'creator_nickname',
-        'create_date',
-        'media_url',
-        'text',
-        'likes',)
 
 
 class ContentTabularInline(SortableInlineAdminMixin, admin.TabularInline):

@@ -29,7 +29,7 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(2),
     height: "auto",
     position: 'relative',
-    maxWidth: `90vw`
+    maxWidth: `100vw`
   },
   date: {
     textAlign: 'right'

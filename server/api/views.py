@@ -116,6 +116,10 @@ class GroupViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
 
+class ContentPagination(pagination.PageNumberPagination):
+    page_size = 6
+
+
 class ContentViewSet(viewsets.ModelViewSet):
     """
     API endpoint that shares content randomly.
@@ -125,6 +129,7 @@ class ContentViewSet(viewsets.ModelViewSet):
     queryset = Content.objects.all()
     filter_backends = [filters.OrderingFilter]
     ordering_fields = ['likes', 'create_date']
+    pagination_class = ContentPagination
 
     @paginate
     @action(detail=True)

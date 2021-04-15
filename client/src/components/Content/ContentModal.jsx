@@ -6,6 +6,8 @@ import EditRoundedIcon from '@material-ui/icons/EditRounded';
 import ExpandLessRoundedIcon from '@material-ui/icons/ExpandLessRounded';
 import ExpandMoreRoundedIcon from '@material-ui/icons/ExpandMoreRounded';
 import ShareIcon from '@material-ui/icons/Share';
+import CloseIcon from '@material-ui/icons/Close';
+
 import { useSpring, animated } from 'react-spring/web.cjs';
 import { useClipboard } from 'use-clipboard-copy';
 
@@ -161,6 +163,7 @@ export const ContentModal = (props) => {
                   <EditRoundedIcon />
                 </Link>
                 <ShareIcon color="textSecondary" onClick={handleShareClick} style={{marginLeft: '10px', cursor: 'pointer'}} />
+                <CloseIcon color="textSecondary" onClick={handleClose} style={{marginLeft: '10px', cursor: 'pointer'}} />
                 <Snackbar
                   anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
                   open={snackBarOpen}

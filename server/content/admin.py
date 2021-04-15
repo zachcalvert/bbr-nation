@@ -29,6 +29,7 @@ class ContentAdmin(admin.ModelAdmin):
 
     fields = (
         'name',
+        'kind',
         'creator',
         'creator_nickname',
         'display_name',

@@ -220,7 +220,7 @@ export const App = (props) => {
               <Route path="/season/:year" exact component={Season} />
               <Route path="/player/:id" exact component={Player} />
               <Route path="/all-time-ranks/" exact component={AllSeasons} />
-              <Route path="/" exact component={Page} />
+              <Route path="/" exact component={AllContent} />
             </Grid>
           </Grid>
         </main>

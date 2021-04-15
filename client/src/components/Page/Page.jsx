@@ -9,6 +9,9 @@ const useStyles = makeStyles((theme) => ({
   leftAlign: {
     padding: '20px',
     margin: 'auto auto auto 10px'
+  },
+  pageName: {
+    padding: '10px 0 0 20px'
   }
 }));
 
@@ -39,7 +42,7 @@ export const Page = () => {
     <>
       <Grid container spacing={1}>
         <Grid item>
-          <Typography variant='h4'>{name}</Typography>
+          <Typography className={classes.pageName} variant='h6'>{name}</Typography>
         </Grid>
         <Grid className={classes.leftAlign} item>
         </Grid>

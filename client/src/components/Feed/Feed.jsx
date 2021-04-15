@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import axios from "axios"
-import { Button, Divider, makeStyles, Paper } from '@material-ui/core';
+import { Button, makeStyles } from '@material-ui/core';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 
 import { Content } from '../Content/Content';

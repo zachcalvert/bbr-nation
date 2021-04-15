@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Accordion, AccordionDetails, AccordionSummary, Avatar, Backdrop, Dialog, Divider, Grid, Link, makeStyles, Slide, Snackbar, Typography } from '@material-ui/core';
+import { Accordion, AccordionDetails, AccordionSummary, Backdrop, Dialog, Grid, Link, makeStyles, Slide, Snackbar } from '@material-ui/core';
 import PropTypes from 'prop-types';
 import axios from "axios"
 import EditRoundedIcon from '@material-ui/icons/EditRounded';
@@ -11,7 +11,7 @@ import { useClipboard } from 'use-clipboard-copy';
 
 import { Content } from './Content'
 import { GroupMeMessage } from '../Content/GroupMeMessage'
-import { FormattedTime } from '../Common'
+
 import './ContentModal.css'
 
 const CONTENT_URL = `${process.env.REACT_APP_DJANGO_URL}api/content`
@@ -85,7 +85,6 @@ export const ContentModal = (props) => {
   const { handleClose } = props;
   const { activeContent } = props;
   const clipboard = useClipboard();
-  const [avatarUrl, setAvatarUrl] = React.useState(null);
   const [precedingConversation, setPrecedingConversation] = React.useState([]);
   const [ensuingConversation, setEnsuingConversation] = React.useState([]);
   const [snackBarOpen, setSnackBarOpen] = React.useState(false);
@@ -112,7 +111,6 @@ export const ContentModal = (props) => {
   useEffect(() => {
     fetchConversation(activeContent.name);
     fetchConversation(activeContent.name, true);
-    setAvatarUrl(activeContent.avatar_url);
   }, [activeContent]);
 
   function TransitionDown(props) {
@@ -159,11 +157,10 @@ export const ContentModal = (props) => {
             <Grid item xs={12}>
               <div className='copy-link'>
                 <input ref={clipboard.target} value={window.location.href} readOnly hidden />
-                <Link color='inherit' href={`${ADMIN_URL}content/content/${activeContent.id}/change`} target="_blank" style={{cursor: 'pointer'}}>
+                <Link color='textSecondary' href={`${ADMIN_URL}content/content/${activeContent.id}/change`} target="_blank" style={{cursor: 'pointer'}}>
                   <EditRoundedIcon />
                 </Link>
-
-                <ShareIcon onClick={handleShareClick} style={{marginLeft: '10px', cursor: 'pointer'}} />
+                <ShareIcon color="textSecondary" onClick={handleShareClick} style={{marginLeft: '10px', cursor: 'pointer'}} />
                 <Snackbar
                   anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
                   open={snackBarOpen}

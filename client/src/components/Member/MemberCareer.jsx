@@ -11,7 +11,7 @@ import Paper from '@material-ui/core/Paper';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
-    padding: theme.spacing(2),
+    padding: theme.spacing(1),
     textAlign: 'center',
     color: theme.palette.text.secondary,
     height: "auto",
@@ -19,6 +19,22 @@ const useStyles = makeStyles((theme) => ({
     position: 'relative'
   }
 }));
+
+
+const FINISH_MAP = {
+  1: '1st',
+  2: '2nd',
+  3: '3rd',
+  4: '4th',
+  5: '5th',
+  6: '6th',
+  7: '7th',
+  8: '8th',
+  9: '9th',
+  10: '10th',
+  11: '11th',
+  12: '12th'
+}
 
 export const MemberCareer = (props) => {
   const classes = useStyles();
@@ -33,7 +49,7 @@ export const MemberCareer = (props) => {
               <TableCell>Year</TableCell>
               <TableCell>Team</TableCell>
               <TableCell align="right">Record</TableCell>
-              <TableCell align="right">Final Standing</TableCell>
+              <TableCell align="right">Place</TableCell>
               <Hidden smDown>
               <TableCell align="right">Points Scored</TableCell>
               </Hidden>
@@ -53,7 +69,7 @@ export const MemberCareer = (props) => {
               </TableCell>
               <TableCell align="right">{team.wins}-{team.losses}</TableCell>
               <TableCell align="right">
-                {team.final_standing}
+                {FINISH_MAP[team.final_standing]}
               </TableCell>
               <Hidden smDown>
                 <TableCell align="right">{team.points_for}</TableCell>

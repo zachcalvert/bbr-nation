@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from "axios";
-import { Avatar, Box, Divider, makeStyles, Tab, Tabs, Typography } from '@material-ui/core';
+import { Avatar, Box, Divider, makeStyles, List, ListItem, ListItemText, Tab, Tabs, Typography } from '@material-ui/core';
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
@@ -22,6 +22,7 @@ const useStyles = makeStyles((theme) => ({
   },
   card: {
     padding: '0',
+    marginBottom: theme.spacing(1)
   },
   title: {
     fontSize: 14,
@@ -119,29 +120,27 @@ export const Member = () => {
               {member.name}
             </Typography>
             <Divider />
-            <Typography className={classes.title} color="textSecondary" gutterBottom>
+            <Typography className={classes.pos} color="textSecondary" gutterBottom>
               aka {nick}
             </Typography>
             
             {lastYear === '2020' ? (
-              <Typography color="textSecondary" className={classes.pos} >since {firstYear}</Typography>
+              <Typography color="textSecondary" className={classes.title} >since {firstYear}</Typography>
             ) : (
-              <Typography color="textSecondary" className={classes.pos} >career: {firstYear} - {lastYear}</Typography>
+              <Typography color="textSecondary" className={classes.title} >career: {firstYear} - {lastYear}</Typography>
             )}
           </div>
         </CardContent>
 
         <CardActions className={classes.actions}>
-          {member.champ_years && member.champ_years.map((year) => (
-            <>
-              <Typography style={{ padding: '0 10px' }} variant='h6'><span role='img'>🏆</span> {year}</Typography>
-            </>
-          ))}
-          {member.pierced_years && member.pierced_years.map((year) => (
-            <>
-              <Typography style={{ padding: '0 10px' }} variant='h6'><span role='img'>💍</span> {year}</Typography>
-            </>
-          ))}
+          <List>
+            {member.champ_years && member.champ_years.map((year) => (
+              <ListItem><ListItemText primary={`🏆  ${year}`} /></ListItem>
+            ))}
+            {member.pierced_years && member.pierced_years.map((year) => (
+              <ListItem><ListItemText primary={`💍  ${year}`} /></ListItem>
+            ))}
+          </List>
         </CardActions>
       </Card>
 

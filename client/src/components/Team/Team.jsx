@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from "axios"
 import { makeStyles, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@material-ui/core';
-import { Avatar, Divider, Link, Typography } from '@material-ui/core';
+import { Avatar, Link, Typography } from '@material-ui/core';
 
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
@@ -88,8 +88,8 @@ export const Team = () => {
 
         {(team.champ || team.pierced) &&
           <CardActions className={classes.actions}>
-            {team.champ && <Typography>🏆 &nbsp;League Champ</Typography>}
-            {team.pierced && <Typography>💍 &nbsp;Pierced</Typography>}
+            {team.champ && <Typography><span role="img">🏆 &nbsp;League Champ</span></Typography>}
+            {team.pierced && <Typography><span role="img">💍 &nbsp;Pierced</span></Typography>}
           </CardActions>
         }
     </Card>

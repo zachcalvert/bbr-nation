@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { BrowserRouter, Route } from 'react-router-dom';
 import { createMuiTheme, CssBaseline, Grid, Hidden, Link, ThemeProvider, makeStyles } from '@material-ui/core';
-import { AppBar, Button, Drawer, Fab, IconButton, TextField, Toolbar, Typography } from '@material-ui/core';
+import { AppBar, Button, Drawer, Fab, IconButton, TextField, Toolbar } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
 import HomeRoundedIcon from '@material-ui/icons/HomeRounded';
 
@@ -55,7 +55,12 @@ const useStyles = makeStyles((theme) => ({
   },
   content: {
     flexGrow: 1,
-    padding: theme.spacing(2),
+    [theme.breakpoints.down('sm')]: {
+      padding: theme.spacing(1),
+    },
+    [theme.breakpoints.up('sm')]: {
+      padding: theme.spacing(2),
+    },
   },
 }));
 

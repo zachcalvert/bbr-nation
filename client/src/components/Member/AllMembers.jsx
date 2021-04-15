@@ -12,7 +12,7 @@ import { Divider, Hidden, Link, Typography } from '@material-ui/core';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 
-const PLAYERS_URL = `${process.env.REACT_APP_DJANGO_URL}api/playerseasons/`
+const MEMBERS_URL = `${process.env.REACT_APP_DJANGO_URL}api/members/all`;
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -42,31 +42,31 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-export const AllPlayers = () => {
+export const AllMembers = () => {
   const classes = useStyles();
-  const [playerSeasons, setPlayerSeasons] = React.useState([]);
-  const [filter, setFilter] = React.useState('qb');
-
-  const handleFilter = (event, newFilter) => {
-    setFilter(newFilter)
-  };
+  const [memberCareers, setMemberCareers] = React.useState([]);
+  const [filter, setFilter] = React.useState('total');
   
-  async function fetchPlayerSeasons(filter) {
-    let url = PLAYERS_URL;
-    setPlayerSeasons([])
+  async function fetchMemberCareers(filter) {
+    let url = MEMBERS_URL;
+    setMemberCareers([])
     if (filter) {
-      url = `${PLAYERS_URL}?position=${filter}`
+      url = `${MEMBERS_URL}?ordering=${filter}`
     }
     const { data } = await axios.get(url, {
       headers: {
         Authorization: `JWT ${localStorage.getItem('token')}`
       }
     });
-    setPlayerSeasons(data.results);
+    setMemberCareers(data);
   }
 
+  const handleFilter = (event, newFilter) => {
+    setFilter(newFilter)
+  };
+
   React.useEffect(() => {
-    fetchPlayerSeasons(filter);
+    fetchMemberCareers(filter);
   }, [filter]);
   
   return (
@@ -76,24 +76,12 @@ export const AllPlayers = () => {
         exclusive
         onChange={handleFilter}
         aria-label="position-filter">
-        <ToggleButton value="qb" aria-label="centered">
-        <Typography variant='h6'>QB</Typography>
-        </ToggleButton>
-        <ToggleButton value="rb" aria-label="right aligned">
-        <Typography variant='h6'>RB</Typography>
-        </ToggleButton>
-        <ToggleButton value="wr" aria-label="justified">
-          <Typography variant='h6'>WR</Typography>
-        </ToggleButton>
-        <ToggleButton value="te" aria-label="justified">
-          <Typography variant='h6'>TE</Typography>
-        </ToggleButton>
-        <ToggleButton value="dst" aria-label="justified">
-          <Typography variant='h6'>D/ST</Typography>
-        </ToggleButton>
-        <ToggleButton value="k" aria-label="justified">
-          <Typography variant='h6'>K</Typography>
-        </ToggleButton>
+            <ToggleButton value="total" aria-label="right aligned">
+            <Typography variant='h6'>Total</Typography>
+            </ToggleButton>
+            <ToggleButton value="average" aria-label="centered">
+            <Typography variant='h6'>Average</Typography>
+            </ToggleButton>
       </ToggleButtonGroup>
       <Divider />
       <TableContainer component={Paper}>
@@ -101,28 +89,27 @@ export const AllPlayers = () => {
           <TableHead>
             <TableRow>
             <TableCell>Rank</TableCell>
-            <TableCell>Name</TableCell>
-            <TableCell align="right">Year</TableCell>
+            <TableCell>Member</TableCell>
             <Hidden smDown>
-            <TableCell align="right">Team</TableCell>
+            <TableCell align="right">Seasons</TableCell>
             </Hidden>
             <TableCell align="right">Total Points</TableCell>
+            <TableCell align="right">Weekly Average</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {playerSeasons.map((playerSeason, index) => (
-            <TableRow key={playerSeason.name}>
+          {memberCareers?.map((member, index) => (
+            <TableRow key={member.name}>
               <TableCell>{index + 1}</TableCell>
               <TableCell component="th" scope="row">
-                <Link color='inherit' href={`/player/${playerSeason.player_id}`}>{playerSeason.name}</Link>
+                <Link color='inherit' href={`/u/${member.name}`}>{member.name}</Link>
               </TableCell>
-              <TableCell align="right">{playerSeason.season}</TableCell>
+              
               <Hidden smDown>
-              <TableCell align="right" component="th" scope="row">
-                <Link color='inherit' href={`/season/${playerSeason.season}/team/${playerSeason.team_id}`}>{playerSeason.team_name}</Link>
-              </TableCell>
+                <TableCell align="right">{member.seasons}</TableCell>
               </Hidden>
-              <TableCell align="right">{playerSeason.total_points}</TableCell>
+              <TableCell align="right">{member.total_points}</TableCell>
+              <TableCell align="right">{member.average_points}</TableCell>
             </TableRow>
           ))}
         </TableBody>

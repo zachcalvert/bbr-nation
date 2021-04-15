@@ -66,6 +66,34 @@ class MemberViewSet(viewsets.ModelViewSet):
         self.serializer_class = serializers.MemberDetailsSerializer
         return super(MemberViewSet, self).retrieve(request, *args, **kwargs)
 
+    @action(detail=False)
+    def all(self, request):
+        members = []
+
+        for member in Member.objects.exclude(name__in=['bbot', 'shmads', 'GroupMe']):
+            total_points = 0
+            games_played = 0
+            member_teams = Team.objects.filter(manager=member)
+            for team in member_teams:
+                total_points += team.points_for
+                games_played += 13
+
+            members.append({
+                "id": member.id,
+                "name": member.name,
+                'total_points': total_points,
+                'average_points': round(total_points / games_played, 2),
+                'seasons': member_teams.count()
+            })
+
+        if request.GET.get('ordering') == 'average':
+            sorted_members = sorted(members, key=lambda k: k['average_points'])
+        else:
+            sorted_members = sorted(members, key=lambda k: k['total_points'])
+
+        sorted_members.reverse()
+        return Response(sorted_members)
+
 
 class UserViewSet(viewsets.ModelViewSet):
     """

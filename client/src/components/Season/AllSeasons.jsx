@@ -1,6 +1,7 @@
 import React from 'react';
 import { Box, Divider, makeStyles, Paper, Tab, Tabs, Typography } from '@material-ui/core';
 
+import { AllMembers } from '../Member/AllMembers';
 import { AllPlayers } from '../Player/AllPlayers';
 import { AllTeams } from '../Team/AllTeams';
 
@@ -12,6 +13,7 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.text.secondary,
     height: "auto",
     marginTop: 0,
+    marginBottom: theme.spacing(1),
     position: 'relative'
   }
 }));
@@ -54,22 +56,25 @@ export const AllSeasons = () => {
   
   return (
     <>
-      <Paper className={classes.paper}>
+      <Paper className={classes.paper} variant='outlined'>
         <Typography variant='h4'>All Time Ranks</Typography>
       </Paper>
 
-      <Divider />
-
       <Tabs value={value} onChange={handleChange} centered aria-label="member tabs">
-        <Tab label="Teams" {...a11yProps(0)} />
-        <Tab label="Players" {...a11yProps(1)} />
+        <Tab label="Members" {...a11yProps(0)} />
+        <Tab label="Teams" {...a11yProps(1)} />
+        <Tab label="Players" {...a11yProps(2)} />
       </Tabs>
 
       <TabPanel value={value} index={0}>
-        <AllTeams />
+        <AllMembers />
       </TabPanel>
 
       <TabPanel value={value} index={1}>
+        <AllTeams />
+      </TabPanel>
+
+      <TabPanel value={value} index={2}>
         <AllPlayers />
       </TabPanel>
     </>

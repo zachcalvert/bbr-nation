@@ -1,4 +1,5 @@
 import React from 'react';
+import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
@@ -11,8 +12,14 @@ import { Feed } from '../Feed/Feed';
 
 const CONTENT_URL = `${process.env.REACT_APP_DJANGO_URL}api/content/`;
 
+const useStyles = makeStyles({
+  toggleOrdering: {
+    padding: '10px 0 0 20px'
+  }
+});
 
 export const AllContent = () => {
+  const classes = useStyles();
   const [order, setOrder] = React.useState('?');
   const [url, setUrl] = React.useState(CONTENT_URL);
 
@@ -26,6 +33,7 @@ export const AllContent = () => {
       <ToggleButtonGroup
         value={order}
         exclusive
+        className={classes.toggleOrdering}
         onChange={handleOrderingChange}
         aria-label="content-sorter">
 

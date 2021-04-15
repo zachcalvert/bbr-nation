@@ -200,7 +200,6 @@ class PlayerSeasonViewSet(viewsets.ModelViewSet):
     """
     queryset = PlayerSeason.objects.all()
     serializer_class = serializers.PlayerSeasonSerializer
-    pagination.PageNumberPagination.page_size = 50
 
     def get_queryset(self):
         """
@@ -241,7 +240,6 @@ class TeamViewSet(viewsets.ModelViewSet):
     """
     queryset = Team.objects.all()
     serializer_class = serializers.TeamSerializer
-    pagination.PageNumberPagination.page_size = 10
 
     def retrieve(self, request, *args, **kwargs):
         self.serializer_class = serializers.TeamDetailsSerializer

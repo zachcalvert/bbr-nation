@@ -71,7 +71,7 @@ const useStyles = makeStyles((theme) => ({
 export const App = (props) => {
   const { window } = props;
   const classes = useStyles();
-  const [prefersDarkMode, setPrefersDarkMode] = React.useState(useMediaQuery('(prefers-color-scheme: dark)'));
+  const [prefersDarkMode, setPrefersDarkMode] = React.useState(localStorage.getItem('dark-mode') === 'true');
   const theme = createMuiTheme({
     palette: {
       type: prefersDarkMode ? 'dark' : 'light',
@@ -98,6 +98,7 @@ export const App = (props) => {
 
   const handleDarkModeChange = () => {
     setPrefersDarkMode(!prefersDarkMode);
+    localStorage.setItem('dark-mode', !prefersDarkMode)
   }
 
   const handleLogin = (e) => {

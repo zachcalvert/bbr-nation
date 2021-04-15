@@ -100,12 +100,6 @@ export const App = (props) => {
     setPrefersDarkMode(!prefersDarkMode);
   }
 
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    setLoggedIn(false);
-    setUsername('');
-  };
-
   const handleLogin = (e) => {
     e.preventDefault();
     fetch(`${process.env.REACT_APP_DJANGO_URL}token-auth/`, {
@@ -179,8 +173,6 @@ export const App = (props) => {
               <Grid item><WbSunnyRoundedIcon /></Grid>
             </Grid>
           </Typography>
-          { loggedIn && <Button className={classes.logout} onClick={handleLogout} color="inherit">Logout</Button>}
-          
         </Toolbar>
       </AppBar>
       {loggedIn && 

@@ -129,19 +129,16 @@ export const Member = () => {
             ) : (
               <Typography color="textSecondary" className={classes.title} >career: {firstYear} - {lastYear}</Typography>
             )}
-          </div>
-        </CardContent>
-
-        <CardActions className={classes.actions}>
-          <List>
+            <List>
             {member.champ_years && member.champ_years.map((year) => (
-              <ListItem><ListItemText primary={`🏆  ${year}`} /></ListItem>
+              <Typography color="textSecondary" className={classes.title} >{`🏆  ${year}`}</Typography>
             ))}
             {member.pierced_years && member.pierced_years.map((year) => (
-              <ListItem><ListItemText primary={`💍  ${year}`} /></ListItem>
+              <Typography color="textSecondary" className={classes.title} >{`💍  ${year}`}</Typography>
             ))}
           </List>
-        </CardActions>
+          </div>
+        </CardContent>
       </Card>
 
       <Tabs value={value} onChange={handleChange} centered aria-label="member tabs">

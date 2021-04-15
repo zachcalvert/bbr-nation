@@ -8,6 +8,7 @@ from django.contrib.auth.models import User, Group
 from django.contrib.auth import authenticate
 from django.db.models import QuerySet
 from django.shortcuts import render
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, generics, pagination, permissions, viewsets
 from rest_framework.decorators import action, api_view
 from rest_framework.response import Response
@@ -127,7 +128,8 @@ class ContentViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.ContentSerializer
     lookup_field = 'name'
     queryset = Content.objects.all()
-    filter_backends = [filters.OrderingFilter]
+    filter_backends = [filters.OrderingFilter, DjangoFilterBackend]
+    filterset_fields = ['kind', 'creator_id']
     ordering_fields = ['likes', 'create_date']
     pagination_class = ContentPagination
 

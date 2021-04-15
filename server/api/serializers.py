@@ -1,3 +1,5 @@
+import re
+
 from django.contrib.auth.models import User, Group
 from django.core.paginator import Paginator
 from rest_framework import serializers
@@ -8,6 +10,7 @@ from football.models import Player, PlayerSeason, Season, Team
 
 class ContentSerializer(serializers.ModelSerializer):
     creator_name = serializers.SerializerMethodField('get_creator_name')
+    text = serializers.SerializerMethodField()
 
     class Meta:
         model = Content
@@ -18,6 +21,13 @@ class ContentSerializer(serializers.ModelSerializer):
 
     def get_creator_name(self, obj):
         return obj.creator.name
+
+    def strip_urls(self, text):
+        result = re.sub(r"http\S+", "", text)
+        return result
+
+    def get_text(self, obj):
+        return self.strip_urls(obj.text)
 
 
 class PageSerializer(serializers.HyperlinkedModelSerializer):

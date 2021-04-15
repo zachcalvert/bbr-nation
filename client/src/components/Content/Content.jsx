@@ -16,6 +16,9 @@ const useStyles = makeStyles({
     maxWidth: '100%',
     padding: '0 15px'
   },
+  cardActions: {
+    margin: '0 0 15px 0'
+  },
   title: {
     fontSize: 24,
   },
@@ -44,10 +47,10 @@ export const Content = (props) => {
 
         {content.description && 
           <>
-          <Typography variant="body2" component="p">
-            {content.description}
-          </Typography>
-          <Divider />
+            <Typography variant="body2" component="p">
+              {content.description}
+            </Typography>
+            <Divider />
           </>
         }
       
@@ -72,7 +75,8 @@ export const Content = (props) => {
         }
       
     </CardContent>
-    <CardActions>
+
+    <CardActions className={classes.cardActions}>
       <div style={{'display': 'flex'}}>
         {content.avatar_url && <Avatar src={content.avatar_url} />}
         <Typography className={classes.pos} color="textSecondary">

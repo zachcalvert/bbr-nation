@@ -241,7 +241,7 @@ class TeamViewSet(viewsets.ModelViewSet):
     """
     queryset = Team.objects.all()
     serializer_class = serializers.TeamSerializer
-    pagination.PageNumberPagination.page_size = 100 
+    pagination.PageNumberPagination.page_size = 10
 
     def retrieve(self, request, *args, **kwargs):
         self.serializer_class = serializers.TeamDetailsSerializer

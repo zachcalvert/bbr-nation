@@ -67,7 +67,7 @@ class MemberDetailsSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Member
-        fields = ['name', 'groupme_id', 'avatar_url', 'nicks', 'champ_years', 'pierced_years', 'best_finish', 'worst_finish', 'teams']
+        fields = ['id', 'name', 'groupme_id', 'avatar_url', 'nicks', 'champ_years', 'pierced_years', 'best_finish', 'worst_finish', 'teams']
         extra_kwargs = {
             'url': {'lookup_field': 'name'}
         }

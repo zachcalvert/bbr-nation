@@ -3,7 +3,6 @@ import { useParams } from 'react-router-dom';
 import axios from "axios";
 import { Avatar, Box, Divider, makeStyles, List, ListItem, ListItemText, Tab, Tabs, Typography } from '@material-ui/core';
 import Card from '@material-ui/core/Card';
-import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 
 import { Feed } from '../Feed/Feed';
@@ -71,13 +70,12 @@ export const Member = () => {
   const classes = useStyles();
   const { name } = useParams();
   const DETAIL_URL = `${process.env.REACT_APP_DJANGO_URL}api/members/${name}/`
-  const MEMBER_CONTENT_URL = `${process.env.REACT_APP_DJANGO_URL}api/content/${name}/member/`
   const [member, setMember] = useState({});
   const [nick, setNick] = useState(null);
   const [value, setValue] = React.useState(0);
   const [firstYear, setFirstYear] = React.useState('2015')
-  const [lastYear, setLastYear] = React.useState('2020')
-
+  const [lastYear, setLastYear] = React.useState('2020');
+  const [contentUrl, setContentUrl] = React.useState(null);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -105,6 +103,7 @@ export const Member = () => {
       setFirstYear(data.teams.slice(-1)[0]?.year)
       setLastYear(data.teams[0]?.year)
       setNick(data.nicks[Math.floor(Math.random() * data.nicks.length)])
+      setContentUrl(`${process.env.REACT_APP_DJANGO_URL}api/content/?creator_id=${data.id}`)
     }
     fetchUserDetails();
   }, [DETAIL_URL, name]);
@@ -150,7 +149,7 @@ export const Member = () => {
         {member.name === 'bbot' && <Typography variant='h6'>Bbot has no fantasy statistics</Typography>}
       </TabPanel>
       <TabPanel value={value} index={1}>
-        <Feed url={MEMBER_CONTENT_URL} />
+        {contentUrl && <Feed url={contentUrl} showControls={true} memberId={member.id} />}
       </TabPanel>
     </>
   )

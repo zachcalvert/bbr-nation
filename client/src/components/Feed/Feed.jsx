@@ -1,8 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import axios from "axios"
-import { Button, makeStyles } from '@material-ui/core';
+import { Button, Grid, makeStyles, Typography } from '@material-ui/core';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
+import ToggleButton from '@material-ui/lab/ToggleButton';
+import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
+import WhatshotIcon from '@material-ui/icons/Whatshot';
+import HelpRoundedIcon from '@material-ui/icons/HelpRounded';
+import UpdateRoundedIcon from '@material-ui/icons/UpdateRounded';
+import RestoreRoundedIcon from '@material-ui/icons/RestoreRounded';
+import LocalMoviesRoundedIcon from '@material-ui/icons/LocalMoviesRounded';
+import PhotoLibraryRoundedIcon from '@material-ui/icons/PhotoLibraryRounded';
 
 import { Content } from '../Content/Content';
 import { ContentModal } from '../Content/ContentModal';
@@ -42,17 +50,29 @@ const useStyles = makeStyles((theme) => ({
     position: 'absolute',
     bottom: '15px',
     right: '5px'
+  },
+  filtering: {
+    padding: '10px 20px 0 20px',
+    float: 'right'
+  },
+  ordering: {
+    padding: '10px 20px 0 20px',
   }
 }));
 
 
 export const Feed = (props) => {
-  const { url } = props;
+  const BASE_URL = props.url;
+  const { memberId } = props;
+  const { showControls } = props;
+  const [url, setUrl] = useState(props.url);
   const history = useHistory();
-  const location = useLocation();
   const classes = useStyles();
 
   const [content, setContent] = useState([]);
+  const [filter, setFilter] = useState(null);
+  const [order, setOrder] = useState(null);
+
   const [activeContent, setActiveContent] = React.useState(null);
   const [open, setOpen] = React.useState(false);
 
@@ -78,7 +98,6 @@ export const Feed = (props) => {
     if (!data.next) {
       setKeepScrolling(false);
     }
-    
     setNexUrl(data.next);
   }
 
@@ -145,10 +164,9 @@ export const Feed = (props) => {
     document.activeElement.blur();
   };
 
-  // modal stuff
   const handleClose = () => {
     setOpen(false);
-    const queryParams = new URLSearchParams(location.search);
+    const queryParams = new URLSearchParams(window.location.search);
     if (queryParams.has('content')) {
       queryParams.delete('content')
       history.replace({
@@ -157,8 +175,89 @@ export const Feed = (props) => {
     }
   };
 
+  const handleFilterChange = (event, newFilter) => {
+    let url = new URL(window.location.href);
+    let params = new URLSearchParams(url.search);
+    if (newFilter) {
+      setFilter(newFilter);
+      params.set('kind', newFilter)
+      order && params.set('ordering', order)
+    } else {
+      setFilter(null);
+      params.delete('kind')
+      order && params.set('ordering', order)
+    }
+    BASE_URL.includes('creator_id') ? (
+      setUrl(`${BASE_URL}&${params}`)
+    ) : (
+      setUrl(`${BASE_URL}?${params}`)
+    )
+  };
+
+  const handleOrderChange = (event, newOrder) => {
+    setOrder(newOrder);
+    let url = new URL(window.location.href);
+    let params = new URLSearchParams(url.search);
+    params.set('ordering', newOrder)
+    filter && params.set('kind', filter)
+    BASE_URL.includes('creator_id') ? (
+      setUrl(`${BASE_URL}&${params}`)
+    ) : (
+      setUrl(`${BASE_URL}?${params}`)
+    )
+  };
+
   return (
     <>
+      {showControls &&
+        <Grid container xs={12}>
+          <Grid item xs={6}>
+
+            <ToggleButtonGroup
+              value={order}
+              exclusive
+              className={classes.ordering}
+              onChange={handleOrderChange}
+              aria-label="content-sorter">
+
+              <ToggleButton value="?" aria-label="random order">
+                <Typography variant='h6'><HelpRoundedIcon /></Typography>
+              </ToggleButton>
+
+              <ToggleButton value="-likes" aria-label="most popular">
+                <Typography variant='h6'><WhatshotIcon /></Typography>
+              </ToggleButton>
+
+              <ToggleButton value="-create_date" aria-label="most recent">
+                <Typography variant='h6'><UpdateRoundedIcon /></Typography>
+              </ToggleButton>
+
+              <ToggleButton value="create_date" aria-label="earliest">
+                <Typography variant='h6'><RestoreRoundedIcon /></Typography>
+              </ToggleButton>
+
+            </ToggleButtonGroup>
+          </Grid>
+          <Grid item xs={6}>
+            <ToggleButtonGroup
+              value={filter}
+              exclusive
+              className={classes.filtering}
+              onChange={handleFilterChange}
+              aria-label="content-filter">
+
+              <ToggleButton value="VIDEO" aria-label="videos">
+                <Typography variant='h6'><LocalMoviesRoundedIcon /></Typography>
+              </ToggleButton>
+
+              <ToggleButton value="IMAGE" aria-label="images">
+                <Typography variant='h6'><PhotoLibraryRoundedIcon /></Typography>
+              </ToggleButton>
+            </ToggleButtonGroup>
+          </Grid>
+        </Grid>
+      }
+
       {content.map((c) => (
         <div className={classes.content} key={c.name}>
           <Button size="small" className={classes.seeMore} onClick={(e) => handleClick(c, e)}>

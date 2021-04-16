@@ -71,12 +71,6 @@ export const TableOfContents = () => {
               <Typography variant='h6'>{page.name}</Typography>
           </MenuItem>
         ))}
-        <MenuItem
-            key='all-content'
-            component={Link}
-            to={`/content`}>
-              <Typography variant='h6'>All</Typography>
-          </MenuItem>
       </List>
       <Accordion>
         <AccordionSummary

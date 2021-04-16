@@ -48,7 +48,7 @@ export const Page = () => {
         </Grid>
       </Grid>
 
-      <Feed url={PAGE_URL}/>
+      <Feed url={PAGE_URL} showControls={false}/>
     </>
   )
 }

@@ -44,15 +44,6 @@ export const Content = (props) => {
         <Typography className={classes.title} color="textSecondary" gutterBottom>
           {content.display_name}
         </Typography>
-
-        {content.description && 
-          <>
-            <Typography variant="body2" component="p">
-              {content.description}
-            </Typography>
-            <Divider />
-          </>
-        }
       
         {kind === 'IMAGE' && (
           <div className='bbr-image'>
@@ -79,9 +70,11 @@ export const Content = (props) => {
     <CardActions className={classes.cardActions}>
       <div style={{'display': 'flex'}}>
         {content.avatar_url && <Avatar src={content.avatar_url} />}
-        <Typography className={classes.pos} color="textSecondary">
-          {content.creator_nickname}, {FormattedDate(content.create_date)}
-        </Typography>
+        {content.description ? (
+          <Typography className={classes.pos} color="textSecondary">{content.description}</Typography>
+        ) : (
+          <Typography className={classes.pos} color="textSecondary">{content.creator_nickname}, {FormattedDate(content.create_date)}</Typography>
+        )}
       </div>
       
       {showLikes && 

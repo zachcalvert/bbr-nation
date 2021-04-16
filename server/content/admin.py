@@ -38,6 +38,7 @@ class ContentAdmin(admin.ModelAdmin):
         'upload',
         'text',
         'likes',
+        'avatar_url'
     )
     readonly_fields = (
         'likes',

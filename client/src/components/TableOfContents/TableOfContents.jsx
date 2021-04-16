@@ -62,7 +62,6 @@ export const TableOfContents = () => {
   return (
     <>
       <List>
-        <Typography className={classes.menuHeader} variant='h5'>Content</Typography>
         {pages.filter(page => page.slug !== 'home').map((page) => (
           <MenuItem 
             key={page.slug} 

@@ -14,7 +14,7 @@ from rest_framework.decorators import action, api_view
 from rest_framework.response import Response
 
 from api import serializers
-from content.models import Content, Page, Member
+from content.models import Content, Page, Member, ImageSlider, Image
 from football.models import Player, PlayerSeason, Season, Team
 
 
@@ -114,6 +114,24 @@ class GroupViewSet(viewsets.ModelViewSet):
     """
     queryset = Group.objects.all()
     serializer_class = serializers.GroupSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+
+class ImageSliderViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows groups to be viewed or edited.
+    """
+    queryset = ImageSlider.objects.all()
+    serializer_class = serializers.ImageSliderSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+
+class ImageViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows groups to be viewed or edited.
+    """
+    queryset = Image.objects.all()
+    serializer_class = serializers.ImageSerializer
     permission_classes = [permissions.IsAuthenticated]
 
 

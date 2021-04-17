@@ -1,7 +1,7 @@
 from django.contrib import admin
 from adminsortable2.admin import SortableInlineAdminMixin
 
-from content.models import Content, Page, Member, Nickname
+from content.models import Content, Page, Member, Nickname, Image, ImageSlider
 
 
 class MemberAdmin(admin.ModelAdmin):
@@ -56,6 +56,19 @@ class PageAdmin(admin.ModelAdmin):
     inlines = (ContentTabularInline,)
 
 
+class ImageAdmin(admin.ModelAdmin):
+    list_display = ['name', 'caption', 'upload']
+    fields = ['name', 'caption', 'upload']
+
+
+class ImageSliderAdmin(admin.ModelAdmin):
+    list_display = ['name']
+    fields = ['name', 'images', 'page']
+
+
+
+admin.site.register(Image, ImageAdmin)
+admin.site.register(ImageSlider, ImageSliderAdmin)
 admin.site.register(Member, MemberAdmin)
 admin.site.register(Nickname)
 admin.site.register(Content, ContentAdmin)

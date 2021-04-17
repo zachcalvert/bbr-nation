@@ -114,3 +114,21 @@ class PageContents(models.Model):
 
     def __str__(self):
         return self.content.display_name or self.content.name
+
+
+class Image(models.Model):
+    name = models.CharField(max_length=100)
+    caption = models.TextField(null=True, blank=True)
+    upload = models.FileField(upload_to='uploads/%Y/%m/%d/', null=True, blank=True)
+
+    def __str__(self):
+        return str(self.name)
+
+
+class ImageSlider(models.Model):
+    name = models.CharField(max_length=100, null=True)
+    page = models.ForeignKey(Page, null=True, blank=True, on_delete=models.SET_NULL, related_name='image_sliders')
+    images = models.ManyToManyField(Image, related_name='sliders')
+
+    def __str__(self):
+        return str(self.name)

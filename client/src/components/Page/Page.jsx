@@ -1,9 +1,10 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import axios from "axios"
-import { Grid, makeStyles, Typography } from '@material-ui/core';
+import { Grid, makeStyles, Paper, Typography } from '@material-ui/core';
 
 import { Feed } from '../Feed/Feed';
+import { ImageSlider } from '../ImageSlider/ImageSlider';
 
 const useStyles = makeStyles((theme) => ({
   leftAlign: {
@@ -19,6 +20,7 @@ export const Page = () => {
   let { slug } = useParams();
   const classes = useStyles();
   const [name, setName] = React.useState(null);
+  const [sliders, setSliders] = React.useState([])
   
   if ( !slug ) {
     slug = 'home'
@@ -34,6 +36,7 @@ export const Page = () => {
         }
       });
       setName(data.name);
+      setSliders(data.image_sliders)
     }
     fetchPage();
   }, [slug]);
@@ -44,10 +47,10 @@ export const Page = () => {
         <Grid item>
           <Typography className={classes.pageName} variant='h6'>{name}</Typography>
         </Grid>
-        <Grid className={classes.leftAlign} item>
-        </Grid>
       </Grid>
-
+      {sliders.length && 
+        <ImageSlider slider={sliders[0]} />
+      }
       <Feed url={PAGE_URL} showControls={false}/>
     </>
   )

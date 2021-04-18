@@ -103,7 +103,7 @@ class Page(models.Model):
 
 
 class PageContents(models.Model):
-    """This is a junction table model that also stores the button order for a panel."""
+    """This is a junction table model that also stores the order of contents on a page."""
     page = models.ForeignKey(Page, null=True, on_delete=models.SET_NULL)
     content = models.ForeignKey(Content, null=True, on_delete=models.SET_NULL)
     content_order = models.PositiveIntegerField(default=0)
@@ -114,3 +114,33 @@ class PageContents(models.Model):
 
     def __str__(self):
         return self.content.display_name or self.content.name
+
+
+class Image(models.Model):
+    name = models.CharField(max_length=100)
+    caption = models.TextField(null=True, blank=True)
+    upload = models.FileField(upload_to='uploads/%Y/%m/%d/', null=True, blank=True)
+
+    def __str__(self):
+        return str(self.name)
+
+
+class ImageSlider(models.Model):
+    name = models.CharField(max_length=100, null=True)
+    description = models.TextField(null=True, blank=True)
+    page = models.ForeignKey(Page, null=True, blank=True, on_delete=models.SET_NULL, related_name='image_sliders')
+    images = models.ManyToManyField(Image, related_name='sliders', through='ImageSliderImages')
+
+    def __str__(self):
+        return str(self.name)
+
+
+class ImageSliderImages(models.Model):
+    """This is a junction table model that also stores the order of images in a slider."""
+    slider = models.ForeignKey(ImageSlider, null=True, on_delete=models.SET_NULL)
+    image = models.ForeignKey(Image, null=True, on_delete=models.SET_NULL)
+    order = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ('order',)
+        verbose_name_plural = 'Slider image'

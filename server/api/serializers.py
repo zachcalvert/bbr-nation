@@ -4,7 +4,7 @@ from django.contrib.auth.models import User, Group
 from django.core.paginator import Paginator
 from rest_framework import serializers
 
-from content.models import Content, Page, Member
+from content.models import Content, Page, Member, ImageSlider, Image
 from football.models import Player, PlayerSeason, Season, Team
 
 
@@ -30,11 +30,25 @@ class ContentSerializer(serializers.ModelSerializer):
         return self.strip_urls(obj.text)
 
 
+class ImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Image
+        fields = '__all__'
+
+
+class ImageSliderSerializer(serializers.ModelSerializer):
+    images = ImageSerializer(many=True, read_only=True)
+    class Meta:
+        model = ImageSlider
+        fields = '__all__'
+
+
 class PageSerializer(serializers.HyperlinkedModelSerializer):
+    image_sliders = ImageSliderSerializer(many=True, read_only=True)
 
     class Meta:
         model = Page
-        fields = ['id', 'name', 'slug']
+        fields = ['id', 'name', 'slug', 'image_sliders']
         extra_kwargs = {
             'url': {'lookup_field': 'slug'}
         }

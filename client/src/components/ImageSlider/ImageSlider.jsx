@@ -1,6 +1,6 @@
 import React from "react";
 import { Slide } from "react-slideshow-image";
-import { makeStyles, Paper, Typography } from '@material-ui/core';
+import { Divider, makeStyles, Paper, Typography } from '@material-ui/core';
 import "react-slideshow-image/dist/styles.css";
 
 const useStyles = makeStyles((theme) => ({
@@ -38,6 +38,7 @@ export const ImageSlider = (props) => {
     <Paper className={classes.paper} variant='outlined'>
       <Typography className={classes.name} color="textPrimary">{slider.name}</Typography>
       <Typography className={classes.pos} color="textSecondary">{slider.description}</Typography>
+      <Divider />
       <div className={classes.sliderContainer}>
         <Slide duration={3000} transitionDuration={300} autoplay={false} canSwipe={true}>
             {slider.images.map((image) => (

@@ -48,7 +48,7 @@ export const Page = () => {
           <Typography className={classes.pageName} variant='h6'>{name}</Typography>
         </Grid>
       </Grid>
-      {sliders.length && 
+      {sliders.length > 0 &&
         <ImageSlider slider={sliders[0]} />
       }
       <Feed url={PAGE_URL} showControls={false}/>

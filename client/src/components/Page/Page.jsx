@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import axios from "axios"
-import { Grid, makeStyles, Typography } from '@material-ui/core';
+import { Grid, makeStyles, Paper, Typography } from '@material-ui/core';
 
 import { Feed } from '../Feed/Feed';
 import { ImageSlider } from '../ImageSlider/ImageSlider';
@@ -48,7 +48,9 @@ export const Page = () => {
           <Typography className={classes.pageName} variant='h6'>{name}</Typography>
         </Grid>
       </Grid>
-      {sliders.length && <ImageSlider images={sliders[0].images} />}
+      {sliders.length && 
+        <ImageSlider slider={sliders[0]} />
+      }
       <Feed url={PAGE_URL} showControls={false}/>
     </>
   )

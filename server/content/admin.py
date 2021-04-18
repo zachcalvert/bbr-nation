@@ -50,10 +50,17 @@ class ContentTabularInline(SortableInlineAdminMixin, admin.TabularInline):
     extra = 0
 
 
+class ImageSliderInline(admin.TabularInline):
+    model = ImageSlider
+    fields = ['name', 'description']
+    readonly_fields = ['name']
+    extra = 0
+
+
 class PageAdmin(admin.ModelAdmin):
     list_display = ['name']
     fields = ['name', 'slug']
-    inlines = (ContentTabularInline,)
+    inlines = (ImageSliderInline, ContentTabularInline,)
 
 
 class ImageAdmin(admin.ModelAdmin):
@@ -61,10 +68,15 @@ class ImageAdmin(admin.ModelAdmin):
     fields = ['name', 'caption', 'upload']
 
 
+class ImageInline(SortableInlineAdminMixin, admin.TabularInline):
+    model = Image.sliders.through
+    extra = 0
+
+
 class ImageSliderAdmin(admin.ModelAdmin):
     list_display = ['name']
-    fields = ['name', 'images', 'page']
-
+    fields = ['name', 'page', 'description']
+    inlines = (ImageInline,)
 
 
 admin.site.register(Image, ImageAdmin)

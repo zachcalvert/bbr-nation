@@ -134,6 +134,11 @@ export const App = (props) => {
           Authorization: `JWT ${localStorage.getItem('token')}`
         }
       })
+      .then(function(response) {
+        if (response.status === 401) {
+          setLoggedIn(false);
+        }
+      })
       .then(res => res.json())
       .then(json => {
         setUsername(json.username);

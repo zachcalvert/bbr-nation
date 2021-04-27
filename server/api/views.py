@@ -207,12 +207,17 @@ class PageViewSet(viewsets.ModelViewSet):
     lookup_field = 'slug'
 
 
+class FootballPagination(pagination.PageNumberPagination):
+    page_size = 100
+
+
 class PlayerViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows groups to be viewed or edited.
     """
     queryset = Player.objects.all()
     serializer_class = serializers.PlayerSerializer
+    pagination_class = FootballPagination
 
     def retrieve(self, request, *args, **kwargs):
         self.serializer_class = serializers.PlayerDetailsSerializer
@@ -225,6 +230,7 @@ class PlayerSeasonViewSet(viewsets.ModelViewSet):
     """
     queryset = PlayerSeason.objects.all()
     serializer_class = serializers.PlayerSeasonSerializer
+    pagination_class = FootballPagination
 
     def get_queryset(self):
         """
@@ -257,6 +263,7 @@ class SeasonViewSet(viewsets.ModelViewSet):
     queryset = Season.objects.all()
     serializer_class = serializers.SeasonSerializer
     lookup_field = 'year'
+    pagination_class = FootballPagination
 
 
 class TeamViewSet(viewsets.ModelViewSet):
@@ -265,6 +272,7 @@ class TeamViewSet(viewsets.ModelViewSet):
     """
     queryset = Team.objects.all()
     serializer_class = serializers.TeamSerializer
+    pagination_class = FootballPagination
 
     def retrieve(self, request, *args, **kwargs):
         self.serializer_class = serializers.TeamDetailsSerializer

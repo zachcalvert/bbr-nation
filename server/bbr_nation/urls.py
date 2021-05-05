@@ -34,3 +34,7 @@ urlpatterns = [
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL,
                           document_root=settings.MEDIA_ROOT)
+
+admin.site.site_header = "BBR Nation Admin"
+admin.site.site_title = "BBR Nation Admin Portal"
+admin.site.index_title = "BBR Nation Administration"

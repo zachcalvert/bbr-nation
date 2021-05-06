@@ -8,3 +8,5 @@ django-admin-sortable2==0.7.8
 django-filter==2.4.0
 requests
 espn_api
+spacy==2.3.5
+giphy_client

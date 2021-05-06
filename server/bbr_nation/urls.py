@@ -29,6 +29,7 @@ urlpatterns = [
     path('api/', include(router.urls)),
     path('token-auth/', obtain_jwt_token),
     path('current_user/', views.current_user),
+    path('bot/', include('bot.urls')),
 ]
 
 if settings.DEBUG:

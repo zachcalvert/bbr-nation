@@ -4,6 +4,7 @@ from django.contrib.auth.models import User, Group
 from django.core.paginator import Paginator
 from rest_framework import serializers
 
+from bot.models import Thought
 from content.models import Content, Page, Member, ImageSlider, Image
 from football.models import Player, PlayerSeason, Season, Team
 
@@ -261,3 +262,22 @@ class SeasonSerializer(serializers.HyperlinkedModelSerializer):
     def get_piercee(self, obj):
         return obj.piercee.name
 
+
+class ThoughtSerializer(serializers.ModelSerializer):
+    player = serializers.SerializerMethodField('get_player')
+
+    class Meta:
+        model = Thought
+        fields = ['id', 'text', 'player', 'sentiment']
+
+    def update(self, instance, validated_data):
+        instance.text = validated_data.get('text', instance.text)
+        instance.sentiment = validated_data.get('sentiment', instance.sentiment)
+        instance.approved = True
+        instance.save()
+        return instance
+
+    def get_player(self, obj):
+        if obj.player:
+            return obj.player.name
+        return None

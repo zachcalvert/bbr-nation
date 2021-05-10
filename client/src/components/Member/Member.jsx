@@ -13,7 +13,6 @@ const useStyles = makeStyles((theme) => ({
   leftAlign: {
     padding: '10px',
     margin: 'auto auto auto 10px',
-    
   },
   large: {
     width: theme.spacing(16),

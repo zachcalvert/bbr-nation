@@ -1,9 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import useMediaQuery from '@material-ui/core/useMediaQuery';
 import { BrowserRouter, Route } from 'react-router-dom';
 import { createMuiTheme, CssBaseline, Grid, Hidden, Link, ThemeProvider, makeStyles } from '@material-ui/core';
-import { AppBar, Button, Drawer, Fab, IconButton, Switch, TextField, Toolbar, Typography } from '@material-ui/core';
+import { AppBar, Drawer, Fab, IconButton, TextField, Toolbar, Typography } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
 import HomeRoundedIcon from '@material-ui/icons/HomeRounded';
 import NightsStayRoundedIcon from '@material-ui/icons/NightsStayRounded';
@@ -18,6 +17,7 @@ import { Player } from './components/Player/Player';
 import { AllSeasons } from './components/Season/AllSeasons';
 import { Season } from './components/Season/Season';
 import { Team } from './components/Team/Team';
+import { Thought } from './components/Thought/Thought';
 
 const drawerWidth = 250;
 
@@ -137,12 +137,11 @@ export const App = (props) => {
       .then(function(response) {
         if (response.status === 401) {
           setLoggedIn(false);
+        } else if (response.status === 200) {
+          console.log(response)
+          setLoggedIn(true);
+          setUsername(response.username);
         }
-      })
-      .then(res => res.json())
-      .then(json => {
-        setUsername(json.username);
-        setLoggedIn(true);
       })
       .catch((error) => {
         setLoggedIn(false);
@@ -218,6 +217,7 @@ export const App = (props) => {
           <div className={classes.toolbar} />
           <Grid className={classes.container} container spacing={1}>
             <Grid item xs={12}>
+              <Route path="/bot/thought" component={Thought} />
               <Route path="/u/:name" component={Member} />
               <Route path="/content" exact component={AllContent} />
               <Route path="/content/:slug" component={Page} />

@@ -21,6 +21,9 @@ class GroupMeBot(models.Model):
     name = models.CharField(max_length=25, null=True)
     identifier = models.CharField(max_length=100)
 
+    def __str__(self):
+        return self.name
+
     def send_message(self, message):
         """
         Post a message to a groupme channel
@@ -157,7 +160,8 @@ class Response(models.Model):
         if not thought:
             thought = Thought.objects.filter(used=False, approved=True).order_by('?').first()
 
-        self.text = thought.text
+        text = thought.text.replace('MEMBER_NAME', self.request.sender.name)
+        self.text = text
         self.save()
 
         thought.used = True

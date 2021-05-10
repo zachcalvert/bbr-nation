@@ -10,3 +10,5 @@ requests
 espn_api
 spacy==2.3.5
 giphy_client
+wolframalpha
+praw==7.2.0

@@ -44,7 +44,6 @@ class NewMessageViewTestCase(TestCase):
         self.assertEqual(Response.objects.get().request.bot, self.bbot)
         self.assertEqual(Response.objects.count(), 1)
 
-        
     def test_testbot_correctly_instantiated(self):
         self.assertEqual(Request.objects.count(), 0)
         self.assertEqual(Response.objects.count(), 0)
@@ -60,7 +59,7 @@ class NewMessageViewTestCase(TestCase):
           "sender_type": "",
           "source_guid": "GUID",
           "system": False,
-          "text": "Hi testbot",
+          "text": "hello testbot",
           "user_id": "zach"
         }
 

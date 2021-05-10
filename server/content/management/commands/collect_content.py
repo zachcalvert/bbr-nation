@@ -65,6 +65,9 @@ class Command(BaseCommand):
             message_list = content['response']['messages']
 
             for message in message_list:
+                if Content.objects.filter(name=message['id']).exists():
+                    print(f'seen message with id {message["id"]} before, exiting')
+                    return
                 try:
                     if message['attachments'] and len(message['favorited_by']) > 1:
                         try:

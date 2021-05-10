@@ -26,6 +26,7 @@ class NewMessageView(View):
         #   "text": "Hello world ☃☃",
         #   "user_id": "1234567890"
         # }
+        print('got a message!')
         try:
             content = json.loads(request.body)
         except json.decoder.JSONDecodeError:
@@ -35,6 +36,8 @@ class NewMessageView(View):
 
         if content['sender_type'] == 'bot':
             return HttpResponse(status=204)
+
+        print(f'message is {content["text"]}')
         
         try:
             message_content = content['text'].lower()
@@ -60,6 +63,7 @@ class NewMessageView(View):
 
         print(f'request: {request}')
         response = request.generate_response()
-        print(f'response: {response}')
+        print(f'response: {response.text}')
+        response.send()
         
         return HttpResponse(status=204)

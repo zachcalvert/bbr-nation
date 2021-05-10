@@ -1,11 +1,20 @@
 import json
+import random
 import requests
+import spacy
+import wolframalpha
 
 from django.db import models
 
+from bot import vocab
 from content.models import Member
+from football.models import Player
 
 GROUPME_URL = "https://api.groupme.com/v3/bots/post"
+WOLFRAMALPHA_KEY = "EW5XY2-H2U9WT7Y6X"
+
+nlp = spacy.load("en_core_web_sm")
+wolframalpha_instance = wolframalpha.Client(WOLFRAMALPHA_KEY)
 
 
 class GroupMeBot(models.Model):
@@ -16,6 +25,7 @@ class GroupMeBot(models.Model):
         """
         Post a message to a groupme channel
         """
+        print('we are inside send_message')
         body = {
             "bot_id": self.identifier,
             "text": message.text
@@ -43,56 +53,82 @@ class Request(models.Model):
     sender = models.ForeignKey(Member, null=True, on_delete=models.SET_NULL)
     sent_at = models.DateTimeField(auto_now_add=True)
     text = models.TextField()
-    question = models.BooleanField(default=False)
+    is_question = models.BooleanField(default=False)
+    question_word = models.CharField(max_length=15, null=True, blank=True)
+    is_greeting = models.BooleanField(default=False)
+    greeting_word = models.CharField(max_length=15, null=True, blank=True)
     bot = models.ForeignKey(GroupMeBot, null=True, on_delete=models.SET_NULL)
+    subject = models.CharField(max_length=50, null=True, blank=True)
+    verb = models.CharField(max_length=50, null=True, blank=True)
+    direct_object = models.CharField(max_length=50, null=True, blank=True)
 
     def __str__(self):
         return f"{self.sender.name}: '{self.text}' ({self.sentiment})"
 
     def classify(self):
-        laughs = {'lol', 'loll', 'lolll', 'lolll', 'lmao', 'lmaoo', 'lmaooo', 'haha', 'lmfao', '😂', '🤣', '😅', '😆'}
-        negatives = {'bruh', 'wtf', 'not cool', 'not chill', 'no chill', 'damn bro', 'damn dude', 'damn bbot', 'fuck you', 'fuck off', 'bad bot'}
-        positives = {'yess', 'yesss', 'yaww', 'yawww', 'chya', 'chyaa', 'chyaaa', 'hell ye', 'hell ya', 'yes bbot', 'fuck ye', 'love it', 'my man', 'my guy', 'bro', '!', 'thank you', 'thanks', 'absolutely'}
-        questions = {'how', 'what', 'when', 'who', 'why', 'wanna', 'want', 'are', 'did', 'do', 'have', 'will', 'can'}
-
-        if any(laugh in self.text for laugh in laughs):
+        """
+        1. Identify the sentiment of the message, if one exists
+        2. Identify if it is a question
+        3. Identify if it is a greeting
+        4. Identify the subject, verb and object, if they exist
+        """
+        print('inside request.classify')
+        if any(laugh in self.text for laugh in vocab.LAUGHS):
             self.sentiment = "LAUGHING"
-        elif any(negative in self.text for negative in negatives):
+        elif any(negative in self.text for negative in vocab.NEGATIVES):
             self.sentiment = "NEGATIVE"
-        elif any(positive in self.text for positive in positives):
+        elif any(positive in self.text for positive in vocab.POSITIVES):
             self.sentiment = "POSITIVE"
         else:
             self.sentiment = "NEUTRAL"
 
         first_word = self.text.split(' ')
-        if any(first_word[0].startswith(question) for question in questions):
-            self.question = True
-
-        if self.text[-1] == '?':
-            self.question = True
+        if first_word and first_word[0] == 'bbot':
+            first_word = first_word[1]
+        else:
+            first_word = first_word[0]
         
-        self.save()        
+        self.greeting_word = next((word for word in vocab.GREETINGS if word in self.text), None)
+        if self.greeting_word:
+            self.is_greeting = True
 
-    def answer(self):
-        return ''
+        self.question_word = next((word for word in vocab.QUESTIONS if word in self.text), None)
+        if not self.is_greeting and self.question_word or self.text[-1] == '?':
+            self.is_question = True
 
-    def reply(self):
-        return ''
+        doc = nlp(self.text)
+        middle = len(self.text.split(' ')) // 2
+
+        span = doc[doc[middle].left_edge.i : doc[middle].right_edge.i+1]
+        with doc.retokenize() as retokenizer:
+            retokenizer.merge(span)
+        for token in doc:
+            if token.dep_ == 'nsubj':
+                self.subject = str(token)
+            if token.dep_ == 'ROOT' and token.pos_ == 'VERB':
+                self.verb = str(token)
+            if token.dep_ == 'dobj':
+                self.direct_object = str(token)
+        
+        if not self.subject and self.text.startswith('bbot'):
+            self.subject = 'bbot'
+        if not self.subject and self.text.startswith('you'):
+            self.subject = 'you'
+        if not self.subject and self.text.startswith('i '):
+            self.subject = 'i'
+
+        self.save()
 
     def generate_response(self):
 
         self.classify()
-
-        if self.question:
-            text = self.answer()
-        else:
-            text = self.reply()
         
         response = Response.objects.create(
             request=self,
-            sender=self.bot,
-            text=text
+            sender=self.bot
         )
+
+        response.build()
 
         return response
 
@@ -104,5 +140,63 @@ class Response(models.Model):
     text = models.TextField()
     image = models.URLField(null=True, blank=True)
 
+    def build(self):
+        print('we are inside response.build')
+        if self.request.is_question:
+            self.text = self.answer()
+            self.save()
+            return
+        
+        if self.request.is_greeting:
+            self.text = self.greet()
+            self.save()
+            return
+        
+        thought = Thought.objects.filter(sentiment=self.request.sentiment, used=False, approved=True).order_by('?').first()
+
+        if not thought:
+            thought = Thought.objects.filter(used=False, approved=True).order_by('?').first()
+
+        self.text = thought.text
+        self.save()
+
+        thought.used = True
+        thought.save()
+
+    def greet(self):
+        text = f'{random.choice(vocab.GREETING_RESPONSES)} {self.request.sender.name}! {random.choice(vocab.GREETING_QUESTIONS)}'
+        return text
+        
+    def answer(self):
+        question = self.request.text.replace('bbot', '')
+        
+        wolfram_response = wolframalpha_instance.query(question)
+        try:
+            answer = next(wolfram_response.results).text
+            return answer
+        except StopIteration:
+            pass
+    
+        return f'I don\'t really know {self.request.question_word} {self.request.subject} {self.request.verb}'
+
     def send(self):
+        print('inside Response.send')
         self.request.bot.send_message(self)
+
+
+class Thought(models.Model):
+    SENTIMENT_CHOICES = (
+        ("NEUTRAL", "NEUTRAL"),
+        ("POSITIVE", "POSITIVE"),
+        ("NEGATIVE", "NEGATIVE"),
+        ("LAUGHING", "LAUGHING")
+    )
+    text = models.TextField()
+    member = models.ForeignKey(Member, null=True, blank=True, on_delete=models.SET_NULL, related_name='thoughts')
+    player = models.ForeignKey(Player, null=True, blank=True, on_delete=models.SET_NULL, related_name='thoughts')
+    used = models.IntegerField(default=0)
+    approved = models.BooleanField(default=False)
+    sentiment = models.CharField(max_length=15, choices=SENTIMENT_CHOICES, default="NEUTRAL")
+
+    def __str__(self):
+        return self.text

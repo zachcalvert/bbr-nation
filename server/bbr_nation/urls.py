@@ -8,6 +8,8 @@ from rest_framework_jwt.views import obtain_jwt_token
 from api import views
 
 router = routers.DefaultRouter()
+
+# content
 router.register(r'users', views.UserViewSet)
 router.register(r'groups', views.GroupViewSet)
 router.register(r'content', views.ContentViewSet)
@@ -16,11 +18,15 @@ router.register(r'members', views.MemberViewSet)
 router.register(r'sliders', views.ImageSliderViewSet)
 router.register(r'images', views.ImageViewSet)
 
-
+# football
 router.register(r'players', views.PlayerViewSet)
 router.register(r'playerseasons', views.PlayerSeasonViewSet)
 router.register(r'seasons', views.SeasonViewSet)
 router.register(r'teams', views.TeamViewSet)
+
+# bbot
+router.register(r'thoughts', views.ThoughtViewSet)
+
 
 
 urlpatterns = [

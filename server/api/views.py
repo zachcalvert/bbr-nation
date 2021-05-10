@@ -14,6 +14,7 @@ from rest_framework.decorators import action, api_view
 from rest_framework.response import Response
 
 from api import serializers
+from bot.models import Thought
 from content.models import Content, Page, Member, ImageSlider, Image
 from football.models import Player, PlayerSeason, Season, Team
 
@@ -21,12 +22,6 @@ from football.models import Player, PlayerSeason, Season, Team
 BASE_URL = "https://api.groupme.com/v3/"
 GROUP_ID = "16191637"
 TOKEN = "kUtmZNokfpZvOE8KrOw1tb7cF15wZ3h55Vxk0T34"
-SHOUTOUT_IDS = [
-    '160879140245416165',
-    '160879152046258192',
-    '160879261420945182',
-    '160879271942474197'
-]
 
 
 def paginate(func):
@@ -282,3 +277,13 @@ class TeamViewSet(viewsets.ModelViewSet):
     @action(detail=False)
     def all(self, request):
         return Team.objects.all().order_by('-points_for')
+
+
+class ThoughtViewSet(viewsets.ModelViewSet):
+    queryset = Thought.objects.all()
+    serializer_class = serializers.ThoughtSerializer
+
+    @paginate
+    @action(detail=False)
+    def random(self, request):
+        return [Thought.objects.filter(approved=False).order_by('?').first()]

@@ -1,15 +1,15 @@
 import json
 
 from django.shortcuts import render
-from django.http import HttpResponse
 from django.utils import timezone
-from django.views import View
+from rest_framework.views import APIView
+from rest_framework.response import Response
 
 from bot.models import GroupMeBot, Request
 from content.models import Member
 
 
-class NewMessageView(View):
+class NewMessageView(APIView):
 
     def post(self, request):
         # {
@@ -66,4 +66,4 @@ class NewMessageView(View):
         print(f'response: {response.text}')
         response.send()
         
-        return HttpResponse(status=204)
+        return Response(status=204)

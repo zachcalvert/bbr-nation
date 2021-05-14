@@ -50,7 +50,20 @@ GREETING_QUESTIONS = [
 
 LAUGHS = {'lol', 'loll', 'lolll', 'lolll', 'lmao', 'lmaoo', 'lmaooo', 'haha', 'lmfao', '😂', '🤣', '😅', '😆'}
 
-NEGATIVES = {'bruh', 'wtf', 'not cool', 'not chill', 'no chill', 'damn bro', 'damn dude', 'damn bbot', 'fuck you', 'fuck off', 'bad bot'}
+NEGATIVES = {
+    'jesus dude',
+    'bruh',
+    'wtf',
+    'not cool',
+    'not chill',
+    'no chill',
+    'damn bro',
+    'damn dude',
+    'damn bbot',
+    'fuck you',
+    'fuck off',
+    'bad bot'
+}
 
 POSITIVES = {'yess', 'yesss', 'yaww', 'yawww', 'chya', 'chyaa', 'chyaaa', 'hell ye', 'hell ya', 'yes bbot', 'fuck ye', 'love it', 'my man', 'my guy', 'bro', '!', 'thank you', 'thanks', 'absolutely'}
 

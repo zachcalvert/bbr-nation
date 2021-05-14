@@ -75,6 +75,7 @@ class Request(models.Model):
         2. Identify if it is a question
         3. Identify if it is a greeting
         4. Identify the subject, verb and object, if they exist
+        5. Identify if it is a simple check in
         """
         print('inside request.classify')
         if any(laugh in self.text for laugh in vocab.LAUGHS):
@@ -100,7 +101,8 @@ class Request(models.Model):
         if not self.is_greeting and self.question_word or self.text[-1] == '?':
             self.is_question = True
 
-        if any(word for word in vocab.CHECK_INS in self.text):
+        check_in = next((word for word in vocab.CHECK_INS if word in self.text), None)
+        if check_in:
             self.is_check_in = True
 
         doc = nlp(self.text)
@@ -176,8 +178,8 @@ class Response(models.Model):
         thought.save()
 
     def give_update(self):
-        text = Thought.objects.filter(is_update=True, used=False, approved=True).order_by('?').first()
-        return text.replace('MEMBER_NAME', self.request.sender.name)
+        thought = Thought.objects.filter(is_update=True, used=False, approved=True).order_by('?').first()
+        return thought.text.replace('MEMBER_NAME', self.request.sender.name)
 
     def greet(self):
         text = f'{random.choice(vocab.GREETING_RESPONSES)} {self.request.sender.name}! {random.choice(vocab.GREETING_QUESTIONS)}'

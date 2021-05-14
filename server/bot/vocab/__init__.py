@@ -3,14 +3,25 @@ GREETINGS = {
     'whatup',
     'whassup',
     'wassup',
-    'morning',
+    'morning'
+}
+
+CHECK_INS = [
     'how we doin',
     'how you doin',
     'what\'s good',
     'whats good',
     'how\'s it goin',
-    'hows it goin'
-}
+    'hows it goin',
+    'whats poppin',
+    'how you livin',
+    'how we livin',
+    'whats happenin',
+    'what\'s happenin',
+    'what\'s crackin',
+    'whats crackin',
+    'how are you',
+]
 
 GREETING_RESPONSES = [
     'whatup', 'hey', 'ay', 'ayyyy', 'chyaa', 'chyaaa', 'ayoo', 'ayyy', 'whatupp', 'yo yo', 'yooo'

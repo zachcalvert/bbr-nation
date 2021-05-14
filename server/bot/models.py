@@ -64,6 +64,7 @@ class Request(models.Model):
     subject = models.CharField(max_length=50, null=True, blank=True)
     verb = models.CharField(max_length=50, null=True, blank=True)
     direct_object = models.CharField(max_length=50, null=True, blank=True)
+    is_check_in = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.sender.name}: '{self.text}' ({self.sentiment})"
@@ -98,6 +99,9 @@ class Request(models.Model):
         self.question_word = next((word for word in vocab.QUESTIONS if word in self.text), None)
         if not self.is_greeting and self.question_word or self.text[-1] == '?':
             self.is_question = True
+
+        if any(word for word in vocab.CHECK_INS in self.text):
+            self.is_check_in = True
 
         doc = nlp(self.text)
         middle = len(self.text.split(' ')) // 2
@@ -144,7 +148,11 @@ class Response(models.Model):
     image = models.URLField(null=True, blank=True)
 
     def build(self):
-        print('we are inside response.build')
+        if self.request.is_check_in:
+            self.text = self.give_update()
+            self.save()
+            return
+
         if self.request.is_question:
             self.text = self.answer()
             self.save()
@@ -158,7 +166,7 @@ class Response(models.Model):
         thought = Thought.objects.filter(sentiment=self.request.sentiment, used=False, approved=True).order_by('?').first()
 
         if not thought:
-            thought = Thought.objects.filter(used=False, approved=True).order_by('?').first()
+            thought = Thought.objects.filter(used=0, approved=True).order_by('?').first()
 
         text = thought.text.replace('MEMBER_NAME', self.request.sender.name)
         self.text = text
@@ -166,6 +174,10 @@ class Response(models.Model):
 
         thought.used = True
         thought.save()
+
+    def give_update(self):
+        text = Thought.objects.filter(is_update=True, used=False, approved=True).order_by('?').first()
+        return text.replace('MEMBER_NAME', self.request.sender.name)
 
     def greet(self):
         text = f'{random.choice(vocab.GREETING_RESPONSES)} {self.request.sender.name}! {random.choice(vocab.GREETING_QUESTIONS)}'
@@ -201,6 +213,7 @@ class Thought(models.Model):
     used = models.IntegerField(default=0)
     approved = models.BooleanField(default=False)
     sentiment = models.CharField(max_length=15, choices=SENTIMENT_CHOICES, default="NEUTRAL")
+    is_update = models.BooleanField(default=False)
 
     def __str__(self):
         return self.text

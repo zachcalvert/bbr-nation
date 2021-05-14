@@ -268,11 +268,12 @@ class ThoughtSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Thought
-        fields = ['id', 'text', 'player', 'sentiment']
+        fields = ['id', 'text', 'player', 'sentiment', 'is_update']
 
     def update(self, instance, validated_data):
         instance.text = validated_data.get('text', instance.text)
         instance.sentiment = validated_data.get('sentiment', instance.sentiment)
+        instance.is_update = validated_data.get('is_update', instance.is_update)
         instance.approved = True
         instance.save()
         return instance

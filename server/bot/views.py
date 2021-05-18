@@ -16,8 +16,7 @@
 import json
 
 from django.shortcuts import render
-from django.utils import timezone
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 
@@ -61,6 +60,20 @@ def new_message(request):
             sender=sender,
             bot=GroupMeBot.objects.get(name='testbot')
         )
+    elif 'localbot' in message_content:
+        sender = Member.objects.get(groupme_id=user_id)
+        request = Request.objects.create(
+            text=message_content,
+            sender=sender,
+            bot=GroupMeBot.objects.get(name='localbot')
+        )
+        print(f'request: {request.text}')
+        response = request.generate_response()
+        print(response.text)
+        return JsonResponse({
+            "text": response.text
+        })
+    
 
     if request:
         print(f'request: {request}')

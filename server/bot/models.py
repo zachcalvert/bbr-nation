@@ -1,6 +1,4 @@
-import json
 import random
-import requests
 import spacy
 import wolframalpha
 
@@ -39,10 +37,10 @@ class GroupMeBot(models.Model):
                 "type": "image",
                 "url": message.image
             }]
-
-        response = requests.post(GROUPME_URL, data=json.dumps(body), headers={'Content-Type': 'Application/json'})
-        if response.status_code < 200 or response.status_code > 299:
-            print('ERROR posting to GroupMe: {}: {}'.format(response.status_code, response.content))
+        print('got here and I shouldnt have!!!')
+        # response = requests.post(GROUPME_URL, data=json.dumps(body), headers={'Content-Type': 'Application/json'})
+        # if response.status_code < 200 or response.status_code > 299:
+            # print('ERROR posting to GroupMe: {}: {}'.format(response.status_code, response.content))
 
 
 class Request(models.Model):
@@ -77,7 +75,6 @@ class Request(models.Model):
         4. Identify the subject, verb and object, if they exist
         5. Identify if it is a simple check in
         """
-        print('inside request.classify')
         if any(laugh in self.text for laugh in vocab.LAUGHS):
             self.sentiment = "LAUGHING"
         elif any(negative in self.text for negative in vocab.NEGATIVES):
@@ -186,16 +183,7 @@ class Response(models.Model):
         return text
         
     def answer(self):
-        question = self.request.text.replace('bbot', '')
-        
-        wolfram_response = wolframalpha_instance.query(question)
-        try:
-            answer = next(wolfram_response.results).text
-            return answer
-        except StopIteration:
-            pass
-    
-        return f'I don\'t really know {self.request.question_word} {self.request.subject} {self.request.verb}'
+        return f'{self.request.question_word} {self.request.subject} {self.request.verb}?'
 
     def send(self):
         print('inside Response.send')

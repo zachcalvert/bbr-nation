@@ -3,9 +3,9 @@ import json
 import random
 from spacy.lang.en.stop_words import STOP_WORDS
 
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 
-from bot.groupme_messages import MESSAGES
+from bot.data.groupme_messages import MESSAGES
 from bot.models import Thought
 from content.models import Member
 
@@ -16,9 +16,11 @@ with open('bot/bigram_to_bigram_model.json') as f:
 MEMBER_NAMES = [member.name for member in Member.objects.all()] + [
     'shanye',
     'commish',
-    'vino',
+    ' vino ',
     ' d ',
-    'lish'
+    ' lish ',
+    ' ne ',
+    ' bk ',
 ]
 
 class Command(BaseCommand):

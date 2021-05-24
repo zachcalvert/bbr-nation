@@ -117,6 +117,7 @@ POSITIVES = {
     "thank you",
     "thanks",
     "absolutely",
+    "welcome",
 }
 
 QUESTIONS = [

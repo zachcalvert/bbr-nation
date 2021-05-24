@@ -85,14 +85,11 @@ class Request(models.Model):
     sender = models.ForeignKey(Member, null=True, on_delete=models.SET_NULL)
     sent_at = models.DateTimeField(auto_now_add=True)
     text = models.TextField()
-    is_question = models.BooleanField(default=False)
     question_word = models.CharField(max_length=15, null=True, blank=True)
-    is_greeting = models.BooleanField(default=False)
     bot = models.ForeignKey(GroupMeBot, null=True, on_delete=models.SET_NULL)
     subject = models.CharField(max_length=50, null=True, blank=True)
     verb = models.CharField(max_length=50, null=True, blank=True)
     direct_object = models.CharField(max_length=50, null=True, blank=True)
-    is_check_in = models.BooleanField(default=False)
     message_type = models.CharField(max_length=20, choices=TYPE_CHOICES, null=True, blank=True)
 
     def __str__(self):
@@ -105,9 +102,8 @@ class Request(models.Model):
         if f'{self.bot.name} gif' in self.text:
             self.message_type = 'GIF'
         elif f'{self.bot.name} image' in self.text:
-            self.message_type = 'GIF'
+            self.message_type = 'IMAGE'
         elif any(word in self.text for word in vocab.CHECK_INS):
-            print('its a checkin')
             self.message_type = 'CHECK_IN'
         elif any(word in self.text for word in vocab.GREETINGS):
             self.message_type = 'GREETING'
@@ -189,7 +185,7 @@ class Response(models.Model):
                 search_terms, 
                 limit=10
             )
-            gif = api_response.data[random.choice(range(0,9))]
+            gif = random.choice(api_response.data)
             url = gif.images.downsized_large.url
         except ApiException as e:
             print("Exception when calling DefaultApi->gifs_search_get: %s\n" % e)

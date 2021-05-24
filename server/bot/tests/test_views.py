@@ -2,7 +2,8 @@ from django.test import TestCase, Client
 from django.urls import reverse
 
 from bot.data.messages_for_bot import MESSAGES
-from bot.models import GroupMeBot, Request, Response
+from bot.data.thoughts import THOUGHTS
+from bot.models import GroupMeBot, Request, Response, Thought
 from content.models import Member
 
 
@@ -24,6 +25,15 @@ class NewMessageViewTestCase(TestCase):
         Member.objects.create(name='zach', groupme_id='zach')
         self.client = Client()
         self.url = reverse('new_message')
+
+        for thought in THOUGHTS:
+            Thought.objects.create(**{
+                "text": thought['text'],
+                "sentiment": thought['sentiment'],
+                "is_update": thought['is_update'],
+                "approved": thought['approved']
+            })
+        print(Thought.objects.count())
     
     def test_bbot_correctly_instantiated(self):
         self.assertEqual(Request.objects.count(), 0)
@@ -90,11 +100,12 @@ class NewMessageViewTestCase(TestCase):
         }
 
         for message in MESSAGES:
+            message = message.lower().replace('bbot', 'localbot')
             print('')
             print(message)
             data['text'] = message
             response = self.client.post(self.url, data=data)
-            print(response.text)
+            print(response.json()['text'])
             print('')
 
 

@@ -1,69 +1,74 @@
 from django.test import TestCase
 
-from bot.models import Request
+from bot.models import GroupMeBot, Request, Response
 from content.models import Member
 
-# Create your tests here.
 
-class BotClassificationTestCase(TestCase):
+class BbotTestCase(TestCase):
 
     def setUp(self):
         self.member = Member.objects.create(name='vino')
-        self.bot = Member.objects.create(name='bbot')
+        self.bot = GroupMeBot.objects.create(name='testbot')
+    
+    def make_request(self, text):
+        return Request.objects.create(sender=self.member, text=text, bot=self.bot)
 
-    def make_message(self, text):
-        return Request.objects.create(sender=self.member, text=text)
 
+class MessageTypeTestCase(BbotTestCase):
+    
     def test_classify_greetings(self):
         GREETINGS = [
-            'whatup bbot!',
-            'how you doing bbot',
-            'how\'s it going bbot',
-            'morning bbot, how we doing today'
+            'good morning testbot',
+            'hi testbot!',
+            'testbot, hello',
+            'hola testbot'
+        ]
+        
+        for greeting in GREETINGS:
+            request = self.make_request(greeting)
+            request.determine_message_type()
+            self.assertEqual(request.message_type, 'GREETING', f'{greeting} failed the test')
+    
+    def test_classify_checkins(self):
+        CHECK_INS = [
+            'whatup testbot!',
+            'how you doing testbot',
+            'how\'s it going testbot',
+            'morning testbot how we doing today'
         ]
 
-        for greeting in GREETINGS:
-            message = self.make_message(greeting)
-            message.classify()
-            self.assertTrue(message.is_greeting, f'{greeting} failed the test')
+        for check_in in CHECK_INS:
+            request = self.make_request(check_in)
+            request.determine_message_type()
+            self.assertEqual(request.message_type, 'CHECK_IN', f'{check_in} failed the test')
 
     def test_classify_questions(self):
-        NEUTRAL_QUESTIONS = [
-            "how's it going bbot?",
-            'what do you say bbot',
-            'idk, what do you think bbot?',
+        QUESTIONS = [
+            "who is winning tonight testbot",
+            'how do you do testbot',
+            'idk, what do you think testbot?',
         ]
-        for question in NEUTRAL_QUESTIONS:
-            message = self.make_message(question)
-            message.classify()
-            self.assertTrue(message.is_question, f'{question} failed the test')
-            self.assertEqual(message.sentiment, 'NEUTRAL')
+        for question in QUESTIONS:
+            request = self.make_request(question)
+            request.determine_message_type()
+            self.assertEqual(request.message_type, 'QUESTION', f'{question} failed the test')
 
-        LAUGHING_QUESTIONS = [
-            "😂 rough night bbot?",
-            "how do you know that lol",
-            "bbot what time is the game lol"
-        ]
-        for question in LAUGHING_QUESTIONS:
-            message = self.make_message(question)
-            message.classify()
-            self.assertTrue(message.is_question, f'{question} failed the test')
-            self.assertEqual(message.sentiment, 'LAUGHING')
 
-    def test_classify_laughs(self):
+class SentimentTestCase(BbotTestCase):
+
+    def test_laughs(self):
         LAUGHS = [
-            "loll broooo",
-            'lmao',
-            'bruhhh 😂',
-            'goddamn 🤣',
-            '😅 lol',
-            '😆'
+            "loll testbot broooo",
+            'testbot lmao',
+            'bruhhh testbot 😂',
+            'goddamn testbot 🤣',
+            '😅 testbot lol',
+            '😆 testbot'
         ]
         for laugh in LAUGHS:
-            message = self.make_message(laugh)
-            message.classify()
-            self.assertFalse(message.is_question)
-            self.assertEqual(message.sentiment, 'LAUGHING', f'{laugh} failed the test')
+            request = self.make_request(laugh)
+            request.determine_sentiment()
+            self.assertEqual(request.sentiment, 'LAUGHING', f'{laugh} failed the test')
 
     def test_classify_negatives(self):
         NEGATIVES = [
@@ -72,10 +77,9 @@ class BotClassificationTestCase(TestCase):
             'not chill man'
         ]
         for negative in NEGATIVES:
-            message = self.make_message(negative)
-            message.classify()
-            self.assertFalse(message.is_question)
-            self.assertEqual(message.sentiment, 'NEGATIVE', f'{negative} failed the test')
+            request = self.make_request(negative)
+            request.determine_sentiment()
+            self.assertEqual(request.sentiment, 'NEGATIVE', f'{negative} failed the test')
 
     def test_classify_positives(self):
         POSITIVES = [
@@ -85,74 +89,59 @@ class BotClassificationTestCase(TestCase):
             'absolutely'
         ]
         for positive in POSITIVES:
-            message = self.make_message(positive)
-            message.classify()
-            self.assertFalse(message.is_question)
-            self.assertEqual(message.sentiment, 'POSITIVE', f'{positive} failed the test')
+            request = self.make_request(positive)
+            request.determine_sentiment()
+            self.assertEqual(request.sentiment, 'POSITIVE', f'{positive} failed the test')
+
+
+class PartsOfSpeechTestCase(BbotTestCase):
 
     def test_pos_tagging(self):
-        # the patriots suck
-        message = self.make_message('the patriots suck')
-        message.classify()
-        self.assertEqual(message.subject, 'the patriots')
-        self.assertEqual(message.verb, 'suck')
+        request = self.make_request('The Patriots suck')
+        request.determine_parts_of_speech()
+        self.assertEqual(request.subject, 'vino')
+        self.assertEqual(request.verb, 'suck')
 
         # I lost lol
-        message = self.make_message('you lost man lol')
-        message.classify()
-        self.assertEqual(message.subject, 'you')
-        self.assertEqual(message.verb, 'lost')
+        request = self.make_request('you lost man lol')
+        request.determine_parts_of_speech()
+        self.assertEqual(request.subject, 'testbot')
+        self.assertEqual(request.verb, 'lost')
 
         # Bbot roasting the fuck out of us
-        message = self.make_message('bbot\'s killing it')
-        message.classify()
-        self.assertEqual(message.subject, 'bbot')
-        self.assertEqual(message.verb, 'killing')
-        self.assertEqual(message.direct_object, 'it')
+        request = self.make_request('testbot\'s killing it')
+        request.determine_parts_of_speech()
+        self.assertEqual(request.subject, 'testbot')
+        self.assertEqual(request.verb, 'killing')
+        self.assertEqual(request.direct_object, 'it')
 
         # We all just freaked the fuck out
-        message = self.make_message('walsh just freaked the fuck out')
-        message.classify()
-        self.assertEqual(message.subject, 'walsh')
-        self.assertEqual(message.verb, 'freaked')
+        request = self.make_request('i was freaking the fuck out')
+        request.determine_parts_of_speech()
+        self.assertEqual(request.subject, 'vino')
+        self.assertEqual(request.verb, 'freaked')
 
 
-class BotAnsweringTestCase(TestCase):
-    def setUp(self):
-        self.member = Member.objects.create(name='vino')
-        self.bot = Member.objects.create(name='bbot')
-
-    def make_request(self, text):
-        return Request.objects.create(sender=self.member, text=text)
+class BotAnsweringTestCase(BbotTestCase):
 
     def test_answers(self):
-        request = self.make_request('what do pandas eat')
+        request = self.make_request('testbot what does he eat?')
         request.classify()
-        self.assertTrue(request.is_question)
-        response = request.generate_response()
-        self.assertEqual(response.text, 'I don\'t really know what pandas eat')
+        self.assertEqual(request.question_word, 'what')
+        response = Response.objects.create(
+            request=request,
+            sender=self.bot
+        )
+        response.build()
+        self.assertEqual(response.text, 'what vino eat?')
 
-
-class BotGreetingResponseTestCase(TestCase):
-    def setUp(self):
-        self.member = Member.objects.create(name='vino')
-        self.bot = Member.objects.create(name='bbot')
-
-    def make_request(self, text):
-        return Request.objects.create(sender=self.member, text=text)
-
-    def test_greetings(self):
-        request = self.make_request('whatup bbot!')
+        request = self.make_request('who\'s gonna win tonight testbot?')
         request.classify()
-        self.assertTrue(request.is_greeting)
-        self.assertEqual(request.greeting_word, 'whatup')
-        response = request.generate_response()
-        print(response.text)
+        response = Response.objects.create(
+            request=request,
+            sender=self.bot
+        )
+        response.build()
+        self.assertEqual(response.text, 'who tonight win')
 
-        request = self.make_request('good morning bbot, whats cookin')
-        request.classify()
-        self.assertTrue(request.is_greeting)
-        self.assertEqual(request.greeting_word, 'good morning')
-        response = request.generate_response()
-        print(response.text)
-
+    

@@ -20,7 +20,7 @@ from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 
-from bot.models import GroupMeBot, Request
+from bot.models import GroupMeBot, Request, Response
 from content.models import Member
 
 
@@ -46,39 +46,28 @@ def new_message(request):
         return HttpResponse(status=204)
 
     request = None
-    if 'bbot' in message_content:
-        sender = Member.objects.get(groupme_id=user_id)
-        request = Request.objects.create(
-            text=message_content,
-            sender=sender,
-            bot=GroupMeBot.objects.get(name='bbot')
-        )
-    elif 'testbot' in message_content:
-        sender = Member.objects.get(groupme_id=user_id)
-        request = Request.objects.create(
-            text=message_content,
-            sender=sender,
-            bot=GroupMeBot.objects.get(name='testbot')
-        )
-    elif 'localbot' in message_content:
-        sender = Member.objects.get(groupme_id=user_id)
-        request = Request.objects.create(
-            text=message_content,
-            sender=sender,
-            bot=GroupMeBot.objects.get(name='localbot')
-        )
-        print(f'request: {request.text}')
-        response = request.generate_response()
-        print(response.text)
-        return JsonResponse({
-            "text": response.text
-        })
-    
+    for bot_name in ['bbot', 'localbot', 'testbot']:
+        if bot_name in message_content:
+            bot=GroupMeBot.objects.get(name=bot_name)
+            sender = Member.objects.get(groupme_id=user_id)
+            request = Request.objects.create(
+                text=message_content,
+                sender=sender,
+                bot=bot
+            )
+            request.classify()
+            
+            response = Response.objects.create(
+                request=request,
+                sender=bot
+            )
+            response.build()
 
-    if request:
-        print(f'request: {request}')
-        response = request.generate_response()
-        print(f'response: {response.text}')
-        response.send()
+            if bot_name == 'localbot':
+                return JsonResponse({
+                    "text": response.text
+                })
+        
+            response.send()
 
     return HttpResponse(status=204)

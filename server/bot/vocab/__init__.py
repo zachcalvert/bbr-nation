@@ -1,4 +1,4 @@
-GREETINGS = {"good morning", "morning", "hello", "hi "}
+GREETINGS = ["good morning", "hello", "hi ", "hola "]
 
 CHECK_INS = [
     "how we doin",
@@ -26,8 +26,11 @@ CHECK_INS = [
 
 GREETING_RESPONSES = [
     "whatup",
+    "whatupp",
+    "whaddup",
     "hey",
     "ay",
+    "ayyy",
     "ayyyy",
     "chyaa",
     "chyaaa",
@@ -35,8 +38,8 @@ GREETING_RESPONSES = [
     "eyawww",
     "eyawwww",
     "ayoo",
+    "ayy",
     "ayyy",
-    "whatupp",
     "yo yo",
     "yooo",
 ]
@@ -116,15 +119,7 @@ POSITIVES = {
     "absolutely",
 }
 
-QUESTIONS = {
-    "wanna",
-    "want",
-    "are",
-    "did",
-    "do",
-    "have",
-    "will",
-    "can",
+QUESTIONS = [
     "what",
     "whats",
     "what's",
@@ -141,4 +136,72 @@ QUESTIONS = {
     "why",
     "whys",
     "why's",
-}
+    "wanna",
+    "want",
+    "are",
+    "did",
+    "do",
+    "have",
+    "will",
+    "can",
+]
+
+GOODBYES = [
+    'goodnight',
+    'good night',
+    'bye ',
+    'go away'
+]
+
+YESES = [
+    'yea',
+    'yes',
+    'yeah',
+    'yaw',
+    'chyaa',
+    'chyaaa',
+    'eyaww',
+    'eyawww',
+    'hell yea',
+    'fuck yea',
+    'for sure',
+    'definitely',
+    'absolutely',
+    'actually',
+    'um yea',
+    'uh yea',
+    'uh ya',
+    'um of course',
+    'lol hell yea',
+    'lol yup',
+    'lmao yup',
+    'yea',
+    'yea',
+    'ah yupp',
+    'ah yup',
+    'yup',
+    'yupp'
+]
+
+EMOJIS = [
+    '😂 😂 😂',  '😂',
+    '🤣 🤣 🤣',  '🤣',
+    '😎','😎',
+    '🔥 🔥 🔥', '🔥',
+    '🧀 🧀 🧀', '🧀',
+    '👏 👏 👏', '👏',
+    '🌊 🌊', '🌊',
+    '💯 💯', '💯',
+    '🙀 🙀', '🙀',
+    '😘 😘', '😘',
+    '🍆 🍆', '🍆',
+    '🤤', '🤤',
+    '😟',
+    '😳 😳', '😳',
+    '🏌', '🏌',
+    '♀', ' ♀',
+    '🧢', '🧢',
+    '🙅', '🙅',
+    '⬇',
+    '🐻'
+]

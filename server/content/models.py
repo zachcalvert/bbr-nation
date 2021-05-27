@@ -113,7 +113,9 @@ class PageContents(models.Model):
         verbose_name_plural = 'Page Contents'
 
     def __str__(self):
-        return self.content.display_name or self.content.name
+        if self.content:
+            return self.content.display_name or self.content.name
+        return 'deleted thing - DELETE ME'
 
 
 class Image(models.Model):

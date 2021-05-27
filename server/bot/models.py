@@ -9,6 +9,8 @@ from giphy_client.rest import ApiException
 from django.db import models
 
 from bot import vocab
+from bot.answerer import Answerer
+
 from content.models import Member
 from football.models import Player
 
@@ -99,21 +101,19 @@ class Request(models.Model):
         """
         assign as greeting, check in, question, comment, or goodbye
         """
-        if f'{self.bot.name} gif' in self.text:
+        message = self.text.replace(' ', '').replace("'", "")
+        if f'{self.bot.name}gif' in message:
             self.message_type = 'GIF'
-        elif f'{self.bot.name} image' in self.text:
+        elif f'{self.bot.name}image' in message:
             self.message_type = 'IMAGE'
-        elif any(word in self.text for word in vocab.CHECK_INS):
+        elif any(word in message for word in vocab.CHECK_INS):
             self.message_type = 'CHECK_IN'
-        elif any(word in self.text for word in vocab.GREETINGS):
-            self.message_type = 'GREETING'
-        elif any(word in self.text for word in vocab.GOODBYES):
+        elif any(word in message for word in vocab.GOODBYES):
             self.message_type = 'GOODBYE'
         else:
-            question_word = next((phrase for phrase in vocab.QUESTIONS if phrase in self.text), None)
-            if question_word or self.text[-1] == '?':
+            if Answerer.question_word(self.text) is not None or self.text[-1] == '?':
                 self.message_type = 'QUESTION'
-                self.question_word = question_word
+                self.question_word = Answerer.question_word(self.text)
             else:
                 self.message_type = 'COMMENT'
     
@@ -149,12 +149,14 @@ class Request(models.Model):
             if token.dep_ == 'dobj':
                 self.direct_object = str(token)
 
-        if not self.subject and self.text.startswith(self.bot.name):
-            self.subject = self.bot.name
-        elif not self.subject and self.text.startswith('you'):
-            self.subject = self.bot.name
-        else:
-            self.subject = self.sender.name
+        if self.subject == 'you':
+            self.subject = 'i'
+
+        if not self.subject:
+            if 'you' in self.text:
+                self.subject = 'i'
+            else:
+                self.subject = self.sender.name
 
     def classify(self):
         """
@@ -176,6 +178,9 @@ class Response(models.Model):
     text = models.TextField()
     image = models.URLField(null=True, blank=True)
     thought = models.ForeignKey(Thought, null=True, blank=True, on_delete=models.SET_NULL)
+
+    def __str__(self):
+        return f"{self.sender.name}: '{self.text}'"
 
     def find_gif(self):
         try:
@@ -208,7 +213,7 @@ class Response(models.Model):
             return self.answer()
         
     def answer(self):
-        answer = f'wait, {self.request.subject} {self.request.question_word} {self.request.verb}?'
+        answer = f'wait, {self.request.question_word} {self.request.verb} {self.request.subject}?'
         return answer
 
     def goodbye(self):
@@ -230,13 +235,13 @@ class Response(models.Model):
             text = self.give_update()
 
         elif request_type == 'QUESTION':
-            text = self.answer()
+            text = Answerer(sender=self.request.sender, request=self.request).answer()
         
         elif request_type == 'GOODBYE':
             text = self.goodbye()
         
         else:
-            thought = Thought.objects.filter(sentiment=self.request.sentiment, approved=True).order_by('?').first()
+            thought = Thought.objects.filter(used=0, sentiment=self.request.sentiment, approved=True).order_by('?').first()
             text = thought.text.replace('MEMBER_NAME', self.request.sender.name)
             thought.used += 1
             thought.save()

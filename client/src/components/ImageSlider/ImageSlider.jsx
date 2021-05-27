@@ -4,8 +4,13 @@ import { Divider, makeStyles, Paper, Typography } from '@material-ui/core';
 import "react-slideshow-image/dist/styles.css";
 
 const useStyles = makeStyles((theme) => ({
+  sliderContainer: {
+    maxWidth: '500px',
+    margin: 'auto'
+  },
   imageContainer: {
     margin: 'auto',
+    maxWidth: '500px'
   },
   paper: {
     padding: theme.spacing(2),
@@ -14,6 +19,7 @@ const useStyles = makeStyles((theme) => ({
     height: "auto",
     margin: theme.spacing(2),
     position: 'relative',
+    maxWidth: '800px',
     [theme.breakpoints.down('sm')]: {
         width: '90vw',
     },

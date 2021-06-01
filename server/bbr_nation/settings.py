@@ -46,11 +46,13 @@ INSTALLED_APPS = [
     'corsheaders',
     'adminsortable2',
     'django_filters',
+    'taggit',
 
     'api',
     'bot',
     'content',
     'football',
+    'language',
 ]
 
 MIDDLEWARE = [

@@ -17,6 +17,7 @@ from api import serializers
 from bot.models import Thought
 from content.models import Content, Page, Member, ImageSlider, Image
 from football.models import Player, PlayerSeason, Season, Team
+from language.models import Word
 
 
 BASE_URL = "https://api.groupme.com/v3/"
@@ -287,3 +288,13 @@ class ThoughtViewSet(viewsets.ModelViewSet):
     @action(detail=False)
     def random(self, request):
         return [Thought.objects.filter(approved=False).order_by('?').first()]
+
+
+class WordViewSet(viewsets.ModelViewSet):
+    queryset = Word.objects.all()
+    serializer_class = serializers.WordSerializer
+
+    @paginate
+    @action(detail=False)
+    def random(self, request):
+        return [Word.objects.filter(pos=None).order_by('?').first()]

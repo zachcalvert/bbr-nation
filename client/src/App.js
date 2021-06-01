@@ -19,6 +19,7 @@ import { AllSeasons } from './components/Season/AllSeasons';
 import { Season } from './components/Season/Season';
 import { Team } from './components/Team/Team';
 import { Thought } from './components/Thought/Thought';
+import { Word } from './components/Word/Word';
 
 const drawerWidth = 250;
 
@@ -220,6 +221,7 @@ export const App = (props) => {
             <Grid item xs={12}>
               <Route path="/bot/thought" component={Thought} />
               <Route path="/bot/chat" component={Chat} />
+              <Route path="/words" component={Word} />
               <Route path="/u/:name" component={Member} />
               <Route path="/content" exact component={AllContent} />
               <Route path="/content/:slug" component={Page} />

@@ -26,7 +26,7 @@ router.register(r'teams', views.TeamViewSet)
 
 # bbot
 router.register(r'thoughts', views.ThoughtViewSet)
-
+router.register(r'words', views.WordViewSet)
 
 
 urlpatterns = [

@@ -7,6 +7,7 @@ from rest_framework import serializers
 from bot.models import Thought
 from content.models import Content, Page, Member, ImageSlider, Image
 from football.models import Player, PlayerSeason, Season, Team
+from language.models import Word
 
 
 class ContentSerializer(serializers.ModelSerializer):
@@ -282,3 +283,37 @@ class ThoughtSerializer(serializers.ModelSerializer):
         if obj.player:
             return obj.player.name
         return None
+
+
+class ThoughtSerializer(serializers.ModelSerializer):
+    player = serializers.SerializerMethodField('get_player')
+
+    class Meta:
+        model = Thought
+        fields = ['id', 'text', 'player', 'sentiment', 'is_update']
+
+    def update(self, instance, validated_data):
+        instance.text = validated_data.get('text', instance.text)
+        instance.sentiment = validated_data.get('sentiment', instance.sentiment)
+        instance.is_update = validated_data.get('is_update', instance.is_update)
+        instance.approved = True
+        instance.save()
+        return instance
+
+    def get_player(self, obj):
+        if obj.player:
+            return obj.player.name
+        return None
+
+
+class WordSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Word
+        fields = ['id', 'name', 'pos', 'tense']
+
+    def update(self, instance, validated_data):
+        instance.pos = validated_data.get('pos', instance.pos)
+        instance.tense = validated_data.get('tense', instance.tense)
+        instance.save()
+        return instance

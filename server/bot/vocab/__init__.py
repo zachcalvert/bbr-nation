@@ -16,8 +16,8 @@ CHECK_INS = [
     "whatspoppin",
     "whatshappenin",
     "whatscrackin",
-    "where you been",
-    "where are you",
+    "whereyoubeen",
+    "whereareyou",
 ]
 
 LAUGHS = {
@@ -75,65 +75,6 @@ POSITIVES = {
     "welcome",
 }
 
-ADVERBS = [
-    'definitely',
-    'absolutely',
-    'wholeheartedly',
-    'certainly',
-    'most certainly',
-    'most definitely',
-    'for sure',
-    'likely do',
-    'certainly do'
-]
-
-TIMES = [
-    'never',
-    'anytime',
-    'last night',
-    'yesterday',
-    'this morning',
-    'today',
-    'this afternoon',
-    'tonight',
-    'tomorrow morning',
-    'tomorrow',
-    'tomorrow night',
-    'next weekend',
-    'next week',
-    'preseason',
-    'playoffs',
-    'fourth of july',
-    'halloween',
-    'christmas eve',
-    'next year',
-    'after chase and status',
-    'before kickoff on sunday',
-    'during the monday night game',
-]
-
-GOODBYES = [
-    'goodnight',
-    'bye',
-    'goaway',
-    'goodbye'
-]
-
-GUESS_PREFIXES = [
-    'i believe ',
-    'that should be ',
-    'if im not mistaken, ',
-    'as i recall, ',
-    'from what i can tell, ',
-    'i think ',
-    'pretty sure ',
-    'likely ',
-    'probably ',
-    'seems like',
-    'looks like',
-    'looking like'
-]
-
 REASON_PREFIXES = [
     'because',
     'cause',
@@ -148,5 +89,6 @@ REASON_PREFIXES = [
     'here\'s the deal',
     'dude,',
     'bruh,',
-    'bro,'
+    'bro,',
+    'dude',
 ]

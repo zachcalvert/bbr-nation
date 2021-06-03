@@ -13,6 +13,7 @@ from bot.answerer import Answerer
 
 from content.models import Member
 from football.models import Player
+from vocab.models import Phrase
 
 GIPHY_API_KEY = "qUzMZY2GSYY8y"
 GROUPME_URL = "https://api.groupme.com/v3/bots/post"
@@ -75,7 +76,6 @@ class Request(models.Model):
         ("CHECK_IN", "CHECK_IN"),
         ("QUESTION", "QUESTION"),
         ("COMMENT", "COMMENT"),
-        ("GOODBYE", "GOODBYE")
     )
     SENTIMENT_CHOICES = (
         ("NEUTRAL", "NEUTRAL"),
@@ -99,7 +99,7 @@ class Request(models.Model):
 
     def determine_message_type(self):
         """
-        assign as greeting, check in, question, comment, or goodbye
+        assign as gif request, image, greeting, check in, question or comment
         """
         message = self.text.replace(' ', '').replace("'", "")
         if f'{self.bot.name}gif' in message:
@@ -108,8 +108,6 @@ class Request(models.Model):
             self.message_type = 'IMAGE'
         elif any(word in message for word in vocab.CHECK_INS):
             self.message_type = 'CHECK_IN'
-        elif any(word in message for word in vocab.GOODBYES):
-            self.message_type = 'GOODBYE'
         else:
             if Answerer.question_word(self.text) is not None or self.text[-1] == '?':
                 self.message_type = 'QUESTION'
@@ -201,26 +199,24 @@ class Response(models.Model):
         return url
 
     def greet(self):
-        text = f'{random.choice(vocab.GREETING_RESPONSES)} {self.request.sender.name}! {random.choice(vocab.GREETING_QUESTIONS)}'
+        text = f'{self.request.sender.name}! {Phrase.get_next("QUESTION")}'
         return text
 
     def give_update(self):
         thought = Thought.objects.filter(is_update=True, used=False, approved=True).order_by('?').first()
         if thought:
+            thought.used +=1
+            thought.save()
             return thought.text.replace('MEMBER_NAME', self.request.sender.name)
         else:
-            print('we have no thought')
-            return self.answer()
+            return self.greet()
         
     def answer(self):
-        answer = f'wait, {self.request.question_word} {self.request.verb} {self.request.subject}?'
-        return answer
-
-    def goodbye(self):
-        return f'{random.choice(vocab.EMOJIS)}'
-
-    def add_emojis(self):
-        pass
+        if self.request.question_word and self.request.verb:
+            answer = f'wait, {self.request.question_word} {self.request.verb} {self.request.subject}?'
+            return answer
+        else:
+            return self.greet()
 
     def build(self):
         request_type = self.request.message_type
@@ -236,9 +232,6 @@ class Response(models.Model):
 
         elif request_type == 'QUESTION':
             text = Answerer(sender=self.request.sender, request=self.request).answer()
-        
-        elif request_type == 'GOODBYE':
-            text = self.goodbye()
         
         else:
             thought = Thought.objects.filter(used=0, sentiment=self.request.sentiment, approved=True).order_by('?').first()

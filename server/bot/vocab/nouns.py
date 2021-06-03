@@ -301,7 +301,7 @@ TIMES = [
     "during the monday night game",
 ]
 
-COUNTRIES = [
+PLACES = [
     "Afghanistan",
     "Åland Islands",
     "Albania",
@@ -545,9 +545,6 @@ COUNTRIES = [
     "Yemen",
     "Zambia",
     "Zimbabwe",
-]
-
-US_CITIES = [
     "New York, New York",
     "Los Angeles, California",
     "Chicago, Illinois",

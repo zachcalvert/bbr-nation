@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'bot',
     'content',
     'football',
+    'vocab',
 ]
 
 MIDDLEWARE = [

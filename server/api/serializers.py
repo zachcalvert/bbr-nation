@@ -1,7 +1,7 @@
 import re
 
 from django.contrib.auth.models import User, Group
-from django.core.paginator import Paginator
+
 from rest_framework import serializers
 
 from bot.models import Thought

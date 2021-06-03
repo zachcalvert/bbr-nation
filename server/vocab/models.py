@@ -1,59 +1,18 @@
 from django.db import models
 
 
-class PhraseQuerySet(models.QuerySet):
-    def yeses(self):
-        return self.filter(kind='YES')
-
-    def times(self):
-        return self.filter(kind='TIME')
-
-    def qualifiers(self):
-        return self.filter(kind='QUALIFIER')
-
-    def exclamations(self):
-        return self.filter(pos='EXCLAMATIONS')
-
-    def questions(self):
-        return self.filter(pos='QUESTION')
-
-    def suffixes(self):
-        return self.filter(pos='SUFFIX')
-
-
-class PhraseManager(models.Manager):
-    def get_queryset(self):
-        return PhraseQuerySet(self.model, using=self._db)
-
-    def yeses(self):
-        return self.get_queryset().yeses()
-
-    def times(self):
-        return self.get_queryset().times()
-
-    def qualifiers(self):
-        return self.get_queryset().qualifiers()
-
-    def exclamations(self):
-        return self.get_queryset().exclamations()
-
-    def questions(self):
-        return self.get_queryset().questions()
-
-    def suffixes(self):
-        return self.get_queryset().suffixes()
-
-
 class Phrase(models.Model):
     KIND_CHOICES = (
         ('YES', 'YES'),
         ('TIME', 'TIME'),
         ('QUESTION', 'QUESTION'),
         ('ADVERB', 'ADVERB'),
-        ('EXCLAMATION', 'EXCLAMATION'),
         ('QUESTION', 'QUESTION'),
         ('SUFFIX', 'SUFFIX'),
         ('EMOJI', 'EMOJI'),
+        ('ADJECTIVE', 'ADJECTIVE'),
+        ('THING', 'THING'),
+        ('OCCURRENCE', 'OCCURRENCE'),
     )
     used = models.IntegerField(default=0)
     kind = models.CharField(max_length=20, choices=KIND_CHOICES)

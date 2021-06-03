@@ -27,12 +27,6 @@ def create_objects(apps, schema_editor):
             kind='SUFFIX'
         )
 
-    for exclamation in phrases.EXCLAMATIONS:
-        phrase_model.objects.get_or_create(
-            text=exclamation,
-            kind='EXCLAMATION'
-        )
-
     for question in phrases.QUESTIONS:
         phrase_model.objects.get_or_create(
             text=question,

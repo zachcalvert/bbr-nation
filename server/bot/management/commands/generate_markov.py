@@ -3,12 +3,12 @@ import json
 import random
 from spacy.lang.en.stop_words import STOP_WORDS
 
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 
-from groupme_messages import MESSAGES
+from bot.data.groupme_messages import MESSAGES
 
 
-with open('bigram_to_bigram_model.json') as f:
+with open('bot/data/bigram_to_bigram_model.json') as f:
     model = json.load(f)
 
 

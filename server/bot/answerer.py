@@ -36,10 +36,9 @@ class Answerer:
             suffix = Phrase.get_next('SUFFIX')
             answer += f'{suffix} '
         
-        if emojis:
-            if random.choice([[1,2]]) == 1:
-                for i in range(random.choice([1,2])):
-                    answer += Phrase.get_next('EMOJI') 
+        if emojis and random.choice([1,2]) == 1:
+            for i in range(random.choice([1,2])):
+                answer += Phrase.get_next('EMOJI') 
 
         answer = " ".join(answer.split())  # remove any duplicate spaces
         return answer
@@ -67,10 +66,13 @@ class Answerer:
         return f'{prefix} {core}'
 
     def how(self):
-        return self._build_answer(confirm=False, suffix=True, emojis=True)
+        choices = ['knows', 'did it once', 'could tell you', 'is who you wanna ask', 'knows']
+        core = f'{Person.get_next()} {random.choice(choices)}'
+        return self._build_answer(confirm=False, core=core, suffix=True, emojis=True)
 
     def what(self):
-        return self._build_answer(confirm=False, suffix=True, emojis=True)
+        thing = Phrase.get_next('THING')
+        return self._build_answer(confirm=False, core=thing, suffix=True, emojis=True)
 
     def when(self):
         time = Phrase.get_next('TIME')
@@ -86,14 +88,15 @@ class Answerer:
 
     def why(self):
         reason = random.choice(vocab.REASON_PREFIXES)
-        core = f'{reason} {Person.get_next()} said it would be litty'
+        core = f'{reason} {Person.get_next()} said it would be {Phrase.get_next("ADJECTIVE")}'
         return self._build_answer(confirm=False, core=core, suffix=True)
 
     def are_you(self):
         return self._build_answer(confirm=True, suffix=True)
 
     def did_you(self):
-        return self._build_answer(confirm=True, suffix=True)
+        occurrence = Phrase.get_next('OCCURRENCE')
+        return self._build_answer(confirm=True, core=occurrence, suffix=True)
 
     def do_you(self):
         first_punc = '!' if random.choice([1, 2]) == 1 else '.'
@@ -103,12 +106,12 @@ class Answerer:
         return self._build_answer(confirm=True, core=core, suffix=True)
 
     def have_you(self):
-        core = self._build_core('i have')
-        return self._build_answer(confirm=True, core=core, suffix=True)
+        occurrence = Phrase.get_next('OCCURRENCE')
+        return self._build_answer(confirm=True, core=occurrence, suffix=True)
 
     def will_you(self):
-        core = self._build_core('i will')
-        return self._build_answer(confirm=True, core=core, suffix=True)
+        occurrence = Phrase.get_next('OCCURRENCE')
+        return self._build_answer(confirm=True, core=occurrence, suffix=True)
 
     def wanna(self):
         first_punc = '!' if random.choice([1, 2]) == 1 else '.'
@@ -142,7 +145,10 @@ class Answerer:
 QUESTION_SWITCHER = {
     'when': Answerer.when,
     'where': Answerer.where,
+    'what': Answerer.what,
     'who': Answerer.who,
+    'why': Answerer.why,
+    'how': Answerer.how,
     'are you': Answerer.are_you,
     'did you': Answerer.did_you,
     'do you': Answerer.do_you,

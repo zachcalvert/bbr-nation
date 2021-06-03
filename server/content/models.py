@@ -1,8 +1,4 @@
-from django.contrib.auth.models import User
 from django.db import models
-from django.db.models.signals import post_save
-from django.dispatch import receiver
-from django.utils.text import slugify
 
 
 FINISH_PLACE_MAP = {
@@ -39,6 +35,10 @@ class Member(models.Model):
             if team.final_standing < best:
                 best = team.final_standing
                 year = team.season.year
+            if team.standing < best:
+                best = team.standing
+                year = team.season.year
+
         return f'{FINISH_PLACE_MAP[best]} in {year}'
 
     def get_worst_finish(self):
@@ -47,6 +47,9 @@ class Member(models.Model):
         for team in self.teams.all():
             if team.final_standing > worst:
                 worst = team.final_standing
+                year = team.season.year
+            if team.standing > worst:
+                worst = team.standing
                 year = team.season.year
 
         if year == None:

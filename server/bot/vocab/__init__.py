@@ -73,6 +73,7 @@ POSITIVES = {
     "thanks",
     "absolutely",
     "welcome",
+    "the best",
 }
 
 REASON_PREFIXES = [

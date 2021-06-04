@@ -53,16 +53,10 @@ NEGATIVES = {
 
 POSITIVES = {
     "yess",
-    "yesss",
     "yaww",
-    "yawww",
     "chya",
-    "chyaa",
-    "chyaaa",
     "eyaw",
-    "eyaww",
-    "hell ye",
-    "hell ya",
+    "hell y",
     "yes bbot",
     "fuck ye",
     "love it",
@@ -74,6 +68,8 @@ POSITIVES = {
     "absolutely",
     "welcome",
     "the best",
+    "friend",
+    "gets it",
 }
 
 REASON_PREFIXES = [

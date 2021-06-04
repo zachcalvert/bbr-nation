@@ -12,6 +12,7 @@ from bot import vocab
 from bot.answerer import Answerer
 
 from content.models import Member
+from football.espn_wrapper import ESPNWrapper
 from football.models import Player
 from vocab.models import Phrase
 
@@ -76,6 +77,7 @@ class Request(models.Model):
         ("CHECK_IN", "CHECK_IN"),
         ("QUESTION", "QUESTION"),
         ("COMMENT", "COMMENT"),
+        ("STANDINGS", "STANDINGS"),
     )
     SENTIMENT_CHOICES = (
         ("NEUTRAL", "NEUTRAL"),
@@ -108,10 +110,12 @@ class Request(models.Model):
             self.message_type = 'IMAGE'
         elif any(word in message for word in vocab.CHECK_INS):
             self.message_type = 'CHECK_IN'
+        elif 'standings' in message:
+            self.message_type = 'STANDINGS'
         else:
-            if Answerer.question_word(self.text) is not None or self.text[-1] == '?':
+            self.question_word = Answerer.question_word(self.text)
+            if self.question_word:
                 self.message_type = 'QUESTION'
-                self.question_word = Answerer.question_word(self.text)
             else:
                 self.message_type = 'COMMENT'
     
@@ -229,6 +233,9 @@ class Response(models.Model):
 
         elif request_type == 'CHECK_IN':
             text = self.give_update()
+
+        elif request_type == 'STANDINGS':
+            text = ESPNWrapper().standings()
 
         elif request_type == 'QUESTION':
             text = Answerer(sender=self.request.sender, request=self.request).answer()

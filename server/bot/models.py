@@ -17,6 +17,8 @@ from football.models import Player
 from vocab.models import Phrase
 
 GIPHY_API_KEY = "qUzMZY2GSYY8y"
+GIS_ID = "cc646ee172e69377d"
+GOOGLE_SEARCH_API_KEY = "AIzaSyCknrR34a7r"
 GROUPME_URL = "https://api.groupme.com/v3/bots/post"
 
 giphy_api_instance = giphy_client.DefaultApi()
@@ -102,6 +104,7 @@ class Request(models.Model):
     def determine_message_type(self):
         """
         assign as gif request, image, greeting, check in, question or comment
+        We remove all spaces and apostrophes for easier matching on patterns
         """
         message = self.text.replace(' ', '').replace("'", "")
         if f'{self.bot.name}gif' in message:
@@ -202,6 +205,22 @@ class Response(models.Model):
 
         return url
 
+    def find_image(self):
+        image_url = None
+
+        _, search_terms = self.request.text.split(' image ')
+        search_terms = search_terms.replace(" ", "%20")
+        url =  f'https://www.googleapis.com/customsearch/v1?q={search_terms}&num=10&cx={GIS_ID}&searchType=image&key={GOOGLE_SEARCH_API_KEY}CP4PQ-z2IUhHouIR_GaLXFQ'
+        response = requests.get(url)
+
+        if response.status_code == 200:
+            content = json.loads(response.content)
+            if 'items' in content:
+                index = random.choice(range(len(content['items'])))
+                image_url = content['items'][index]['link']
+
+        return image_url
+
     def greet(self):
         text = f'{self.request.sender.name}! {Phrase.get_next("QUESTION")}'
         return text
@@ -227,6 +246,9 @@ class Response(models.Model):
 
         if request_type == 'GIF':
             text = self.find_gif()
+
+        if request_type == 'IMAGE':
+            text = self.find_image()
 
         elif request_type == 'GREETING':
             text = self.greet()

@@ -46,7 +46,7 @@ class GroupMeBot(models.Model):
                 "type": "image",
                 "url": message.image
             }]
-        print('got here and I shouldnt have!!!')
+
         response = requests.post(GROUPME_URL, data=json.dumps(body), headers={'Content-Type': 'Application/json'})
         if response.status_code < 200 or response.status_code > 299:
             print('ERROR posting to GroupMe: {}: {}'.format(response.status_code, response.content))
@@ -99,7 +99,7 @@ class Request(models.Model):
     message_type = models.CharField(max_length=20, choices=TYPE_CHOICES, null=True, blank=True)
 
     def __str__(self):
-        return f"{self.sender.name}: '{self.text}' ({self.sentiment})"
+        return f"{self.sender.name}: '{self.text}' ({self.message_type} - {self.sentiment})"
 
     def determine_message_type(self):
         """
@@ -231,13 +231,6 @@ class Response(models.Model):
             thought.used +=1
             thought.save()
             return thought.text.replace('MEMBER_NAME', self.request.sender.name)
-        else:
-            return self.greet()
-        
-    def answer(self):
-        if self.request.question_word and self.request.verb:
-            answer = f'wait, {self.request.question_word} {self.request.verb} {self.request.subject}?'
-            return answer
         else:
             return self.greet()
 

@@ -22,12 +22,7 @@ CHECK_INS = [
 
 LAUGHS = {
     "lol",
-    "loll",
-    "lolll",
-    "lolll",
     "lmao",
-    "lmaoo",
-    "lmaooo",
     "haha",
     "lmfao",
     "😂",
@@ -49,7 +44,8 @@ NEGATIVES = {
     "fuck you",
     "fuck off",
     "bad bot",
-    "bruh",
+    "trash",
+    "get fucked"
 }
 
 POSITIVES = {

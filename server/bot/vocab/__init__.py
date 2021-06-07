@@ -49,13 +49,12 @@ NEGATIVES = {
     "fuck you",
     "fuck off",
     "bad bot",
+    "bruh",
 }
 
 POSITIVES = {
     "yess",
     "yaww",
-    "chya",
-    "eyaw",
     "hell y",
     "yes bbot",
     "fuck ye",
@@ -70,6 +69,7 @@ POSITIVES = {
     "the best",
     "friend",
     "gets it",
+    "love you"
 }
 
 REASON_PREFIXES = [
@@ -83,9 +83,11 @@ REASON_PREFIXES = [
     'only cause',
     'well,',
     'basically,',
-    'here\'s the deal',
+    'here\'s the deal:',
+    'breaking :',
     'dude,',
     'bruh,',
     'bro,',
-    'dude',
+    'dude,',
+    'brah,',
 ]

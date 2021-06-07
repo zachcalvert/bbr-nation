@@ -72,6 +72,7 @@ OCCURRENCES = [
     'its hard to fall asleep if i dont',
     'maybe once or twice',
     'once in a blue moon',
+    'earlier today',
 ]
 
 QUESTIONS = [

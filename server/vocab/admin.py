@@ -14,11 +14,13 @@ class PersonAdmin(admin.ModelAdmin):
     list_display = ['name', 'used']
     list_filter = ['used',]
     fields = ['name', 'used']
+    search_fields = ['name']
 
 
 class PhraseAdmin(admin.ModelAdmin):
     list_display = ['text', 'kind', 'used']
     list_filter = ['used', 'kind']
+    search_fields = ['text']
     fields = ['text', 'kind', 'used']
     actions = [mark_as_unused,]
 
@@ -26,6 +28,7 @@ class PhraseAdmin(admin.ModelAdmin):
 class PlaceAdmin(admin.ModelAdmin):
     list_display = ['name', 'used']
     list_filter = ['used',]
+    search_fields = ['name']
     fields = ['name', 'used']
 
 

@@ -22,6 +22,7 @@ class ResponseAdmin(admin.ModelAdmin):
 class ThoughtAdmin(admin.ModelAdmin):
     list_display = ('text', 'approved', 'sentiment', 'member', 'player')
     list_filter = ('approved', 'used', 'sentiment', 'is_update')
+    search_fields = ['text']
     actions = [mark_as_unused, ]
 
 

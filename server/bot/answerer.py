@@ -24,17 +24,21 @@ class Answerer:
 
     def _build_answer(self, confirm=True, core=None, suffix=True, emojis=True):
         answer = ''
+        PUNCTUATIONS = ['!', '!', '.', ',', '...', '. .', ' "', ":", "! !"]
+        core_punc = random.choice(PUNCTUATIONS)
 
         if confirm:
             yes = Phrase.get_next('YES')
-            answer += f'{yes} '
+            answer += f'{yes}{random.choice(PUNCTUATIONS)} '
         
         if core:
-            answer += f'{core}! '
-        
+            answer += f'{core}{core_punc} '
+
         if suffix:
             suffix = Phrase.get_next('SUFFIX')
             answer += f'{suffix} '
+            if core_punc == ' "':
+                answer += '"'
         
         if emojis and random.choice([1,2]) == 1:
             for i in range(random.choice([1,2])):
@@ -88,7 +92,20 @@ class Answerer:
 
     def why(self):
         reason = random.choice(vocab.REASON_PREFIXES)
-        core = f'{reason} {Person.get_next()} said it would be {Phrase.get_next("ADJECTIVE")}'
+
+        core = f'{reason} '
+        if random.choice([1,2]) == 1:
+            choices = [
+                "said it would be",
+                "is",
+                "was",
+                "made me",
+                "makes me",
+                "has me",
+            ]
+            core += f'{Person.get_next()} {random.choice(choices)} {Phrase.get_next("ADJECTIVE")}'
+        else:
+            core += f'{Phrase.get_next("THING")}'
         return self._build_answer(confirm=False, core=core, suffix=True)
 
     def are_you(self):
@@ -145,6 +162,7 @@ class Answerer:
 QUESTION_SWITCHER = {
     'when': Answerer.when,
     'where': Answerer.where,
+    'what time': Answerer.when,
     'what': Answerer.what,
     'who': Answerer.who,
     'why': Answerer.why,
@@ -158,7 +176,7 @@ QUESTION_SWITCHER = {
     'right bbot?': Answerer.right,
     'wanna': Answerer.wanna,
     'want to': Answerer.wanna,
-    'chyaa': Answerer.chyaa,
-    'eyaww': Answerer.eyaww,
+    'chya': Answerer.chyaa,
+    'eyaw': Answerer.eyaww,
     'gonna': Answerer.wanna
 }

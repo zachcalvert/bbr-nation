@@ -268,7 +268,7 @@ class Response(models.Model):
             thought.used += 1
             thought.save()
         
-        self.text = text
+        self.text = text.lower()
         self.save()
 
     def send(self):

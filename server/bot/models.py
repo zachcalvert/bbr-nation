@@ -240,7 +240,7 @@ class Response(models.Model):
         if request_type == 'GIF':
             text = self.find_gif()
 
-        if request_type == 'IMAGE':
+        elif request_type == 'IMAGE':
             text = self.find_image()
 
         elif request_type == 'GREETING':

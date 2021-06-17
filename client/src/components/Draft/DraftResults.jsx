@@ -89,7 +89,7 @@ export const DraftResults = ()  => {
                     </TableCell>
                     <TableCell>
                         <div className={classes.nameCell}>
-                          <Avatar src={pick.image} />
+                          <Avatar src={pick.draftee_image} />
                           <span className={classes.name}>{pick.draftee}</span>
                         </div>
                     </TableCell>

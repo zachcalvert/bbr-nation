@@ -102,7 +102,7 @@ export const Thought = () => {
   return (
     <>
       <Snackbar
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
         open={snackBarOpen}
         TransitionComponent={TransitionDown}
         message={`Thought ${action}!`}

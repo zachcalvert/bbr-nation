@@ -11,6 +11,7 @@ import WbSunnyRoundedIcon from '@material-ui/icons/WbSunnyRounded';
 import { AllContent } from "./components/Content/AllContent";
 import { AntSwitch } from "./components/AntSwitch/AntSwitch";
 import { Chat } from "./components/Chat/Chat";
+import { Draft } from "./components/Draft/Draft";
 import { Page } from "./components/Page/Page";
 import { TableOfContents } from './components/TableOfContents/TableOfContents';
 import { Member } from './components/Member/Member';
@@ -94,8 +95,6 @@ export const App = (props) => {
       <TableOfContents />
     </div>
   );
-
-  const container = window !== undefined ? () => window().document.body : undefined;
 
   const handleDarkModeChange = () => {
     setPrefersDarkMode(!prefersDarkMode);
@@ -185,7 +184,6 @@ export const App = (props) => {
         <nav className={classes.drawer}>
           <Hidden smUp implementation="css">
             <Drawer
-              container={container}
               variant="temporary"
               anchor='left'
               open={mobileOpen}
@@ -218,6 +216,7 @@ export const App = (props) => {
           <div className={classes.toolbar} />
           <Grid className={classes.container} container spacing={1}>
             <Grid item xs={12}>
+              <Route path="/draft/:id" component={Draft} />
               <Route path="/bot/thought" component={Thought} />
               <Route path="/bot/chat" component={Chat} />
               <Route path="/u/:name" component={Member} />

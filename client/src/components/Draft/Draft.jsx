@@ -137,7 +137,7 @@ export const Draft = ()  => {
           <Typography variant='h6'>Picks</Typography>
           {picks.map((pick, index) => (
             <ListItem key={index}>
-              <ListItemText>{index+1}. <Avatar className={classes.medium} src={`${IMAGE_URL}${pick.draftee_image}`} /> {pick.draftee} ({pick.player})</ListItemText>
+              <ListItemText>{index+1}. <Avatar className={classes.medium} src={pick.draftee_image} /> {pick.draftee} ({pick.player})</ListItemText>
             </ListItem>
           ))}
         </List>
@@ -146,7 +146,7 @@ export const Draft = ()  => {
           {contestants.map((c, index) => (
             <Grid item>
               <Card className={classes.card} onClick={() => setSelectedContestantId(c.id)}>
-                <Avatar className={classes.large} src={`${IMAGE_URL}${c.image}`} />
+                <Avatar className={classes.large} src={c.image} />
                 <Typography variant='h6'>{c.name}</Typography>
                 <Typography variant='subtitle1'>{c.profession}, {c.age}</Typography>
                 <CardActions>

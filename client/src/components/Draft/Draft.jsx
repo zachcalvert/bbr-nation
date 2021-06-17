@@ -150,7 +150,7 @@ export const Draft = ()  => {
                 <Typography variant='h6'>{c.name}</Typography>
                 <Typography variant='subtitle1'>{c.profession}, {c.age}</Typography>
                 <CardActions>
-                  <Button disabled={selectedContestantId !== c.id && player} onClick={handleDraftPick} color='primary' variant='contained'>Draft {c.name}</Button>
+                  <Button disabled={selectedContestantId !== c.id} onClick={handleDraftPick} color='primary' variant='contained'>Draft {c.name}</Button>
                 </CardActions>
               </Card>
             </Grid>

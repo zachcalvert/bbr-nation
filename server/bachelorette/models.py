@@ -33,4 +33,8 @@ class DraftPick(models.Model):
     pick = models.IntegerField(default=0)
 
     def __str__(self):
-        return f'{self.pick}: {self.draftee.name} ({self.player})'
+        try:
+            return f'{self.pick}: {self.draftee.name} ({self.player})'
+        except AttributeError:
+            return self.id
+

@@ -21,9 +21,16 @@ class Contestant(models.Model):
 class Draft(models.Model):
     name = models.CharField(max_length=100)
 
+    def __str__(self):
+        return self.name
+
 
 class DraftPick(models.Model):
     draft = models.ForeignKey(Draft, null=True, on_delete=models.SET_NULL, related_name='picks')
     draftee = models.ForeignKey(Contestant, null=True, on_delete=models.SET_NULL)
     drafter = models.ForeignKey(Member, null=True, on_delete=models.SET_NULL)
     player = models.CharField(max_length=100, null=True, blank=True)
+    pick = models.IntegerField(default=0)
+
+    def __str__(self):
+        return f'{self.pick}: {self.draftee.name} ({self.player})'

@@ -323,7 +323,8 @@ class DraftSerializer(serializers.ModelSerializer):
                 "draftee": p.draftee.name,
                 "draftee_image": p.draftee.image.url,
                 "drafter": p.drafter.name,
-                "player": p.player
+                "player": p.player,
+                "pick": p.pick
             } for p in DraftPick.objects.filter(draft=obj)
         ]
         return picks

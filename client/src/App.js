@@ -11,7 +11,7 @@ import WbSunnyRoundedIcon from '@material-ui/icons/WbSunnyRounded';
 import { AllContent } from "./components/Content/AllContent";
 import { AntSwitch } from "./components/AntSwitch/AntSwitch";
 import { Chat } from "./components/Chat/Chat";
-import { Draft } from "./components/Draft/Draft";
+import { DraftResults } from "./components/Draft/DraftResults";
 import { Page } from "./components/Page/Page";
 import { TableOfContents } from './components/TableOfContents/TableOfContents';
 import { Member } from './components/Member/Member';
@@ -71,7 +71,6 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export const App = (props) => {
-  const { window } = props;
   const classes = useStyles();
   const [prefersDarkMode, setPrefersDarkMode] = React.useState(localStorage.getItem('dark-mode') === 'true');
   const theme = createMuiTheme({
@@ -216,7 +215,7 @@ export const App = (props) => {
           <div className={classes.toolbar} />
           <Grid className={classes.container} container spacing={1}>
             <Grid item xs={12}>
-              <Route path="/draft/:id" component={Draft} />
+              <Route path="/draft/" component={DraftResults} />
               <Route path="/bot/thought" component={Thought} />
               <Route path="/bot/chat" component={Chat} />
               <Route path="/u/:name" component={Member} />

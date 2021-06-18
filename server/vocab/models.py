@@ -63,3 +63,19 @@ class Place(models.Model):
         place.save()
         
         return place.name
+
+
+class TeamName(models.Model):
+    name = models.CharField(max_length=100)
+    used = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.name
+
+    @staticmethod
+    def get_next():
+        team_name = TeamName.objects.filter(used=False).order_by('?').first()
+        team_name.used = True
+        team_name.save()
+
+        return team_name.name

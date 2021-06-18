@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from vocab.models import Person, Place, Phrase
+from vocab.models import Person, Place, Phrase, TeamName
 
 
 def mark_as_unused(modeladmin, request, queryset):
@@ -32,6 +32,14 @@ class PlaceAdmin(admin.ModelAdmin):
     fields = ['name', 'used']
 
 
+class TeamNameAdmin(admin.ModelAdmin):
+    list_display = ['name', 'used']
+    list_filter = ['used',]
+    search_fields = ['name']
+    fields = ['name', 'used']
+
+
 admin.site.register(Phrase, PhraseAdmin)
 admin.site.register(Person, PersonAdmin)
 admin.site.register(Place, PlaceAdmin)
+admin.site.register(TeamName, TeamNameAdmin)

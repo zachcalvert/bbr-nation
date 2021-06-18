@@ -1,7 +1,7 @@
 import random
 
 from bot import vocab
-from vocab.models import Person, Phrase, Place
+from vocab.models import Person, Phrase, Place, TeamName
 
 
 class Answerer:
@@ -158,6 +158,12 @@ class Answerer:
         core = '{}!'.format(eyaw)
         return self._build_answer(confirm=False, core=core, suffix=True, emojis=True)
 
+    def nickname(self):
+        name = TeamName.get_next()
+        prefixes = ['your new name is', 'how about', 'why dont you try on', 'how bout', 'why not', 'the name that comes to mind is', 'ok,']
+        core = f'{random.choice(prefixes)} {name}'.format(name)
+        return self._build_answer(confirm=False, core=core, suffix=True, emojis=True)
+
 
 QUESTION_SWITCHER = {
     'when': Answerer.when,
@@ -178,5 +184,6 @@ QUESTION_SWITCHER = {
     'want to': Answerer.wanna,
     'chya': Answerer.chyaa,
     'eyaw': Answerer.eyaww,
-    'gonna': Answerer.wanna
+    'gonna': Answerer.wanna,
+    'nickname': Answerer.nickname
 }

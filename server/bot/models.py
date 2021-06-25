@@ -270,7 +270,7 @@ class Response(models.Model):
             if self.request.sender:
                 text = thought.text.replace('MEMBER_NAME', self.request.sender.name)
             else:
-                text = though.text
+                text = thought.text
             thought.used += 1
             thought.save()
         

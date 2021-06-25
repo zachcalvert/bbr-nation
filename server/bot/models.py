@@ -100,7 +100,10 @@ class Request(models.Model):
     message_type = models.CharField(max_length=20, choices=TYPE_CHOICES, null=True, blank=True)
 
     def __str__(self):
-        return f"{self.sender.name}: '{self.text}' ({self.message_type} - {self.sentiment})"
+        if self.sender:
+            return f"{self.sender.name}: '{self.text}' ({self.message_type} - {self.sentiment})"
+        else:
+            return f"{self.sender_name}: '{self.text}' ({self.message_type} - {self.sentiment})"
 
     def determine_message_type(self):
         """
@@ -162,7 +165,7 @@ class Request(models.Model):
             if 'you' in self.text:
                 self.subject = 'i'
             else:
-                self.subject = self.sender.name
+                self.subject = self.sender.name if self.sender else self.sender_name
 
     def classify(self):
         """

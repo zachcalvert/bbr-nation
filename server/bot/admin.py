@@ -11,12 +11,12 @@ mark_as_unused.short_description = 'Mark as unused'
 
 
 class RequestAdmin(admin.ModelAdmin):
-    list_display = ('text', 'sentiment', 'sender', 'sent_at', 'message_type', 'question_word', 'subject')
+    list_display = ('text', 'sentiment', 'sender', 'sender_name', 'sent_at', 'message_type', 'question_word', 'subject')
     list_filter = ('sentiment', 'message_type', 'question_word', 'bot', 'subject')
 
 
 class ResponseAdmin(admin.ModelAdmin):
-    list_display = ('text', 'request')
+    list_display = ('request', 'text')
 
 
 class ThoughtAdmin(admin.ModelAdmin):

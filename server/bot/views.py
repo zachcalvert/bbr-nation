@@ -71,3 +71,32 @@ def new_message(request):
             response.send()
 
     return HttpResponse(status=204)
+
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def crib_message(request):
+    try:
+        message = json.loads(request.body)
+    except Exception:
+        return HttpResponse(200)
+
+    bot = GroupMeBot.objects.get(name='cribbot')
+    sender_name = message['sender']
+    text = message['text']
+    request = Request.objects.create(
+        text=text,
+        sender_name=sender_name,
+        bot=bot
+    )
+    request.classify()
+
+    response = Response.objects.create(
+        request=request,
+        sender=bot
+    )
+    response.build()
+
+    return JsonResponse({
+        "text": response.text
+    })

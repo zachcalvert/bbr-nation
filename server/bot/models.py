@@ -89,6 +89,7 @@ class Request(models.Model):
     )
     sentiment = models.CharField(max_length=10, choices=SENTIMENT_CHOICES, null=True)
     sender = models.ForeignKey(Member, null=True, on_delete=models.SET_NULL)
+    sender_name = models.CharField(max_length=100, null=True, blank=True)
     sent_at = models.DateTimeField(auto_now_add=True)
     text = models.TextField()
     question_word = models.CharField(max_length=15, null=True, blank=True)

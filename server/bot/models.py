@@ -223,7 +223,10 @@ class Response(models.Model):
         return image_url
 
     def greet(self):
-        text = f'{self.request.sender.name}! {Phrase.get_next("QUESTION")}'
+        if self.request.sender:
+            text = f'{self.request.sender.name}! {Phrase.get_next("QUESTION")}'
+        else:
+            text = f'MEMBER_NAME! {Phrase.get_next("QUESTION")}'
         return text
 
     def give_update(self):
@@ -231,7 +234,9 @@ class Response(models.Model):
         if thought:
             thought.used +=1
             thought.save()
-            return thought.text.replace('MEMBER_NAME', self.request.sender.name)
+            if self.request.sender:
+                return thought.text.replace('MEMBER_NAME', self.request.sender.name)
+            return thought.text
         else:
             return self.greet()
 
@@ -254,11 +259,15 @@ class Response(models.Model):
             text = ESPNWrapper().standings()
 
         elif request_type == 'QUESTION':
-            text = Answerer(sender=self.request.sender, request=self.request).answer()
+            sender = self.request.sender if self.request.sender else self.request.sender_name
+            text = Answerer(sender=sender, request=self.request).answer()
         
         else:
             thought = Thought.objects.filter(used=0, sentiment=self.request.sentiment, approved=True).order_by('?').first()
-            text = thought.text.replace('MEMBER_NAME', self.request.sender.name)
+            if self.request.sender:
+                text = thought.text.replace('MEMBER_NAME', self.request.sender.name)
+            else:
+                text = though.text
             thought.used += 1
             thought.save()
         

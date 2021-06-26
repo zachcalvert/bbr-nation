@@ -17,6 +17,7 @@ class Phrase(models.Model):
     used = models.IntegerField(default=0)
     kind = models.CharField(max_length=20, choices=KIND_CHOICES)
     text = models.CharField(max_length=100)
+    bot = models.ForeignKey('bot.GroupMeBot', null=True, blank=True, on_delete=models.SET_NULL)
 
     def __str__(self):
         return self.text

@@ -66,6 +66,7 @@ class Thought(models.Model):
     approved = models.BooleanField(default=False)
     sentiment = models.CharField(max_length=15, choices=SENTIMENT_CHOICES, default="NEUTRAL")
     is_update = models.BooleanField(default=False)
+    bot = models.ForeignKey(GroupMeBot, null=True, blank=True, on_delete=models.SET_NULL)
 
     def __str__(self):
         return self.text

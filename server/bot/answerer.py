@@ -28,21 +28,21 @@ class Answerer:
         core_punc = random.choice(PUNCTUATIONS)
 
         if confirm:
-            yes = Phrase.get_next('YES')
+            yes = Phrase.get_next('YES', bot=self.request.bot)
             answer += f'{yes}{random.choice(PUNCTUATIONS)} '
         
         if core:
             answer += f'{core}{core_punc} '
 
         if suffix:
-            suffix = Phrase.get_next('SUFFIX')
+            suffix = Phrase.get_next('SUFFIX', bot=self.request.bot)
             answer += f'{suffix} '
             if core_punc == ' "':
                 answer += '"'
         
         if emojis and random.choice([1,2]) == 1:
             for i in range(random.choice([1,2])):
-                answer += Phrase.get_next('EMOJI') 
+                answer += Phrase.get_next('EMOJI', bot=self.request.bot) 
 
         answer = " ".join(answer.split())  # remove any duplicate spaces
         return answer
@@ -75,11 +75,11 @@ class Answerer:
         return self._build_answer(confirm=False, core=core, suffix=True, emojis=True)
 
     def what(self):
-        thing = Phrase.get_next('THING')
+        thing = Phrase.get_next('THING', bot=self.request.bot)
         return self._build_answer(confirm=False, core=thing, suffix=True, emojis=True)
 
     def when(self):
-        time = Phrase.get_next('TIME')
+        time = Phrase.get_next('TIME', bot=self.request.bot)
         return self._build_answer(confirm=False, core=time, suffix=True)
 
     def where(self):
@@ -105,34 +105,34 @@ class Answerer:
             ]
             core += f'{Person.get_next()} {random.choice(choices)} {Phrase.get_next("ADJECTIVE")}'
         else:
-            core += f'{Phrase.get_next("THING")}'
+            core += f'{Phrase.get_next("THING", bot=self.request.bot)}'
         return self._build_answer(confirm=False, core=core, suffix=True)
 
     def are_you(self):
         return self._build_answer(confirm=True, suffix=True)
 
     def did_you(self):
-        occurrence = Phrase.get_next('OCCURRENCE')
+        occurrence = Phrase.get_next('OCCURRENCE', bot=self.request.bot)
         return self._build_answer(confirm=True, core=occurrence, suffix=True)
 
     def do_you(self):
         first_punc = '!' if random.choice([1, 2]) == 1 else '.'
-        adverb = Phrase.get_next('ADVERB') if random.choice([1, 2]) == 1 else ''
+        adverb = Phrase.get_next('ADVERB', bot=self.request.bot) if random.choice([1, 2]) == 1 else ''
         prefix = '{}{} i {} do'.format(self.sender, first_punc, adverb)
         core = self._build_core(prefix)
         return self._build_answer(confirm=True, core=core, suffix=True)
 
     def have_you(self):
-        occurrence = Phrase.get_next('OCCURRENCE')
+        occurrence = Phrase.get_next('OCCURRENCE', bot=self.request.bot)
         return self._build_answer(confirm=True, core=occurrence, suffix=True)
 
     def will_you(self):
-        occurrence = Phrase.get_next('OCCURRENCE')
+        occurrence = Phrase.get_next('OCCURRENCE', bot=self.request.bot)
         return self._build_answer(confirm=True, core=occurrence, suffix=True)
 
     def wanna(self):
         first_punc = '!' if random.choice([1, 2]) == 1 else '.'
-        adverb = Phrase.get_next('ADVERB') if random.choice([1, 2]) == 1 else ''
+        adverb = Phrase.get_next('ADVERB', bot=self.request.bot) if random.choice([1, 2]) == 1 else ''
         prefix = '{}{} i {} wanna'.format(self.sender, first_punc, adverb)
         core = self._build_core(prefix)
         return self._build_answer(confirm=True, core=core, suffix=True)

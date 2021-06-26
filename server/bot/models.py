@@ -47,9 +47,9 @@ class GroupMeBot(models.Model):
                 "url": message.image
             }]
 
-        response = requests.post(GROUPME_URL, data=json.dumps(body), headers={'Content-Type': 'Application/json'})
-        if response.status_code < 200 or response.status_code > 299:
-            print('ERROR posting to GroupMe: {}: {}'.format(response.status_code, response.content))
+        # response = requests.post(GROUPME_URL, data=json.dumps(body), headers={'Content-Type': 'Application/json'})
+        # if response.status_code < 200 or response.status_code > 299:
+            # print('ERROR posting to GroupMe: {}: {}'.format(response.status_code, response.content))
 
 
 class Thought(models.Model):
@@ -101,10 +101,13 @@ class Request(models.Model):
     message_type = models.CharField(max_length=20, choices=TYPE_CHOICES, null=True, blank=True)
 
     def __str__(self):
+        return f"{self.sender_display_name}: '{self.text}' ({self.message_type} - {self.sentiment})"
+
+    @property
+    def sender_display_name(self):
         if self.sender:
-            return f"{self.sender.name}: '{self.text}' ({self.message_type} - {self.sentiment})"
-        else:
-            return f"{self.sender_name}: '{self.text}' ({self.message_type} - {self.sentiment})"
+            return self.sender.name
+        return self.sender_name
 
     def determine_message_type(self):
         """
@@ -166,7 +169,7 @@ class Request(models.Model):
             if 'you' in self.text:
                 self.subject = 'i'
             else:
-                self.subject = self.sender.name if self.sender else self.sender_name
+                self.subject = self.sender_display_name
 
     def classify(self):
         """
@@ -228,9 +231,9 @@ class Response(models.Model):
 
     def greet(self):
         if self.request.sender:
-            text = f'{self.request.sender.name}! {Phrase.get_next("QUESTION")}'
+            text = f'{self.request.sender_display_name}! {Phrase.get_next("QUESTION", bot=self.request.bot)}'
         else:
-            text = f'MEMBER_NAME! {Phrase.get_next("QUESTION")}'
+            text = f'MEMBER_NAME! {Phrase.get_next("QUESTION", bot=self.request.bot)}'
         return text
 
     def give_update(self):
@@ -239,7 +242,7 @@ class Response(models.Model):
             thought.used +=1
             thought.save()
             if self.request.sender:
-                return thought.text.replace('MEMBER_NAME', self.request.sender.name)
+                return thought.text.replace('MEMBER_NAME', self.request.sender_display_name)
             return thought.text
         else:
             return self.greet()
@@ -263,15 +266,12 @@ class Response(models.Model):
             text = ESPNWrapper().standings()
 
         elif request_type == 'QUESTION':
-            sender = self.request.sender if self.request.sender else self.request.sender_name
+            sender = self.request.sender_display_name
             text = Answerer(sender=sender, request=self.request).answer()
-        
+
         else:
-            thought = Thought.objects.filter(used=0, sentiment=self.request.sentiment, approved=True).order_by('?').first()
-            if self.request.sender:
-                text = thought.text.replace('MEMBER_NAME', self.request.sender.name)
-            else:
-                text = thought.text
+            thought = Thought.objects.filter(bot=self.request.bot, used=0, sentiment=self.request.sentiment, approved=True).order_by('?').first()
+            text = thought.text.replace('MEMBER_NAME', self.request.sender_display_name)
             thought.used += 1
             thought.save()
         

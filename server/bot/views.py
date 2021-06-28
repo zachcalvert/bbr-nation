@@ -107,6 +107,8 @@ def crib_message(request):
 def game_comment(request):
     try:
         message = json.loads(json.dumps(request.POST))
+    except KeyError:
+        message = json.loads(request.body)
     except Exception:
         return HttpResponse(200)
 

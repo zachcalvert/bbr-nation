@@ -113,7 +113,7 @@ def game_comment(request):
         return HttpResponse(200)
 
     print(message)
-    print(vars(message)
+    print(vars(message))
 
     bot = get_object_or_404(GameBot, name=message['bot'])
 

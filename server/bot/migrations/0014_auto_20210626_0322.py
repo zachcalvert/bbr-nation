@@ -7,11 +7,12 @@ def create_objects(apps, schema_editor):
     bot_model = apps.get_model("bot", "GroupMeBot")
     thought_model = apps.get_model("bot", "Thought")
 
-    bbot_id = bot_model.objects.get(name='bbot')
+    bbot_id = bot_model.objects.filter(name='bbot').first()
 
-    for thought in thought_model.objects.all():
-        thought.bot_id = bbot_id
-        thought.save() 
+    if bbot_id:
+        for thought in thought_model.objects.all():
+            thought.bot_id = bbot_id
+            thought.save() 
 
 
 class Migration(migrations.Migration):

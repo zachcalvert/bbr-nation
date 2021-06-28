@@ -1,9 +1,11 @@
+import json
+
 from django.test import TestCase, Client
 from django.urls import reverse
 
 from bot.data.messages_for_bot import MESSAGES
 from bot.data.thoughts import THOUGHTS
-from bot.models import GroupMeBot, Request, Response, Thought
+from bot.models import GameBot, GameComment, GroupMeBot, Request, Response, Thought
 from content.models import Member
 
 
@@ -110,4 +112,60 @@ class NewMessageViewTestCase(TestCase):
 
 
 
-    
+
+class GameCommentViewTestCase(TestCase):
+
+    def setUp(self):
+        self.bev = GameBot.objects.create(
+            name='Bev',
+            identifier='12345678',
+            personality='KIND'
+        )
+        self.lish = GameBot.objects.create(
+            name='Lish',
+            identifier='23456789',
+            personality='ROWDY'
+        )
+        self.sender = 'zach'
+        self.client = Client()
+        self.url = reverse('game_comment')
+
+    def test_good_cut_rowdy(self):
+        comment = GameComment.objects.create(
+            personality='ROWDY',
+            quality='GOOD',
+            time='CUT',
+            text='Wow so lucky lol',
+            used=0
+        )
+        data = {
+            "bot": "Lish",
+            "quality": "GOOD",
+            "time": "CUT"
+        }
+        headers = {'Content-Type': 'application/json', 'Accept-Encoding': None}
+        response = self.client.post(self.url, data=data, headers=headers)
+        self.assertEqual(response.json()['text'], 'Wow so lucky lol')
+
+        comment.refresh_from_db()
+        self.assertEqual(comment.used, 1)
+
+    def test_bad_cut_kind(self):
+        comment = GameComment.objects.create(
+            personality='KIND',
+            quality='BAD',
+            time='CUT',
+            text='Alright then let\'s get started',
+            used=0
+        )
+        data = {
+            "bot": "Bev",
+            "quality": "BAD",
+            "time": "CUT"
+        }
+        headers = {'Content-Type': 'application/json', 'Accept-Encoding': None}
+        response = self.client.post(self.url, data=data, headers=headers)
+        self.assertEqual(response.json()['text'], 'Alright then let\'s get started')
+
+        comment.refresh_from_db()
+        self.assertEqual(comment.used, 1)

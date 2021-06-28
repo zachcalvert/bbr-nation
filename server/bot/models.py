@@ -47,9 +47,9 @@ class GroupMeBot(models.Model):
                 "url": message.image
             }]
 
-        # response = requests.post(GROUPME_URL, data=json.dumps(body), headers={'Content-Type': 'Application/json'})
-        # if response.status_code < 200 or response.status_code > 299:
-            # print('ERROR posting to GroupMe: {}: {}'.format(response.status_code, response.content))
+        response = requests.post(GROUPME_URL, data=json.dumps(body), headers={'Content-Type': 'Application/json'})
+        if response.status_code < 200 or response.status_code > 299:
+            print('ERROR posting to GroupMe: {}: {}'.format(response.status_code, response.content))
 
 
 class Thought(models.Model):
@@ -166,7 +166,7 @@ class Request(models.Model):
             self.subject = 'i'
 
         if not self.subject:
-            if 'you' in self.text:
+            if self.text.startswith('you '):
                 self.subject = 'i'
             else:
                 self.subject = self.sender_display_name
@@ -280,3 +280,57 @@ class Response(models.Model):
 
     def send(self):
         self.request.bot.send_message(self)
+
+
+class GameBot(GroupMeBot):
+    PERSONALITY_CHOICES = (
+        ("KIND", "Kind"),
+        ("ROWDY", "Rowdy"),
+    )
+    personality = models.CharField(max_length=100, choices=PERSONALITY_CHOICES, default='KIND', null=True, blank=True)
+
+
+class GameComment(models.Model):
+    TIME_CHOICES = (
+        ("START", "Start"),
+        ("DRAW", "Draw"),
+        ("CUT", "Cut"),
+        ("PLAY", "Play"),
+        ("HAND", "Hand"),
+        ("CRIB", "Crib"),
+        ("GAME", "Game Over"),
+    )
+
+    QUALITY_CHOICES = (
+        ("POOR", "Poor"),
+        ("GOOD", "Good"),
+        ("SUPER", "Super"),
+    )
+
+    PERSONALITY_CHOICES = (
+        ("KIND", "Kind"),
+        ("ROWDY", "Rowdy"),
+    )
+
+    time = models.CharField(max_length=100, choices=TIME_CHOICES, default='DRAW', null=True, blank=True)
+    personality = models.CharField(max_length=100, choices=PERSONALITY_CHOICES, default='KIND', null=True, blank=True)
+    quality = models.CharField(max_length=100, choices=QUALITY_CHOICES, default='GOOD', null=True, blank=True)
+
+    text = models.CharField(max_length=200)
+    used = models.IntegerField(default=0)
+
+    def __str__(self):
+        return f'{self.text} - ({self.quality} {self.time}, {self.personality})'
+
+    @staticmethod
+    def get_next(quality, personality, time):
+        comment = GameComment.objects.filter(
+            personality=personality,
+            quality=quality,
+            time=time
+        ).annotate(models.Min('used')).order_by('used')[0]
+
+        comment.used += 1
+        comment.save()
+
+        return comment

@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from bot.models import GroupMeBot, Request, Response, Thought
+from bot.models import GameBot, GameComment, GroupMeBot, Request, Response, Thought
 
 
 def mark_as_unused(modeladmin, request, queryset):
@@ -39,6 +39,16 @@ class ThoughtAdmin(admin.ModelAdmin):
     search_fields = ['text']
     actions = [mark_as_unused, add_to_cribbot]
 
+
+class GameCommentAdmin(admin.ModelAdmin):
+    list_display = ['text', 'quality', 'time', 'personality']
+    list_filter = ['quality', 'time', 'personality', 'used']
+    fields = ['quality', 'time', 'personality', 'text']
+    search_fields = ['text']
+
+
+admin.site.register(GameBot)
+admin.site.register(GameComment, GameCommentAdmin)
 
 admin.site.register(GroupMeBot)
 admin.site.register(Request, RequestAdmin)

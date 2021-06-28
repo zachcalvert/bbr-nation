@@ -16,19 +16,6 @@ class BbotTestCase(TestCase):
 
 class MessageTypeTestCase(BbotTestCase):
     
-    def test_classify_greetings(self):
-        GREETINGS = [
-            'good morning testbot',
-            'hi testbot!',
-            'testbot, hello',
-            'hola testbot'
-        ]
-        
-        for greeting in GREETINGS:
-            request = self.make_request(greeting)
-            request.determine_message_type()
-            self.assertEqual(request.message_type, 'GREETING', f'{greeting} failed the test')
-    
     def test_classify_checkins(self):
         CHECK_INS = [
             'whatup testbot!',
@@ -84,7 +71,7 @@ class SentimentTestCase(BbotTestCase):
     def test_classify_positives(self):
         POSITIVES = [
             'yessss',
-            'chyaa',
+            'fuck yea',
             'my guy',
             'absolutely'
         ]
@@ -99,13 +86,13 @@ class PartsOfSpeechTestCase(BbotTestCase):
     def test_pos_tagging(self):
         request = self.make_request('The Patriots suck')
         request.determine_parts_of_speech()
-        self.assertEqual(request.subject, 'vino')
+        self.assertEqual(request.subject, 'The Patriots')
         self.assertEqual(request.verb, 'suck')
 
         # I lost lol
         request = self.make_request('you lost man lol')
         request.determine_parts_of_speech()
-        self.assertEqual(request.subject, 'testbot')
+        self.assertEqual(request.subject, 'i')
         self.assertEqual(request.verb, 'lost')
 
         # Bbot roasting the fuck out of us

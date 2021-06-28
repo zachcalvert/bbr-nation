@@ -7,11 +7,12 @@ def create_objects(apps, schema_editor):
     bot_model = apps.get_model("bot", "GroupMeBot")
     phrase_model = apps.get_model("vocab", "Phrase")
 
-    bbot_id = bot_model.objects.get(name='bbot')
+    bbot_id = bot_model.objects.filter(name='bbot').first()
 
-    for phrase in phrase_model.objects.all():
-        phrase.bot_id = bbot_id
-        phrase.save()
+    if bbot_id:
+        for phrase in phrase_model.objects.all():
+            phrase.bot_id = bbot_id
+            phrase.save()
 
 
 class Migration(migrations.Migration):

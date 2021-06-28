@@ -107,14 +107,10 @@ def crib_message(request):
 def game_comment(request):
     try:
         message = json.loads(request.body)
-    except KeyError:
+    except json.decoder.JSONDecodeError:
         message = json.loads(json.dumps(request.POST))
     except Exception:
         return HttpResponse(200)
-
-    print(message)
-    print(type(message))
-    print(dir(message))
 
     bot = get_object_or_404(GameBot, name=message['bot'])
 

@@ -106,9 +106,9 @@ def crib_message(request):
 @require_http_methods(["POST"])
 def game_comment(request):
     try:
-        message = json.loads(json.dumps(request.POST))
-    except KeyError:
         message = json.loads(request.body)
+    except KeyError:
+        message = json.loads(json.dumps(request.POST))
     except Exception:
         return HttpResponse(200)
 

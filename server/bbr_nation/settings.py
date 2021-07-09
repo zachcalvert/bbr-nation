@@ -27,7 +27,7 @@ SECRET_KEY = 'y6t#17tny_q$f%ts6*o1#&t2t5cx=e4sbks8q%b0&_9j1zaldd'
 if os.environ.get('DJANGO_ENVIRONMENT') == 'local':
     DEBUG = True
 else:
-    DEBUG = True
+    DEBUG = False
 
 ALLOWED_HOSTS = ['localhost', 'bbrnation.com', 'www.bbrnation.com']
 

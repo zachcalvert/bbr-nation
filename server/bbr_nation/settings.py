@@ -48,7 +48,6 @@ INSTALLED_APPS = [
     'django_filters',
 
     'api',
-    'bachelorette',
     'bot',
     'content',
     'football',

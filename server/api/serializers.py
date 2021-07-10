@@ -5,7 +5,6 @@ from django.contrib.auth.models import User, Group
 from rest_framework import serializers
 
 from bot.models import Thought
-from bachelorette.models import Contestant, Draft, DraftPick
 from content.models import Content, Page, Member, ImageSlider, Image
 from football.models import Player, PlayerSeason, Season, Team
 
@@ -283,48 +282,3 @@ class ThoughtSerializer(serializers.ModelSerializer):
         if obj.player:
             return obj.player.name
         return None
-
-
-class ContestantSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Contestant
-        fields = ['id', 'name', 'age', 'profession', 'drafted']
-
-
-class DraftPickSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = DraftPick
-        fields = ['id', 'draftee', 'drafter', 'player']
-
-
-class DraftSerializer(serializers.ModelSerializer):
-    contestants = serializers.SerializerMethodField('get_contestants')
-    picks = serializers.SerializerMethodField('get_picks')
-
-    class Meta:
-        model = Draft
-        fields = ['picks', 'contestants']
-    
-    def get_contestants(self, obj):
-        contestants = [
-            {
-                "id": c.id,
-                "name": c.name,
-                "image": c.image.url,
-                "age": c.age,
-                "profession": c.profession
-            } for c in Contestant.objects.filter(drafted=False)
-        ]
-        return contestants
-
-    def get_picks(self, obj):
-        picks = [
-            {
-                "draftee": p.draftee.name,
-                "draftee_image": p.draftee.image.url,
-                "drafter": p.drafter.name,
-                "player": p.player,
-                "pick": p.pick
-            } for p in DraftPick.objects.filter(draft=obj)
-        ]
-        return picks

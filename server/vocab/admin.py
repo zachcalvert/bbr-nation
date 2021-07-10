@@ -11,9 +11,22 @@ def mark_as_unused(modeladmin, request, queryset):
 mark_as_unused.short_description = 'Mark as unused'
 
 
-def add_to_cribbot(modeladmin, request, queryset):
+def add_to_bev(modeladmin, request, queryset):
     from bot.models import GroupMeBot
-    bot_id = GroupMeBot.objects.get(name='cribbot').id
+    bot_id = GroupMeBot.objects.get(name='Bev').id
+    for phrase in queryset:
+        t = {
+            'bot_id': bot_id,
+            'kind': phrase.kind,
+            'text': phrase.text,
+            'used': 0
+        }
+        Phrase.objects.create(**t)
+
+
+def add_to_lish(modeladmin, request, queryset):
+    from bot.models import GroupMeBot
+    bot_id = GroupMeBot.objects.get(name='Lish').id
     for phrase in queryset:
         t = {
             'bot_id': bot_id,
@@ -36,7 +49,7 @@ class PhraseAdmin(admin.ModelAdmin):
     list_filter = ['bot', 'used', 'kind']
     search_fields = ['text']
     fields = ['text', 'kind', 'used']
-    actions = [mark_as_unused, add_to_cribbot]
+    actions = [mark_as_unused, add_to_bev, add_to_lish]
 
 
 class PlaceAdmin(admin.ModelAdmin):

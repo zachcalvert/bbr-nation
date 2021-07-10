@@ -15,12 +15,12 @@
 
 import json
 
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 
-from bot.models import GroupMeBot, Request, Response
+from bot.models import GroupMeBot, Request, Response, GameBot, GameComment
 from content.models import Member
 
 
@@ -81,7 +81,7 @@ def crib_message(request):
     except Exception:
         return HttpResponse(200)
 
-    bot = GroupMeBot.objects.get(name='cribbot')
+    bot = get_object_or_404(GameBot, name=message['bot'])
     sender_name = message['sender']
     text = message['text']
     request = Request.objects.create(
@@ -99,4 +99,27 @@ def crib_message(request):
 
     return JsonResponse({
         "text": response.text
+    })
+
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def game_comment(request):
+    try:
+        message = json.loads(request.body)
+    except json.decoder.JSONDecodeError:
+        message = json.loads(json.dumps(request.POST))
+    except Exception:
+        return HttpResponse(200)
+
+    bot = get_object_or_404(GameBot, name=message['bot'])
+
+    comment = GameComment.get_next(
+        personality=bot.personality,
+        quality=message['quality'],
+        time=message['time']
+    )
+
+    return JsonResponse({
+        "text": comment.text
     })

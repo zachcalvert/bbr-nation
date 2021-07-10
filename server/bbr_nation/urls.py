@@ -27,11 +27,6 @@ router.register(r'teams', views.TeamViewSet)
 # bbot
 router.register(r'thoughts', views.ThoughtViewSet)
 
-# bachelorette
-router.register(r'drafts', views.DraftViewSet)
-router.register(r'draftpicks', views.DraftPickViewSet)
-
-
 
 urlpatterns = [
     path('admin/', admin.site.urls),

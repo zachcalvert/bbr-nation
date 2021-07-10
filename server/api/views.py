@@ -14,7 +14,6 @@ from rest_framework.decorators import action, api_view
 from rest_framework.response import Response
 
 from api import serializers
-from bachelorette.models import Contestant, Draft, DraftPick
 from bot.models import Thought
 from content.models import Content, Page, Member, ImageSlider, Image
 from football.models import Player, PlayerSeason, Season, Team
@@ -288,30 +287,3 @@ class ThoughtViewSet(viewsets.ModelViewSet):
     @action(detail=False)
     def random(self, request):
         return [Thought.objects.filter(approved=False).order_by('?').first()]
-
-
-class DraftViewSet(viewsets.ModelViewSet):
-    queryset = Draft.objects.all()
-    serializer_class = serializers.DraftSerializer
-
-
-class DraftPickViewSet(viewsets.ModelViewSet):
-    queryset = DraftPick.objects.all()
-    serializer_class = serializers.DraftPickSerializer
-
-    def create(self, request, *args, **kwargs):
-        validated_data = request.data
-        draftee = Contestant.objects.get(id=validated_data['draftee_id'])
-        drafter = Member.objects.get(id=validated_data['drafter_id'])
-        draft = Draft.objects.get(id=validated_data['draft_id'])
-        player = validated_data['player']
-
-        DraftPick.objects.create(**{
-            "draftee": draftee,
-            "drafter": drafter,
-            "draft": draft,
-            'player': player
-        })
-        draftee.drafted = True
-        draftee.save()
-        return Response(status=201)

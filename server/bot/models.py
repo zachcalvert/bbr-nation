@@ -32,7 +32,7 @@ class GroupMeBot(models.Model):
     def __str__(self):
         return self.name
 
-    def send_message(self, message):
+    def send_message(self, message, gif_text):
         """
         Post a message to a groupme channel
         """
@@ -42,6 +42,7 @@ class GroupMeBot(models.Model):
         }
 
         if message.image:
+            body['text'] = gif_text
             body['attachments'] = [{
                 "type": "image",
                 "url": message.image
@@ -276,11 +277,12 @@ class Response(models.Model):
             thought.used += 1
             thought.save()
         
-        self.text = text.lower() if not self.image else None
+        self.text = text.lower()
         self.save()
 
     def send(self):
-        self.request.bot.send_message(self)
+        gif_text = self.request.text.replace(f'{self.request.bot.name} gif ', '')
+        self.request.bot.send_message(self, gif_text)
 
 
 class GameBot(GroupMeBot):

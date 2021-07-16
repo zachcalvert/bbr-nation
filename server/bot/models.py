@@ -276,7 +276,7 @@ class Response(models.Model):
             thought.used += 1
             thought.save()
         
-        self.text = text.lower()
+        self.text = text.lower() if not self.image else None
         self.save()
 
     def send(self):

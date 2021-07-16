@@ -204,7 +204,7 @@ class Response(models.Model):
                 limit=10
             )
             gif = random.choice(api_response.data)
-            url = gif.images.downsized_large.url
+            url = gif.images.original.url
         except ApiException as e:
             print("Exception when calling DefaultApi->gifs_search_get: %s\n" % e)
             return None
@@ -252,6 +252,7 @@ class Response(models.Model):
 
         if request_type == 'GIF':
             text = self.find_gif()
+            self.image = text
 
         elif request_type == 'IMAGE':
             text = self.find_image()
@@ -275,7 +276,7 @@ class Response(models.Model):
             thought.used += 1
             thought.save()
         
-        self.text = text.lower()
+        self.text = text.lower() if not self.image else None
         self.save()
 
     def send(self):

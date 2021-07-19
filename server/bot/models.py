@@ -275,7 +275,10 @@ class Response(models.Model):
             text = Answerer(sender=sender, request=self.request).answer()
 
         else:
-            thought = Thought.objects.filter(bot=self.request.bot, used=0, sentiment=self.request.sentiment, approved=True).order_by('?').first()
+            thought = Thought.objects.filter(member=self.request.sender).first()
+            if not thought:
+                thought = Thought.objects.filter(bot=self.request.bot, used=0, sentiment=self.request.sentiment, approved=True).order_by('?').first()
+
             text = thought.text.replace('MEMBER_NAME', self.request.sender_display_name)
             thought.used += 1
             thought.save()

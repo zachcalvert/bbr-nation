@@ -438,7 +438,11 @@ class ESPNWrapper:
             "Hmmm..",
             "Hard to argue against",
             "Lock him in,",
-            "For this week,"
+            "For this week,",
+            "Hearing a lot of chatter about",
+            "For the safe play, I'd go with",
+            "For a high ceiling low floor play, look to",
+            ""
         ]
 
         potentials = []
@@ -448,8 +452,17 @@ class ESPNWrapper:
 
         intro = random.choice(variety_intros)
         player = random.choice(potentials)
-        message = "{} {}. Im thinking he scores {} against the {} defense".format(
-            intro, player.name, player.projected_points, player.pro_opponent
-        )
 
+        variety_outros = [
+            "Im thinking he scores {} against the {} defense".format(player.projected_points, player.pro_opponent),
+            "Dude's about to carve up the {} for {} big ones".format(player.pro_opponent, player.projected_points),
+            "You can count on him for {} points this week".format(player.projected_points),
+            "He's good for at least {} points against the {}".format(player.projected_points, player.pro_opponent),
+            "Against the {} D? That's {} points easy.".format(player.pro_opponent, player.projected_points),
+            "Probably gonna hang up {} on the {}".format(player.projected_points, player.pro_opponent),
+            "Should easily post at least {} points playing against the {}".format(player.projected_points, player.pro_opponent)
+        ]
+        outro = random.choice(variety_outros)
+
+        message = "{} {}. {}".format(intro, player.name, outro)
         return message

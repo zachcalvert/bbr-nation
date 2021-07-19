@@ -5,13 +5,14 @@ from content.models import Content, Page, Member, Nickname, Image, ImageSlider
 
 
 class MemberAdmin(admin.ModelAdmin):
-    list_display = ['name', 'groupme_id']
+    list_display = ['name', 'groupme_id', 'nfl_team']
     search_fields = ['name',]
 
     fields = (
         'name',
         'groupme_id',
         'avatar_url',
+        'nfl_team'
     )
     readonly_fields = ('groupme_id',)
 

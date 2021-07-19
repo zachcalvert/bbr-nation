@@ -120,6 +120,8 @@ class Request(models.Model):
             self.message_type = 'GIF'
         elif f'{self.bot.name}image' in message:
             self.message_type = 'IMAGE'
+        elif 'waiverwire' in message:
+            self.message_type = 'WAIVER'
         elif any(word in message for word in vocab.CHECK_INS):
             self.message_type = 'CHECK_IN'
         elif 'standings' in message:
@@ -258,8 +260,9 @@ class Response(models.Model):
         elif request_type == 'IMAGE':
             text = self.find_image()
 
-        elif request_type == 'GREETING':
-            text = self.greet()
+        elif request_type == 'WAIVER':
+            wrapper = ESPNWrapper()
+            text = wrapper.pickup()
 
         elif request_type == 'CHECK_IN':
             text = self.give_update()

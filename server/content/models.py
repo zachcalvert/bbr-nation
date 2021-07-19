@@ -21,6 +21,7 @@ class Member(models.Model):
     name = models.CharField(max_length=50)
     groupme_id = models.CharField(max_length=50, null=True, blank=True)
     avatar_url = models.CharField(max_length=255, null=True, blank=True)
+    nfl_team = models.ForeignKey('football.NFLTeam', null=True, blank=True, on_delete=models.SET_NULL)
 
     def __str__(self):
         return self.name

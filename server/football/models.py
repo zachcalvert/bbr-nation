@@ -2,6 +2,7 @@ import json
 import random
 import requests
 
+from django.contrib.postgres.fields import ArrayField
 from django.db import models
 
 from content.models import Member
@@ -129,3 +130,51 @@ class PlayerSeason(models.Model):
 
     def __str__(self):
         return f'{self.season} {self.player.name}'
+
+
+class NFLSeason(models.Model):
+    year = models.CharField(max_length=4)
+    current = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.year
+
+
+class NFLConference(models.Model):
+    name = models.CharField(max_length=50)
+
+    def __str__(self):
+        return self.name
+
+
+class NFLDivision(models.Model):
+    name = models.CharField(max_length=50)
+    conference = models.ForeignKey(NFLConference, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f'The {self.name}'
+
+    def total_record(self):
+        wins = 0
+        losses = 0
+        for team in self.teams.all():
+            wins += team.wins
+            losses += team.losses
+
+        return f'{wins}-{losses}'
+
+
+class NFLTeam(models.Model):
+    name = models.CharField(max_length=50)
+    division = models.ForeignKey(NFLDivision, on_delete=models.CASCADE, related_name='teams')
+    nicknames = ArrayField(models.CharField(max_length=50), blank=True)
+    wins = models.IntegerField(default=0)
+    losses = models.IntegerField(default=0)
+    ties = models.IntegerField(default=0)
+
+    def __str__(self):
+        return self.name
+
+    def record(self):
+        return f'{self.wins}-{self.losses}'
+

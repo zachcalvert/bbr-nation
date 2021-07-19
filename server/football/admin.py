@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from football.models import Season, Player, PlayerSeason, Team
+from football.models import Season, Player, PlayerSeason, Team, NFLConference, NFLDivision, NFLTeam
 
 
 class SeasonAdmin(admin.ModelAdmin):
@@ -29,7 +29,17 @@ class PlayerSeasonAdmin(admin.ModelAdmin):
     readonly_fields = fields
 
 
+class NFLTeamAdmin(admin.ModelAdmin):
+    list_display = ('name', 'division', 'nicknames')
+    list_filter = ('division',)
+    fields = ('name', 'division', 'wins', 'losses', 'ties', 'nicknames')
+
+
 admin.site.register(Season, SeasonAdmin)
 admin.site.register(Team, TeamAdmin)
 admin.site.register(Player, PlayerAdmin)
 admin.site.register(PlayerSeason, PlayerSeasonAdmin)
+
+admin.site.register(NFLConference)
+admin.site.register(NFLDivision)
+admin.site.register(NFLTeam, NFLTeamAdmin)

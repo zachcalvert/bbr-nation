@@ -292,6 +292,11 @@ class Response(models.Model):
                 thought.used += 10
             else:
                 thought.used += 1
+
+            if random.choice([1,2,3]) in [2,3]:
+                for i in range(random.choice([1,2,3])):
+                    text += Phrase.get_next('EMOJI', bot=self.request.bot)
+
             thought.save()
         
         self.text = text.lower()

@@ -275,12 +275,23 @@ class Response(models.Model):
             text = Answerer(sender=sender, request=self.request).answer()
 
         else:
-            thought = Thought.objects.filter(member=self.request.sender).first()
+            thought = Thought.objects.filter(member=self.request.sender, sentiment=self.request.sentiment).annotate(models.Min('used')).order_by('used').first()
+
+            if not thought:
+                thought = Thought.objects.filter(member=self.request.sender).annotate(models.Min('used')).order_by('used').first()
+
             if not thought:
                 thought = Thought.objects.filter(bot=self.request.bot, used=0, sentiment=self.request.sentiment, approved=True).order_by('?').first()
 
+            if not thought:
+                thought = Thought.objects.filter(bot=self.request.bot, used=0, approved=True).order_by('?').first()
+
             text = thought.text.replace('MEMBER_NAME', self.request.sender_display_name)
-            thought.used += 1
+
+            if thought.member:
+                thought.used += 10
+            else:
+                thought.used += 1
             thought.save()
         
         self.text = text.lower()

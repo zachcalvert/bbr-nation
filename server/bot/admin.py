@@ -49,7 +49,7 @@ class ResponseAdmin(admin.ModelAdmin):
 
 class ThoughtAdmin(admin.ModelAdmin):
     list_display = ('text', 'approved', 'sentiment', 'is_update', 'member', 'used')
-    list_filter = ('bot', 'approved', 'used', 'sentiment', 'is_update')
+    list_filter = ('bot', 'approved', 'used', 'sentiment', 'is_update', 'member')
     search_fields = ['text']
     actions = [mark_as_unused, add_to_bev, add_to_lish]
 

@@ -243,7 +243,10 @@ class Response(models.Model):
     def give_update(self):
         thought = Thought.objects.filter(is_update=True, used__lt=0, approved=True).annotate(models.Min('used')).order_by('used').first()
         if thought:
-            thought.used +=1
+            if thought.used < 1:
+                thought.used += 10
+            else:
+                thought.used +=1
             thought.save()
             if self.request.sender:
                 return thought.text.replace('MEMBER_NAME', self.request.sender_display_name)

@@ -173,6 +173,8 @@ class NFLTeam(models.Model):
     ties = models.IntegerField(default=0)
 
     def __str__(self):
+        if len(self.nicknames) > 0:
+            return random.choice(self.nicknames)
         return self.name
 
     def record(self):

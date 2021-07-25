@@ -299,7 +299,7 @@ class Response(models.Model):
 
             text = thought.text.replace('MEMBER_NAME', self.request.sender_display_name)
 
-            if thought.member:
+            if thought.used < 1:
                 thought.used += 10
             else:
                 thought.used += 1

@@ -106,9 +106,10 @@ class Request(models.Model):
 
     @property
     def sender_display_name(self):
+        if self.sender_name:
+            return self.sender_name
         if self.sender:
             return self.sender.name
-        return self.sender_name
 
     def determine_message_type(self):
         """
@@ -284,11 +285,11 @@ class Response(models.Model):
 
             # approved, unused, sentiment
             if not thought:
-                thought = Thought.objects.filter(used=0, sentiment=self.request.sentiment, approved=True).order_by('?').first()
+                thought = Thought.objects.filter(approved=True, is_update=False, sentiment=self.request.sentiment, used__lt=0).annotate(models.Min('used')).order_by('used').first()
 
             # approved, unused
             if not thought:
-                thought = Thought.objects.filter(used__lt=0, approved=True).annotate(models.Min('used')).order_by('used').first()
+                thought = Thought.objects.filter(is_update=False, used__lt=0, approved=True).annotate(models.Min('used')).order_by('used').first()
 
             text = thought.text.replace('MEMBER_NAME', self.request.sender_display_name)
 
@@ -299,6 +300,7 @@ class Response(models.Model):
 
             if random.choice([1,2,3]) in [2,3]:
                 for i in range(random.choice([1,2,3])):
+                    text += ' '
                     text += Phrase.get_next('EMOJI', bot=self.request.bot)
 
             thought.save()

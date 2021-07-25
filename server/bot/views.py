@@ -36,7 +36,7 @@ def new_message(request):
 
     try:
         message_content = content['text'].lower()
-        sender = content['name']
+        sender_name = content['name']
         user_id = content['user_id']
     except KeyError:
         print('ERROR parsing GroupMe message: {}'.format(request.POST))
@@ -53,7 +53,8 @@ def new_message(request):
             request = Request.objects.create(
                 text=message_content,
                 sender=sender,
-                bot=bot
+                bot=bot,
+                sender_name=sender_name
             )
             request.classify()
             

@@ -298,7 +298,7 @@ class Response(models.Model):
 
             # approved, unused
             if not thought:
-                thought = thoughts.first()
+                thought = thoughts.filter(sentiment__isnull=True).first()
 
             text = thought.text.replace('MEMBER_NAME', self.request.sender_display_name)
 

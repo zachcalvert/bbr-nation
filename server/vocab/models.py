@@ -23,8 +23,8 @@ class Phrase(models.Model):
         return self.text
 
     @staticmethod
-    def get_next(kind, bot):
-        phrase = Phrase.objects.filter(kind=kind, bot=bot).annotate(models.Min('used')).order_by('used')[0]
+    def get_next(kind):
+        phrase = Phrase.objects.filter(kind=kind).annotate(models.Min('used')).order_by('used')[0]
         phrase.used += 1
         phrase.save()
         

@@ -29,21 +29,21 @@ class Answerer:
         core_punc = random.choice(PUNCTUATIONS)
 
         if confirm:
-            yes = Phrase.get_next('YES', bot=self.request.bot)
+            yes = Phrase.get_next('YES')
             answer += f'{yes}{random.choice(PUNCTUATIONS)} '
         
         if core:
             answer += f'{core}{core_punc} '
 
         if suffix:
-            suffix = Phrase.get_next('SUFFIX', bot=self.request.bot)
+            suffix = Phrase.get_next('SUFFIX')
             answer += f'{suffix} '
             if core_punc == ' "':
                 answer += '"'
         
         if emojis and random.choice([1,2]) == 1:
             for i in range(random.choice([1,2])):
-                answer += Phrase.get_next('EMOJI', bot=self.request.bot) 
+                answer += Phrase.get_next('EMOJI')
 
         answer = " ".join(answer.split())  # remove any duplicate spaces
         return answer
@@ -80,11 +80,11 @@ class Answerer:
             choices = ['honestly', 'actually', '', '. . .', ]
             core = f"{random.choice(choices)} i think it's {Phrase.get_next('ADJECTIVE')}"
         else:
-            core = Phrase.get_next('THING', bot=self.request.bot)
+            core = Phrase.get_next('THING')
         return self._build_answer(confirm=False, core=core, suffix=True, emojis=True)
 
     def when(self):
-        time = Phrase.get_next('TIME', bot=self.request.bot)
+        time = Phrase.get_next('TIME')
         return self._build_answer(confirm=False, core=time, suffix=True)
 
     def where(self):
@@ -94,7 +94,8 @@ class Answerer:
     def who(self):
         if ' win ' in self.question or ' bet ' in self.question:
             choices = ['i put 100 on the', 'i bet on the', '', 'easy. the', 'no doubt in my mind, the', '']
-            core = f"{random.choice(choices)} {NFLTeam.objects.order_by('?').first()}"
+            team = NFLTeam.objects.order_by('?').first()
+            core = f"{random.choice(choices)} {team}"
         else:
             core = Person.get_next()
         return self._build_answer(confirm=False, core=core, suffix=True)
@@ -114,34 +115,34 @@ class Answerer:
             ]
             core += f'{Person.get_next()} {random.choice(choices)} {Phrase.get_next("ADJECTIVE")}'
         else:
-            core += f'{Phrase.get_next("THING", bot=self.request.bot)}'
+            core += f'{Phrase.get_next("THING")}'
         return self._build_answer(confirm=False, core=core, suffix=True)
 
     def are_you(self):
         return self._build_answer(confirm=True, suffix=True)
 
     def did_you(self):
-        occurrence = Phrase.get_next('OCCURRENCE', bot=self.request.bot)
+        occurrence = Phrase.get_next('OCCURRENCE')
         return self._build_answer(confirm=True, core=occurrence, suffix=True)
 
     def do_you(self):
         first_punc = '!' if random.choice([1, 2]) == 1 else '.'
-        adverb = Phrase.get_next('ADVERB', bot=self.request.bot) if random.choice([1, 2]) == 1 else ''
+        adverb = Phrase.get_next('ADVERB') if random.choice([1, 2]) == 1 else ''
         prefix = '{}{} i {} do'.format(self.sender, first_punc, adverb)
         core = self._build_core(prefix)
         return self._build_answer(confirm=True, core=core, suffix=True)
 
     def have_you(self):
-        occurrence = Phrase.get_next('OCCURRENCE', bot=self.request.bot)
+        occurrence = Phrase.get_next('OCCURRENCE')
         return self._build_answer(confirm=True, core=occurrence, suffix=True)
 
     def will_you(self):
-        occurrence = Phrase.get_next('OCCURRENCE', bot=self.request.bot)
+        occurrence = Phrase.get_next('OCCURRENCE')
         return self._build_answer(confirm=True, core=occurrence, suffix=True)
 
     def wanna(self):
         first_punc = '!' if random.choice([1, 2]) == 1 else '.'
-        adverb = Phrase.get_next('ADVERB', bot=self.request.bot) if random.choice([1, 2]) == 1 else ''
+        adverb = Phrase.get_next('ADVERB') if random.choice([1, 2]) == 1 else ''
         prefix = '{}{} i {} wanna'.format(self.sender, first_punc, adverb)
         core = self._build_core(prefix)
         return self._build_answer(confirm=True, core=core, suffix=True)

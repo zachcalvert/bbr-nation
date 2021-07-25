@@ -240,7 +240,7 @@ class Response(models.Model):
         return text
 
     def give_update(self):
-        thought = Thought.objects.filter(is_update=True, used=False, approved=True).order_by('?').first()
+        thought = Thought.objects.filter(is_update=True, used__lt=0, approved=True).annotate(models.Min('used')).order_by('used').first()
         if thought:
             thought.used +=1
             thought.save()
@@ -275,16 +275,20 @@ class Response(models.Model):
             text = Answerer(sender=sender, request=self.request).answer()
 
         else:
+            # member and sentiment
             thought = Thought.objects.filter(member=self.request.sender, sentiment=self.request.sentiment, used__lt=0).annotate(models.Min('used')).order_by('used').first()
 
+            # member
             if not thought:
                 thought = Thought.objects.filter(member=self.request.sender, used__lt=0).annotate(models.Min('used')).order_by('used').first()
 
+            # approved, unused, sentiment
             if not thought:
-                thought = Thought.objects.filter(bot=self.request.bot, used=0, sentiment=self.request.sentiment, approved=True).order_by('?').first()
+                thought = Thought.objects.filter(used=0, sentiment=self.request.sentiment, approved=True).order_by('?').first()
 
+            # approved, unused
             if not thought:
-                thought = Thought.objects.filter(bot=self.request.bot, used=0, approved=True).order_by('?').first()
+                thought = Thought.objects.filter(used__lt=0, approved=True).annotate(models.Min('used')).order_by('used').first()
 
             text = thought.text.replace('MEMBER_NAME', self.request.sender_display_name)
 

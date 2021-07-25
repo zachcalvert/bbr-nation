@@ -38,14 +38,15 @@ NEGATIVES = {
     "not cool",
     "not chill",
     "no chill",
-    "damn bro",
-    "damn dude",
-    "damn bbot",
+    "damn",
     "fuck you",
     "fuck off",
     "bad bot",
     "trash",
-    "get fucked"
+    "get fucked",
+    "bullshit",
+    " bs ",
+    "salt"
 }
 
 POSITIVES = {

@@ -177,4 +177,3 @@ class NFLTeam(models.Model):
 
     def record(self):
         return f'{self.wins}-{self.losses}'
-

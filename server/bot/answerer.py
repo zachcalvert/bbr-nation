@@ -1,6 +1,7 @@
 import random
 
 from bot import vocab
+from football.models import NFLTeam
 from vocab.models import Person, Phrase, Place, TeamName
 
 
@@ -75,8 +76,12 @@ class Answerer:
         return self._build_answer(confirm=False, core=core, suffix=True, emojis=True)
 
     def what(self):
-        thing = Phrase.get_next('THING', bot=self.request.bot)
-        return self._build_answer(confirm=False, core=thing, suffix=True, emojis=True)
+        if 'you think' in self.question:
+            choices = ['honestly', 'actually', '', '. . .', ]
+            core = f"{random.choice(choices)} i think it's {Phrase.get_next('ADJECTIVE')}"
+        else:
+            core = Phrase.get_next('THING', bot=self.request.bot)
+        return self._build_answer(confirm=False, core=core, suffix=True, emojis=True)
 
     def when(self):
         time = Phrase.get_next('TIME', bot=self.request.bot)
@@ -87,7 +92,11 @@ class Answerer:
         return self._build_answer(confirm=False, core=core, suffix=True)
 
     def who(self):
-        core = Person.get_next()
+        if ' win ' in self.question or ' bet ' in self.question:
+            choices = ['i put 100 on the', 'i bet on the', '', 'easy. the', 'no doubt in my mind, the', '']
+            core = f"{random.choice(choices)} {NFLTeam.objects.order_by('?').first()}"
+        else:
+            core = Person.get_next()
         return self._build_answer(confirm=False, core=core, suffix=True)
 
     def why(self):

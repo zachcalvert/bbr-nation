@@ -276,20 +276,26 @@ class Response(models.Model):
             text = Answerer(sender=sender, request=self.request).answer()
 
         else:
+            # approved, not updates, sorted
+            thoughts = Thought.objects.filter(approved=True, is_update=False, used__lt=0).annotate(models.Min('used')).order_by('used')
+
             # member and sentiment
-            thought = Thought.objects.filter(member=self.request.sender, sentiment=self.request.sentiment, used__lt=0).annotate(models.Min('used')).order_by('used').first()
+            thought = thoughts.filter(member=self.request.sender, sentiment=self.request.sentiment).first()
 
             # member
             if not thought:
-                thought = Thought.objects.filter(member=self.request.sender, used__lt=0).annotate(models.Min('used')).order_by('used').first()
+                thought = thoughts.filter(member=self.request.sender).first()
+
+            # nothing for this particular member, get rid of all other member thoughts
+            thoughts = thoughts.filter(member__isnull=True)
 
             # approved, unused, sentiment
             if not thought:
-                thought = Thought.objects.filter(approved=True, is_update=False, sentiment=self.request.sentiment, used__lt=0).annotate(models.Min('used')).order_by('used').first()
+                thought = thoughts.filter(sentiment=self.request.sentiment).first()
 
             # approved, unused
             if not thought:
-                thought = Thought.objects.filter(is_update=False, used__lt=0, approved=True).annotate(models.Min('used')).order_by('used').first()
+                thought = thoughts.first()
 
             text = thought.text.replace('MEMBER_NAME', self.request.sender_display_name)
 

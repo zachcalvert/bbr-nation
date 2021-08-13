@@ -235,9 +235,9 @@ class Response(models.Model):
 
     def greet(self):
         if self.request.sender:
-            text = f'{self.request.sender_display_name}! {Phrase.get_next("QUESTION", bot=self.request.bot)}'
+            text = f'{self.request.sender_display_name}! {Phrase.get_next("QUESTION")}'
         else:
-            text = f'MEMBER_NAME! {Phrase.get_next("QUESTION", bot=self.request.bot)}'
+            text = f'MEMBER_NAME! {Phrase.get_next("QUESTION")}'
         return text
 
     def give_update(self):

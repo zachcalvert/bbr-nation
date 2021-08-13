@@ -310,7 +310,7 @@ class Response(models.Model):
             if random.choice([1,2,3]) in [2,3]:
                 for i in range(random.choice([1,2,3])):
                     text += ' '
-                    text += Phrase.get_next('EMOJI', bot=self.request.bot)
+                    text += Phrase.get_next('EMOJI')
 
             thought.save()
         

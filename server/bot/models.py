@@ -280,7 +280,7 @@ class Response(models.Model):
 
         else:
             # approved, not updates, sorted
-            thoughts = Thought.objects.filter(approved=True, is_update=False, used__lt=0).annotate(models.Min('used')).order_by('used')
+            thoughts = Thought.objects.filter(approved=True, is_update=False, used__lte=0).annotate(models.Min('used')).order_by('used')
 
             # member and sentiment
             thought = thoughts.filter(member=self.request.sender, sentiment=self.request.sentiment).first()

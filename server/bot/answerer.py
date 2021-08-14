@@ -92,6 +92,11 @@ class Answerer:
         return self._build_answer(confirm=False, core=core, suffix=True)
 
     def who(self):
+        if 'pierc' in self.question or ' stab' in self.question:
+            choices = ['bk tha gawd', 'rene', 'shane', 'trav', 'lish', 'rock', 'walsh', 'squirma', 'commish', 'shanye', 'rendizney', 'greg']
+            core = f"{random.choice(choices)}"
+            return self._build_answer(confirm=False, core=core, suffix=True)
+
         if ' win ' in self.question or ' bet ' in self.question:
             choices = ['i put 100 on the', 'i bet on the', '', 'easy. the', 'no doubt in my mind, the', '']
             team = NFLTeam.objects.order_by('?').first()

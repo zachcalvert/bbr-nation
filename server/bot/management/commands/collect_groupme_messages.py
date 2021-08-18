@@ -8,7 +8,7 @@ import spacy
 
 from django.core.management.base import BaseCommand, CommandError
 
-from groupme_messages import MESSAGES
+from bot.data.groupme_messages import MESSAGES
 
 
 # Load English tokenizer, tagger, parser, NER and word vectors
@@ -40,6 +40,7 @@ class Command(BaseCommand):
                 message_list = content['response']['messages']
 
                 for message in message_list:
+                    print(message)
                     if message['sender_type'] != 'bot' and message['text']:
                         groupme_messages.append('{}'.format(message['text'].lower().replace('\n', '')))
 

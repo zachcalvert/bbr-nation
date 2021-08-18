@@ -249,7 +249,7 @@ class Response(models.Model):
                 thought.used +=1
             thought.save()
             if self.request.sender:
-                return thought.text.replace('MEMBER_NAME', self.request.sender_display_name)
+                return thought.text.replace('MEMBER_NAME', self.request.sender_display_name).replace('member_name', self.request.sender_display_name)
             return thought.text
         else:
             return self.greet()
@@ -277,6 +277,7 @@ class Response(models.Model):
         elif request_type == 'QUESTION':
             sender = self.request.sender_display_name
             text = Answerer(sender=sender, request=self.request).answer()
+            text += f' {self.give_update()}'
 
         else:
             # approved, not updates, sorted

@@ -3,6 +3,20 @@ from django.contrib import admin
 from football.models import Season, Player, PlayerSeason, Team, NFLConference, NFLDivision, NFLTeam
 
 
+def mark_as_stud(modeladmin, request, queryset):
+    for player in queryset:
+        player.stud = True
+        player.save()
+mark_as_stud.short_description = 'Mark as stud'
+
+
+def mark_as_active(modeladmin, request, queryset):
+    for player in queryset:
+        player.active = True
+        player.save()
+mark_as_active.short_description = 'Mark as active'
+
+
 class SeasonAdmin(admin.ModelAdmin):
     list_display = ('year', 'winner', 'piercee', 'complete')
     fields = ('year', 'members', 'winner', 'piercee', 'complete')
@@ -17,9 +31,11 @@ class TeamAdmin(admin.ModelAdmin):
 
 
 class PlayerAdmin(admin.ModelAdmin):
-    list_display = ('name', 'nickname', 'espn_id', 'position')
+    list_display = ('name', 'nickname', 'espn_id', 'position', 'active', 'stud')
+    list_filter = ('stud', 'active')
     fields = ('name', 'nickname', 'espn_id', 'position')
     readonly_fields = ('name', 'espn_id', 'position')
+    actions = [mark_as_active, mark_as_stud]
 
 
 class PlayerSeasonAdmin(admin.ModelAdmin):

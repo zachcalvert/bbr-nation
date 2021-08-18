@@ -1,7 +1,7 @@
 import random
 
 from bot import vocab
-from football.models import NFLTeam
+from football.models import NFLTeam, Player
 from vocab.models import Person, Phrase, Place, TeamName
 
 
@@ -76,8 +76,11 @@ class Answerer:
         return self._build_answer(confirm=False, core=core, suffix=True, emojis=True)
 
     def what(self):
-        if 'you think' in self.question:
-            choices = ['honestly', 'actually', '', '. . .', ]
+        if ' pick ' in self.question and ' draft ' in self.question:
+            choices = ['first', 'second', 'third', 'fourth', 'fifth', 'sixth', 'tenth']
+            core = f"{random.choice(choices)} overall"
+        elif 'you think' in self.question:
+            choices = ['honestly', 'actually', '', '. . .', 'yo', 'ay', 'eyaww']
             core = f"{random.choice(choices)} i think it's {Phrase.get_next('ADJECTIVE')}"
         else:
             core = Phrase.get_next('THING')
@@ -93,16 +96,32 @@ class Answerer:
 
     def who(self):
         if 'pierc' in self.question or ' stab' in self.question:
-            choices = ['bk tha gawd', 'rene', 'shane', 'trav', 'lish', 'rock', 'walsh', 'squirma', 'commish', 'shanye', 'rendizney', 'greg']
+            choices = ['bk tha gawd', 'rene', 'shane', 'trav', 'lish', 'rock', 'walsh', 'squirma', 'd', 'shanye', 'rene', 'greg']
             core = f"{random.choice(choices)}"
             return self._build_answer(confirm=False, core=core, suffix=True)
 
-        if ' win ' in self.question or ' bet ' in self.question:
+        elif ' draft' in self.question:
+            core = Player.objects.filter(stud=True).order_by('?').first().name
+            return self._build_answer(confirm=False, core=core, suffix=True)
+
+        elif ' win ' in self.question:
+            if any(['this year', 'the ship', 'it all', 'championship', 'trophy']) in self.question:
+                choices = ['bk tha gawd', 'rene', 'shane', 'trav', 'lish', 'rock', 'walsh', 'squirma', 'd', 'shanye', 'rene', 'greg']
+                core = f"{random.choice(choices)}"
+                return self._build_answer(confirm=False, core=core, suffix=True)
+            else:
+                choices = ['i put 100 on the', 'i bet on the', '', 'easy. the', 'no doubt in my mind, the', '']
+                team = NFLTeam.objects.order_by('?').first()
+                core = f"{random.choice(choices)} {team}"
+
+        elif ' bet ' in self.question:
             choices = ['i put 100 on the', 'i bet on the', '', 'easy. the', 'no doubt in my mind, the', '']
             team = NFLTeam.objects.order_by('?').first()
             core = f"{random.choice(choices)} {team}"
+
         else:
             core = Person.get_next()
+
         return self._build_answer(confirm=False, core=core, suffix=True)
 
     def why(self):

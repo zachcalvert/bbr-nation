@@ -46,6 +46,8 @@ class Player(models.Model):
     espn_id = models.CharField(max_length=20, null=True, blank=True)
     nickname = models.CharField(max_length=30, null=True, blank=True)
     position = models.CharField(max_length=10, null=True, blank=True)
+    active = models.BooleanField(default=False)
+    stud = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name

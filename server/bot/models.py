@@ -241,7 +241,7 @@ class Response(models.Model):
         return text
 
     def give_update(self):
-        thought = Thought.objects.filter(is_update=True, used__lt=0, approved=True).annotate(models.Min('used')).order_by('used').first()
+        thought = Thought.objects.filter(is_update=True, used__lte=0, approved=True).annotate(models.Min('used')).order_by('used').first()
         if thought:
             if thought.used < 1:
                 thought.used += 10

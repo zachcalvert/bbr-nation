@@ -10,18 +10,5 @@ services:
     ports:
       - "5432:5432"
 
-  web:
-    build: .
-    volumes:
-      - .:/app
-      - /app/node_modules
-    ports:
-      - "3001:3001"
-    depends_on:
-      - db
-    env_file:
-      - .env
-    command: npm run dev
-
 volumes:
   postgres_data:

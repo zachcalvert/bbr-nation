@@ -99,7 +99,7 @@ const channels = new ChannelManager();
 
 export const wsRoutes: FastifyPluginAsync = async (app) => {
   app.get("/", { websocket: true }, (socket, request) => {
-    const userId = request.session.get("userId") ?? null;
+    const userId = request.session.userId ?? null;
 
     const client: Client = {
       ws: socket,

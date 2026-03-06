@@ -3,29 +3,45 @@ import bcrypt from "bcrypt";
 import { prisma } from "../index.js";
 
 export const authRoutes: FastifyPluginAsync = async (app) => {
-  app.post<{ Body: { email: string; password: string } }>(
-    "/register",
-    async (request, reply) => {
-      const { email, password } = request.body;
+  app.post<{
+    Body: {
+      email: string;
+      password: string;
+      firstName: string;
+      lastName: string;
+      espnId: string;
+      groupmeId: string;
+      favoriteTeam: string;
+    };
+  }>("/register", async (request, reply) => {
+    const { email, password, firstName, lastName, espnId, groupmeId, favoriteTeam } =
+      request.body;
 
-      const existing = await prisma.user.findUnique({ where: { email } });
-      if (existing) {
-        return reply.status(409).send({ error: "Email already registered" });
-      }
-
-      const hashed = await bcrypt.hash(password, 10);
-      const user = await prisma.user.create({
-        data: { email, password: hashed },
-      });
-
-      request.session.set("userId", user.id);
-
-      return reply.status(201).send({
-        id: user.id,
-        email: user.email,
-      });
+    const existing = await prisma.user.findUnique({ where: { email } });
+    if (existing) {
+      return reply.status(409).send({ error: "Email already registered" });
     }
-  );
+
+    const hashed = await bcrypt.hash(password, 10);
+    const user = await prisma.user.create({
+      data: {
+        email,
+        password: hashed,
+        firstName,
+        lastName,
+        espnId,
+        groupmeId,
+        favoriteTeam,
+      },
+    });
+
+    request.session.userId = user.id;
+
+    return reply.status(201).send({
+      id: user.id,
+      email: user.email,
+    });
+  });
 
   app.post<{ Body: { email: string; password: string } }>(
     "/login",
@@ -42,7 +58,7 @@ export const authRoutes: FastifyPluginAsync = async (app) => {
         return reply.status(401).send({ error: "Invalid credentials" });
       }
 
-      request.session.set("userId", user.id);
+      request.session.userId = user.id;
 
       return { id: user.id, email: user.email };
     }

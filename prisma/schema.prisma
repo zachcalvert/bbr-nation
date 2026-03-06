@@ -26,14 +26,9 @@ model User {
   @@map("users")
 }
 
-model Session {
-  id        String   @id
-  sid       String   @unique
-  data      String
-  expiresAt DateTime @map("expires_at")
-
-  @@map("sessions")
-}
+// NOTE: The "sessions" table is managed entirely by connect-pg-simple, not Prisma.
+// Its schema (sid, sess, expire) is created automatically at server startup
+// via the createTableIfMissing: true option in server/index.ts.
 
 /// One row per season we've synced data for.
 model EspnSeason {

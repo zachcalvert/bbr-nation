@@ -11,8 +11,17 @@ model User {
   id        String   @id @default(cuid())
   email     String   @unique
   password  String
+
+  firstName    String  @map("first_name")
+  lastName     String  @map("last_name")
+  espnId       String  @unique @map("espn_id")
+  groupmeId    String  @unique @map("groupme_id")
+  favoriteTeam String  @map("favorite_team")
+
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
+
+  espnTeams EspnTeam[]
 
   @@map("users")
 }
@@ -24,4 +33,111 @@ model Session {
   expiresAt DateTime @map("expires_at")
 
   @@map("sessions")
+}
+
+/// One row per season we've synced data for.
+model EspnSeason {
+  year               Int      @id
+  leagueName         String   @map("league_name")
+  leagueSize         Int      @map("league_size")
+  regularSeasonWeeks Int      @map("regular_season_weeks")
+  playoffWeeks       Int      @map("playoff_weeks")
+  playoffTeamCount   Int      @map("playoff_team_count")
+  syncedAt           DateTime @default(now()) @map("synced_at")
+
+  teams    EspnTeam[]
+  matchups EspnMatchup[]
+
+  @@map("espn_seasons")
+}
+
+/// One row per fantasy team per season.
+/// Links to a User via the team owner's ESPN member ID.
+model EspnTeam {
+  id                     String  @id @default(cuid())
+  espnTeamId             Int     @map("espn_team_id")
+  seasonYear             Int     @map("season_year")
+
+  name                   String
+  abbreviation           String
+  logoUrl                String? @map("logo_url")
+  ownerEspnMemberId      String  @map("owner_espn_member_id")
+
+  wins                   Int     @default(0)
+  losses                 Int     @default(0)
+  ties                   Int     @default(0)
+
+  pointsFor              Float   @default(0) @map("points_for")
+  pointsAgainst          Float   @default(0) @map("points_against")
+
+  playoffSeed            Int?    @map("playoff_seed")
+  finalStandingsPosition Int?    @map("final_standings_position")
+  regularSeasonRank      Int?    @map("regular_season_rank")
+
+  waiverRank             Int?    @map("waiver_rank")
+
+  season       EspnSeason      @relation(fields: [seasonYear], references: [year])
+  owner        User?           @relation(fields: [ownerEspnMemberId], references: [espnId])
+  homeMatchups EspnMatchup[]   @relation("HomeTeam")
+  awayMatchups EspnMatchup[]   @relation("AwayTeam")
+  rosterWeeks  EspnRosterWeek[]
+
+  @@unique([espnTeamId, seasonYear])
+  @@map("espn_teams")
+}
+
+/// One row per matchup (one per pair of teams per week).
+model EspnMatchup {
+  id              String @id @default(cuid())
+  seasonYear      Int    @map("season_year")
+  matchupPeriodId Int    @map("matchup_period_id")
+
+  homeTeamId      String @map("home_team_id")
+  awayTeamId      String @map("away_team_id")
+
+  homeScore       Float  @default(0) @map("home_score")
+  awayScore       Float  @default(0) @map("away_score")
+
+  season   EspnSeason @relation(fields: [seasonYear], references: [year])
+  homeTeam EspnTeam   @relation("HomeTeam", fields: [homeTeamId], references: [id])
+  awayTeam EspnTeam   @relation("AwayTeam", fields: [awayTeamId], references: [id])
+
+  @@unique([seasonYear, matchupPeriodId, homeTeamId])
+  @@map("espn_matchups")
+}
+
+/// Groups roster entries by team + week.
+model EspnRosterWeek {
+  id              String @id @default(cuid())
+  teamId          String @map("team_id")
+  scoringPeriodId Int    @map("scoring_period_id")
+
+  team    EspnTeam          @relation(fields: [teamId], references: [id])
+  entries EspnRosterEntry[]
+
+  @@unique([teamId, scoringPeriodId])
+  @@map("espn_roster_weeks")
+}
+
+/// One row per player per team per week.
+/// Populated from getBoxscoreForWeek (starters + bench with points)
+/// and getTeamsAtWeek (full roster metadata).
+model EspnRosterEntry {
+  id                  String    @id @default(cuid())
+  rosterWeekId        String    @map("roster_week_id")
+
+  espnPlayerId        Int       @map("espn_player_id")
+  fullName            String    @map("full_name")
+  position            String
+  lineupSlot          String    @map("lineup_slot")
+  nflTeam             String    @map("nfl_team")
+  nflTeamAbbreviation String    @map("nfl_team_abbreviation")
+  totalPoints         Float     @default(0) @map("total_points")
+  acquisitionDate     DateTime? @map("acquisition_date")
+  injuryStatus        String?   @map("injury_status")
+
+  rosterWeek EspnRosterWeek @relation(fields: [rosterWeekId], references: [id])
+
+  @@unique([rosterWeekId, espnPlayerId])
+  @@map("espn_roster_entries")
 }

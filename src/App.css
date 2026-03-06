@@ -345,6 +345,11 @@ input:focus {
   font-size: 0.9em;
 }
 
+.last-place-badge {
+  margin-left: 0.4rem;
+  font-size: 0.9em;
+}
+
 /* ─── Data tables ────────────────────────────────────────────────────────── */
 .data-table {
   width: 100%;
@@ -383,6 +388,13 @@ input:focus {
 }
 .champion-row:hover {
   background: rgba(245, 158, 11, 0.07) !important;
+}
+
+.last-place-row {
+  background: rgba(96, 165, 250, 0.04);
+}
+.last-place-row:hover {
+  background: rgba(96, 165, 250, 0.07) !important;
 }
 
 .col-rank {

@@ -63,6 +63,8 @@ export function SeasonsPage() {
         <div className="seasons-grid">
           {seasons.map((s) => {
             const champion = s.teams.find((t) => t.finalStandingsPosition === 1);
+            const maxRank = Math.max(...s.teams.map((t) => t.regularSeasonRank ?? 0));
+            const lastPlace = s.teams.find((t) => t.regularSeasonRank === maxRank && maxRank > 0);
             return (
               <Link key={s.year} to={`/seasons/${s.year}`} className="card season-card">
                 <div className="season-card-year">{s.year}</div>
@@ -76,6 +78,12 @@ export function SeasonsPage() {
                   </div>
                 ) : (
                   <div className="season-card-champ muted">Season in progress</div>
+                )}
+                {lastPlace && (
+                  <div className="season-card-champ">
+                    <span className="trophy">💎</span>
+                    <span>{lastPlace.name}</span>
+                  </div>
                 )}
               </Link>
             );

@@ -69,7 +69,7 @@ export const espnRoutes: FastifyPluginAsync = async (app) => {
       orderBy: { year: "desc" },
       include: {
         teams: {
-          orderBy: [{ regularSeasonRank: "asc" }, { wins: "desc" }, { pointsFor: "desc" }],
+          orderBy: [{ finalStandingsPosition: "asc" }, { regularSeasonRank: "asc" }, { wins: "desc" }, { pointsFor: "desc" }],
           select: {
             id: true,
             espnTeamId: true,
@@ -103,7 +103,7 @@ export const espnRoutes: FastifyPluginAsync = async (app) => {
       where: { year },
       include: {
         teams: {
-          orderBy: [{ regularSeasonRank: "asc" }, { wins: "desc" }],
+          orderBy: [{ finalStandingsPosition: "asc" }, { regularSeasonRank: "asc" }, { wins: "desc" }],
         },
         matchups: {
           orderBy: { matchupPeriodId: "asc" },

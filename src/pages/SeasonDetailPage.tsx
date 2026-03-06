@@ -70,6 +70,8 @@ export function SeasonDetailPage() {
 
   const teamById = Object.fromEntries(season.teams.map((t) => [t.id, t]));
   const hasTies = season.teams.some((t) => t.ties > 0);
+  const maxRegRank = Math.max(...season.teams.map((t) => t.regularSeasonRank ?? 0));
+  const lastPlaceTeamId = season.teams.find((t) => t.regularSeasonRank === maxRegRank && maxRegRank > 0)?.id;
 
   // Group matchups by week
   const matchupsByWeek = season.matchups.reduce<Record<number, Matchup[]>>((acc, m) => {
@@ -116,9 +118,9 @@ export function SeasonDetailPage() {
               {season.teams.map((team, i) => (
                 <tr
                   key={team.id}
-                  className={team.finalStandingsPosition === 1 ? "champion-row" : ""}
+                  className={team.finalStandingsPosition === 1 ? "champion-row" : team.id === lastPlaceTeamId ? "last-place-row" : ""}
                 >
-                  <td className="col-rank muted">{team.regularSeasonRank ?? i + 1}</td>
+                  <td className="col-rank muted">{team.finalStandingsPosition ?? team.regularSeasonRank ?? i + 1}</td>
                   <td>
                     <Link
                       to={`/seasons/${season.year}/teams/${team.id}`}
@@ -131,6 +133,9 @@ export function SeasonDetailPage() {
                     </Link>
                     {team.finalStandingsPosition === 1 && (
                       <span className="champion-badge">🏆</span>
+                    )}
+                    {team.id === lastPlaceTeamId && (
+                      <span className="last-place-badge">💎</span>
                     )}
                   </td>
                   <td>{team.wins}</td>

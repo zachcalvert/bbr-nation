@@ -1,5 +1,6 @@
 import { FastifyPluginAsync, FastifyRequest, FastifyReply } from "fastify";
 import { Prisma } from "@prisma/client";
+import bcrypt from "bcrypt";
 import { prisma } from "../index.js";
 
 async function checkAdmin(request: FastifyRequest, reply: FastifyReply): Promise<boolean> {
@@ -120,6 +121,50 @@ export const adminRoutes: FastifyPluginAsync = async (app) => {
       }
       throw err;
     }
+  });
+
+  app.post<{
+    Body: {
+      firstName: string;
+      lastName: string;
+      email: string;
+      password: string;
+      groupmeId: string;
+      favoriteTeam: string;
+      isAdmin?: boolean;
+    };
+  }>("/users", async (request, reply) => {
+    if (!(await checkAdmin(request, reply))) return;
+
+    const { firstName, lastName, email, password, groupmeId, favoriteTeam, isAdmin } = request.body;
+
+    const existing = await prisma.user.findUnique({ where: { email } });
+    if (existing) {
+      return reply.status(409).send({ error: "Email already registered" });
+    }
+
+    const hashed = await bcrypt.hash(password, 10);
+    const user = await prisma.user.create({
+      data: {
+        firstName,
+        lastName,
+        email,
+        password: hashed,
+        groupmeId,
+        favoriteTeam,
+        isAdmin: isAdmin ?? false,
+      },
+      select: {
+        id: true,
+        email: true,
+        firstName: true,
+        lastName: true,
+        isAdmin: true,
+        createdAt: true,
+      },
+    });
+
+    return reply.status(201).send({ user });
   });
 
   app.put<{

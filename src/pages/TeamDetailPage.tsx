@@ -29,6 +29,12 @@ interface Matchup {
   awayScore: number;
 }
 
+interface TeamUser {
+  id: string;
+  firstName: string;
+  lastName: string;
+}
+
 interface Team {
   id: string;
   espnTeamId: number;
@@ -44,6 +50,7 @@ interface Team {
   playoffSeed: number | null;
   finalStandingsPosition: number | null;
   regularSeasonRank: number | null;
+  user: TeamUser | null;
   rosterWeeks: RosterWeek[];
   homeMatchups: Matchup[];
   awayMatchups: Matchup[];
@@ -144,6 +151,11 @@ export function TeamDetailPage() {
                 <span className="badge champion">🏆 Champion</span>
               )}
             </p>
+            {team.user && (
+              <p className="team-manager">
+                Manager: {team.user.firstName} {team.user.lastName}
+              </p>
+            )}
           </div>
         </div>
       </div>

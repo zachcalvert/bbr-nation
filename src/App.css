@@ -454,6 +454,12 @@ input:focus {
   gap: 0;
 }
 
+.team-manager {
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  margin-top: 0.25rem;
+}
+
 /* ─── Matchup cards ──────────────────────────────────────────────────────── */
 .matchup-grid {
   display: grid;
@@ -766,6 +772,12 @@ input:focus {
   border-color: var(--accent);
   color: var(--accent);
   background: transparent;
+}
+
+.hof-manager {
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  margin-top: 0.15rem;
 }
 
 /* ─── Utility ────────────────────────────────────────────────────────────── */

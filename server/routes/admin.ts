@@ -54,6 +54,16 @@ export const adminRoutes: FastifyPluginAsync = async (app) => {
         favoriteTeam: true,
         isAdmin: true,
         createdAt: true,
+        espnTeams: {
+          select: {
+            id: true,
+            espnTeamId: true,
+            seasonYear: true,
+            name: true,
+            abbreviation: true,
+          },
+          orderBy: { seasonYear: "desc" },
+        },
       },
     });
 
@@ -62,6 +72,56 @@ export const adminRoutes: FastifyPluginAsync = async (app) => {
     }
 
     return { user: target };
+  });
+
+  app.get("/espn-teams", async (request, reply) => {
+    if (!(await checkAdmin(request, reply))) return;
+
+    const teams = await prisma.espnTeam.findMany({
+      select: {
+        id: true,
+        espnTeamId: true,
+        seasonYear: true,
+        name: true,
+        abbreviation: true,
+        userId: true,
+        user: { select: { id: true, firstName: true, lastName: true } },
+      },
+      orderBy: [{ seasonYear: "desc" }, { name: "asc" }],
+    });
+
+    return { teams };
+  });
+
+  app.patch<{
+    Params: { teamId: string };
+    Body: { userId: string | null };
+  }>("/espn-teams/:teamId", async (request, reply) => {
+    if (!(await checkAdmin(request, reply))) return;
+
+    const { teamId } = request.params;
+    const { userId } = request.body;
+
+    try {
+      const team = await prisma.espnTeam.update({
+        where: { id: teamId },
+        data: { userId },
+        select: {
+          id: true,
+          espnTeamId: true,
+          seasonYear: true,
+          name: true,
+          abbreviation: true,
+          userId: true,
+        },
+      });
+      return { team };
+    } catch (err) {
+      if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === "P2025") {
+        return reply.status(404).send({ error: "Team not found" });
+      }
+      throw err;
+    }
   });
 
   app.put<{

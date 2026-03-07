@@ -23,6 +23,7 @@ model User {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   chatMessages ChatMessage[]
+  espnTeams    EspnTeam[]
 
   @@map("users")
 }
@@ -84,6 +85,9 @@ model EspnTeam {
 
   waiverRank             Int?    @map("waiver_rank")
 
+  userId       String?  @map("user_id")
+
+  user         User?           @relation(fields: [userId], references: [id])
   season       EspnSeason      @relation(fields: [seasonYear], references: [year])
   homeMatchups EspnMatchup[]   @relation("HomeTeam")
   awayMatchups EspnMatchup[]   @relation("AwayTeam")

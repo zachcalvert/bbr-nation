@@ -190,12 +190,12 @@ export function TeamDetailPage() {
                   const won = myScore > oppScore;
                   return (
                     <tr key={m.id}>
-                      <td className="muted">{m.matchupPeriodId}</td>
-                      <td className={won ? "win" : "loss"}>{won ? "W" : "L"}</td>
-                      <td>
+                      <td data-label="Wk" className="muted">{m.matchupPeriodId}</td>
+                      <td data-label="Result" className={won ? "win" : "loss"}>{won ? "W" : "L"}</td>
+                      <td data-label="Score">
                         {myScore.toFixed(2)}–{oppScore.toFixed(2)}
                       </td>
-                      <td>
+                      <td data-label="Opponent">
                         {opp ? (
                           <Link
                             to={`/seasons/${team.seasonYear}/teams/${oppId}`}
@@ -246,16 +246,16 @@ export function TeamDetailPage() {
                   <tbody>
                     {starters.map((e) => (
                       <tr key={e.id}>
-                        <td className="slot-label">{e.lineupSlot}</td>
-                        <td>
+                        <td data-label="Slot" className="slot-label">{e.lineupSlot}</td>
+                        <td data-label="Player">
                           {e.fullName}
                           {e.injuryStatus && (
                             <span className="injury-tag">{e.injuryStatus}</span>
                           )}
                         </td>
-                        <td className="muted">{e.position}</td>
-                        <td className="muted">{e.nflTeamAbbreviation}</td>
-                        <td className="col-right">{e.totalPoints.toFixed(2)}</td>
+                        <td data-label="Pos" className="muted">{e.position}</td>
+                        <td data-label="NFL" className="muted">{e.nflTeamAbbreviation}</td>
+                        <td data-label="Pts" className="col-right">{e.totalPoints.toFixed(2)}</td>
                       </tr>
                     ))}
                     {bench.length > 0 && (
@@ -265,16 +265,16 @@ export function TeamDetailPage() {
                         </tr>
                         {bench.map((e) => (
                           <tr key={e.id} className="bench-row">
-                            <td className="slot-label muted">{e.lineupSlot}</td>
-                            <td className="muted">
+                            <td data-label="Slot" className="slot-label muted">{e.lineupSlot}</td>
+                            <td data-label="Player" className="muted">
                               {e.fullName}
                               {e.injuryStatus && (
                                 <span className="injury-tag">{e.injuryStatus}</span>
                               )}
                             </td>
-                            <td className="muted">{e.position}</td>
-                            <td className="muted">{e.nflTeamAbbreviation}</td>
-                            <td className="col-right muted">{e.totalPoints.toFixed(2)}</td>
+                            <td data-label="Pos" className="muted">{e.position}</td>
+                            <td data-label="NFL" className="muted">{e.nflTeamAbbreviation}</td>
+                            <td data-label="Pts" className="col-right muted">{e.totalPoints.toFixed(2)}</td>
                           </tr>
                         ))}
                       </>

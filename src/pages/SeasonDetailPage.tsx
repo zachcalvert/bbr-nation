@@ -122,8 +122,8 @@ export function SeasonDetailPage() {
                   key={team.id}
                   className={team.finalStandingsPosition === 1 ? "champion-row" : team.id === lastPlaceTeamId ? "last-place-row" : ""}
                 >
-                  <td className="col-rank muted">{team.finalStandingsPosition ?? team.regularSeasonRank ?? i + 1}</td>
-                  <td>
+                  <td data-label="#" className="col-rank muted">{team.finalStandingsPosition ?? team.regularSeasonRank ?? i + 1}</td>
+                  <td data-label="Team">
                     <span className="team-name-row">
                       <Link
                         to={`/seasons/${season.year}/teams/${team.id}`}
@@ -153,12 +153,12 @@ export function SeasonDetailPage() {
                       </div>
                     )}
                   </td>
-                  <td>{team.wins}</td>
-                  <td>{team.losses}</td>
-                  {hasTies && <td>{team.ties}</td>}
-                  <td>{team.pointsFor.toFixed(1)}</td>
-                  <td className="muted">{team.pointsAgainst.toFixed(1)}</td>
-                  <td className="muted">{team.playoffSeed ? `Seed #${team.playoffSeed}` : "—"}</td>
+                  <td data-label="W">{team.wins}</td>
+                  <td data-label="L">{team.losses}</td>
+                  {hasTies && <td data-label="T">{team.ties}</td>}
+                  <td data-label="PF">{team.pointsFor.toFixed(1)}</td>
+                  <td data-label="PA" className="muted">{team.pointsAgainst.toFixed(1)}</td>
+                  <td data-label="Playoff" className="muted">{team.playoffSeed ? `Seed #${team.playoffSeed}` : "—"}</td>
                 </tr>
               ))}
             </tbody>

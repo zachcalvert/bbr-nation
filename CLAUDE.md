@@ -153,6 +153,35 @@ if (!(await checkAdmin(request, reply))) return;
 - New routes must be added to the `<Routes>` tree in `src/App.tsx`
 - Icons use `@phosphor-icons/react` — prefer `weight="duotone"` for hero/positive icons, `weight="bold"` for negative/neutral icons
 
+## Mobile-First Design (non-admin pages)
+
+All user-facing pages are designed mobile-first. **New features must follow this approach.**
+
+### Breakpoints
+- `≤ 640px` — mobile (primary breakpoint in `App.css`)
+- `≤ 768px` — tablet (used for `.two-col` grid)
+
+### Navigation
+On mobile (≤ 640px), the top nav collapses to a hamburger button (`☰`) that opens a full-screen overlay with all nav links and the sign-out option. Implemented in `src/components/Layout.tsx` with `menuOpen` state.
+
+### Tables → Card Reflow
+Tables (`data-table`) automatically reflow into stacked cards on mobile using CSS `::before` pseudo-elements. Every `<td>` in a user-facing table **must** have a `data-label` attribute matching its column header:
+
+```tsx
+<td data-label="Team">...</td>
+<td data-label="W">{team.wins}</td>
+```
+
+The CSS reads `content: attr(data-label)` to render the label on the left, with the value on the right. This is handled globally in `App.css` — no per-component changes needed beyond adding `data-label`.
+
+**Exception:** Admin pages (`/admin`, `/admin/users/:id`) are desktop-only and do not require `data-label` or mobile handling.
+
+### Other Mobile Rules
+- Use `auto-fill` grids with `minmax()` so cards adapt to any screen width
+- `.week-tabs` and `.hof-tab-row` use horizontal scroll (`overflow-x: auto`) on mobile — do not add `flex-wrap` back
+- Touch targets: form buttons and primary actions should have adequate tap area (the CSS handles `min-height: 44px` for `button`/`.btn` globally on mobile)
+- Avoid fixed widths; prefer `max-width` with `width: 100%`
+
 ## Key CSS Classes (for consistent UI)
 
 | Class | Use |
@@ -161,7 +190,7 @@ if (!(await checkAdmin(request, reply))) return;
 | `page-header` | Title/meta section at top of page |
 | `section` | Content section with margin |
 | `card` / `card table-card` | Bordered card, use `table-card` when it directly wraps a table |
-| `data-table` | Standard `<table>` styling |
+| `data-table` | Standard `<table>` styling — reflows to cards on mobile via `data-label` |
 | `team-link` | Inline logo + name link (used in tables) |
 | `team-link-plain` | Plain text link, no logo treatment |
 | `hof-manager` | Small subdued manager name shown below a team name in a table |

@@ -202,8 +202,8 @@ export function HomePage() {
             <tbody>
               {current.teams.map((team, i) => (
                 <tr key={team.id} className={team.finalStandingsPosition === 1 ? "champion-row" : team.id === lastPlaceTeamId ? "last-place-row" : ""}>
-                  <td className="col-rank muted">{team.finalStandingsPosition ?? team.regularSeasonRank ?? i + 1}</td>
-                  <td>
+                  <td data-label="#" className="col-rank muted">{team.finalStandingsPosition ?? team.regularSeasonRank ?? i + 1}</td>
+                  <td data-label="Team">
                     <Link to={`/seasons/${current.year}/teams/${team.id}`} className="team-link">
                       {team.logoUrl && (
                         <img src={team.logoUrl} alt="" className="team-logo-sm" />
@@ -217,11 +217,11 @@ export function HomePage() {
                       <span className="last-place-badge">💎</span>
                     )}
                   </td>
-                  <td>{team.wins}</td>
-                  <td>{team.losses}</td>
-                  {hasTies && <td>{team.ties}</td>}
-                  <td>{team.pointsFor.toFixed(1)}</td>
-                  <td className="muted">{team.pointsAgainst.toFixed(1)}</td>
+                  <td data-label="W">{team.wins}</td>
+                  <td data-label="L">{team.losses}</td>
+                  {hasTies && <td data-label="T">{team.ties}</td>}
+                  <td data-label="PF">{team.pointsFor.toFixed(1)}</td>
+                  <td data-label="PA" className="muted">{team.pointsAgainst.toFixed(1)}</td>
                 </tr>
               ))}
             </tbody>

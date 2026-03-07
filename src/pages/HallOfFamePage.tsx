@@ -106,7 +106,7 @@ interface CategoryDef {
 const categories: CategoryDef[] = [
   { key: "allTimeRecord", label: "All-Time Record", group: "alltime" },
   { key: "championshipCircle", label: "Championship Circle", group: "alltime" },
-  { key: "losersLane", label: "Losers Lane", group: "alltime" },
+  { key: "losersLane", label: "Last Place Larrys", group: "alltime" },
   {
     key: "mostPointsFor",
     label: "Most Points (Season)",
@@ -353,25 +353,25 @@ export function HallOfFamePage() {
                     )
                     .map((r, i) => (
                       <tr key={r.userId}>
-                        <td className="col-rank muted">{i + 1}</td>
-                        <td>
+                        <td data-label="#" className="col-rank muted">{i + 1}</td>
+                        <td data-label="Manager">
                           <Link to={`/members/${r.userId}`} className="team-link-plain">
                             {r.firstName} {r.lastName}
                           </Link>
                         </td>
-                        <td className="col-right muted">{r.seasonsPlayed}</td>
-                        <td className="col-right">
+                        <td data-label="Seasons" className="col-right muted">{r.seasonsPlayed}</td>
+                        <td data-label="W–L–T" className="col-right">
                           {r.ties ? `${r.wins}–${r.losses}–${r.ties}` : `${r.wins}–${r.losses}`}
                         </td>
-                        <td className="col-right">{(winPct(r) * 100).toFixed(1)}%</td>
-                        <td className="col-right">
+                        <td data-label="Win %" className="col-right">{(winPct(r) * 100).toFixed(1)}%</td>
+                        <td data-label="Titles" className="col-right">
                           {r.championships > 0 ? (
                             <span className="champion-badge">{r.championships}</span>
                           ) : (
                             <span className="muted">—</span>
                           )}
                         </td>
-                        <td className="col-right">
+                        <td data-label="Last" className="col-right">
                           {r.lastPlaceFinishes > 0 ? (
                             <span className="last-place-badge">{r.lastPlaceFinishes}</span>
                           ) : (
@@ -401,12 +401,12 @@ export function HallOfFamePage() {
                 <tbody>
                   {data.champions.map((c) => (
                     <tr key={c.seasonYear} className="champion-row">
-                      <td>
+                      <td data-label="Season">
                         <Link to={`/seasons/${c.seasonYear}`} className="team-link-plain">
                           {c.seasonYear}
                         </Link>
                       </td>
-                      <td>
+                      <td data-label="Champion">
                         <span className="team-name-row">
                           <Link
                             to={`/seasons/${c.seasonYear}/teams/${c.teamId}`}
@@ -439,10 +439,10 @@ export function HallOfFamePage() {
           </>
         )}
 
-        {/* ── Losers Lane ── */}
+        {/* ── Last Place Larrys ── */}
         {activeTab === "losersLane" && (
           <>
-            <h2>Losers Lane</h2>
+            <h2>Last Place Larrys</h2>
             <div className="card table-card">
               <table className="data-table">
                 <thead>
@@ -454,12 +454,12 @@ export function HallOfFamePage() {
                 <tbody>
                   {data.lastPlaceTeams.map((c) => (
                     <tr key={c.seasonYear} className="last-place-row">
-                      <td>
+                      <td data-label="Season">
                         <Link to={`/seasons/${c.seasonYear}`} className="team-link-plain">
                           {c.seasonYear}
                         </Link>
                       </td>
-                      <td>
+                      <td data-label="Last Place">
                         <span className="team-name-row">
                           <Link
                             to={`/seasons/${c.seasonYear}/teams/${c.teamId}`}
@@ -514,8 +514,8 @@ export function HallOfFamePage() {
                 <tbody>
                   {visible.map((entry) => (
                     <tr key={`${entry.teamId}-${entry.seasonYear}-${entry.rank}`}>
-                      <td className="col-rank muted">{entry.rank}</td>
-                      <td>
+                      <td data-label="#" className="col-rank muted">{entry.rank}</td>
+                      <td data-label="Team">
                         <span className="team-name-row">
                           <Link
                             to={`/seasons/${entry.seasonYear}/teams/${entry.teamId}`}
@@ -549,19 +549,19 @@ export function HallOfFamePage() {
                           </div>
                         )}
                       </td>
-                      <td>
+                      <td data-label="Season">
                         <Link to={`/seasons/${entry.seasonYear}`} className="team-link-plain">
                           {entry.seasonYear}
                         </Link>
                       </td>
-                      {isMatchup && <td>{(entry as MatchupEntry).week}</td>}
+                      {isMatchup && <td data-label="Week">{(entry as MatchupEntry).week}</td>}
                       {isMatchup && (
-                        <td className="muted">{(entry as MatchupEntry).opponentName}</td>
+                        <td data-label="Opponent" className="muted">{(entry as MatchupEntry).opponentName}</td>
                       )}
-                      <td className="col-right">{activeCat.formatValue!(entry)}</td>
+                      <td data-label={activeCat.valueLabel} className="col-right">{activeCat.formatValue!(entry)}</td>
                       {(activeTab === "biggestBlowout" || activeTab === "closestGame") &&
                         isMatchupEntry(entry) && (
-                          <td className="col-right muted">{entry.score}</td>
+                          <td data-label="Score" className="col-right muted">{entry.score}</td>
                         )}
                     </tr>
                   ))}

@@ -6,10 +6,24 @@ A full-stack fantasy football league history app for a 10-year-old ESPN league. 
 
 - **Season history** — standings, records, and stats for every season synced from ESPN
 - **Matchup history** — week-by-week results for every team across all seasons
-- **Hall of fame** — aggregated all-time stats per league member
+- **Hall of fame** — all-time records, Championship Circle, Last Place Larrys, and season/matchup leaderboards
 - **Roster history** — player-level roster data for each team per week
 - **Group chat** — real-time chat room for league members (WebSocket)
 - **Admin panel** — manage users, edit profiles, and map ESPN teams to league members
+
+## Mobile-First Design
+
+All user-facing pages are fully responsive and designed to work great on phones. On mobile (≤ 640px):
+
+- Navigation collapses to a **hamburger menu** with a full-screen overlay
+- Data tables reflow into **stacked cards** — each row becomes a labeled card with field name on the left and value on the right
+- Grids (matchups, season cards) adapt fluidly using CSS `auto-fill` + `minmax()`
+- Tab rows scroll horizontally rather than wrapping
+
+**All new user-facing features must be built with mobile in mind.** This means:
+- Add `data-label` attributes to every `<td>` in any new `data-table` (the CSS handles the rest)
+- Avoid fixed widths; use fluid grids and `max-width` patterns
+- Admin pages (`/admin`) are exempt — desktop-only is fine there
 
 ## Stack
 

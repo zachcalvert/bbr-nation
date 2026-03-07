@@ -1021,6 +1021,220 @@ input:focus {
   }
 }
 
+/* ─── Mobile ─────────────────────────────────────────────────────────────── */
+.nav-hamburger {
+  display: none;
+}
+
+.mobile-nav-menu {
+  display: none;
+}
+
+@media (max-width: 640px) {
+  :root {
+    --page-pad: 0.875rem;
+  }
+
+  /* Nav: hide links, show hamburger */
+  .nav-links {
+    display: none;
+  }
+
+  .nav-user {
+    display: none;
+  }
+
+  .nav-hamburger {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: auto;
+    background: transparent;
+    color: var(--text);
+    padding: 0.4rem;
+    border-radius: var(--radius-sm);
+    flex-shrink: 0;
+    min-height: auto;
+  }
+
+  .nav-hamburger:hover {
+    background: var(--bg-hover);
+  }
+
+  /* Mobile menu overlay */
+  .mobile-nav-menu {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: var(--nav-height);
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--bg);
+    z-index: 99;
+    overflow-y: auto;
+  }
+
+  .mobile-nav-menu a {
+    display: block;
+    padding: 1.1rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-dim);
+    font-size: 1.05rem;
+  }
+
+  .mobile-nav-menu a:hover {
+    background: var(--bg-hover);
+    color: var(--text);
+  }
+
+  .mobile-nav-menu a.active {
+    color: var(--accent);
+  }
+
+  .mobile-nav-user-section {
+    margin-top: auto;
+    padding: 1.5rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .mobile-nav-username {
+    color: var(--text-dim);
+    font-size: 0.875rem;
+  }
+
+  /* Tables → card reflow */
+  .card.table-card {
+    background: transparent;
+    border: none;
+    overflow: visible;
+    border-radius: 0;
+  }
+
+  .data-table thead {
+    display: none;
+  }
+
+  .data-table tr {
+    display: block;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 0.5rem;
+    background: var(--bg-card);
+  }
+
+  .data-table tbody tr:hover {
+    background: var(--bg-hover);
+  }
+
+  .champion-row {
+    background: rgba(245, 158, 11, 0.06);
+  }
+
+  .champion-row:hover {
+    background: rgba(245, 158, 11, 0.1) !important;
+  }
+
+  .last-place-row {
+    background: rgba(96, 165, 250, 0.06);
+  }
+
+  .last-place-row:hover {
+    background: rgba(96, 165, 250, 0.1) !important;
+  }
+
+  .data-table td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.6rem 0.875rem;
+    border-bottom: 1px solid var(--border-subtle);
+    text-align: left;
+  }
+
+  .data-table td:last-child {
+    border-bottom: none;
+  }
+
+  .data-table td::before {
+    content: attr(data-label);
+    color: var(--text-muted);
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    flex-shrink: 0;
+    margin-right: 0.75rem;
+  }
+
+  /* Bench divider (colSpan row) */
+  .data-table td[colspan] {
+    justify-content: center;
+  }
+
+  .data-table td[colspan]::before {
+    content: none;
+  }
+
+  /* Week tabs: horizontal scroll */
+  .week-tabs {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 2px;
+  }
+
+  .week-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* HOF tab rows: horizontal scroll */
+  .hof-tab-row {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 2px;
+  }
+
+  .hof-tab-row::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Tighter matchup and season grids */
+  .matchup-grid {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  }
+
+  .seasons-grid {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  }
+
+  /* Page header spacing */
+  .page-header {
+    margin-bottom: 1.5rem;
+  }
+
+  /* Min touch target for all buttons */
+  button,
+  .btn {
+    min-height: 44px;
+  }
+
+  .nav-hamburger,
+  .week-tab,
+  .btn-ghost,
+  .btn-sync,
+  .hof-expand-btn,
+  .chat-close {
+    min-height: auto;
+  }
+}
+
 /* ─── Admin user detail form ────────────────────────────────────────────── */
 .success {
   color: var(--green, #22c55e);

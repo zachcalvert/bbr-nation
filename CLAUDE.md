@@ -84,6 +84,46 @@ ALTER TABLE "users" DROP COLUMN "espn_id";
 ALTER TABLE "users" ADD CONSTRAINT "users_groupme_id_key" UNIQUE ("groupme_id");
 ```
 
+## Data Model: Users and ESPN Teams
+
+Each league member is a `User` record. The key identifier is `groupmeId` — the member's ID in the league's GroupMe group chat, which has been active for the entire history of the league. It is unique and stable across seasons.
+
+ESPN teams (`EspnTeam`) are linked to users via a nullable `userId` FK. This is **not** set automatically during sync — `ownerEspnMemberId` is stored on each team (raw from the ESPN API) but is not used for linking because it isn't reliable across seasons. Associations are managed manually via the admin panel.
+
+```
+User (1) ──── (many) EspnTeam
+              └─ userId nullable — set via admin
+              └─ ownerEspnMemberId stored but not used for linking
+```
+
+A user with no linked teams is valid (e.g. a new account before mapping is done). A team with no `userId` is also valid (unmapped team).
+
+## Admin Panel
+
+Routes: `/admin` (user list) and `/admin/users/:id` (user detail).
+
+**`/admin`**
+- Lists all users with name, email, admin flag, join date
+- "Add User" form — creates a new account with: firstName, lastName, email, password, groupmeId, favoriteTeam, isAdmin
+
+**`/admin/users/:id`**
+- Edit all user profile fields (including groupmeId, favoriteTeam, isAdmin)
+- View currently linked ESPN teams (shown as a table, removable)
+- Link additional ESPN teams via a search filter (by name, abbreviation, or year)
+- Shows a warning if a team is already linked to a different user; allows reassignment
+
+**Admin API endpoints:**
+```
+GET    /api/admin/                    → list all users
+POST   /api/admin/users               → create user
+GET    /api/admin/users/:id           → user detail + linked ESPN teams
+PUT    /api/admin/users/:id           → update user profile
+GET    /api/admin/espn-teams          → all ESPN teams (with current owner info)
+PATCH  /api/admin/espn-teams/:teamId  → set or clear userId on a team
+```
+
+All admin endpoints use the `checkAdmin` helper (defined in `server/routes/admin.ts`) which validates the session and checks `isAdmin: true`.
+
 ## API Route Conventions
 
 Routes are registered in `server/index.ts` with a prefix, then handled in `server/routes/<resource>.ts`:

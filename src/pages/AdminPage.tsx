@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 interface AdminUser {
   id: string;
@@ -62,7 +63,9 @@ export function AdminPage() {
               {users.map((u) => (
                 <tr key={u.id}>
                   <td>
-                    {u.firstName} {u.lastName}
+                    <Link to={`/admin/users/${u.id}`}>
+                      {u.firstName} {u.lastName}
+                    </Link>
                   </td>
                   <td>{u.email}</td>
                   <td className="muted">{u.espnId}</td>

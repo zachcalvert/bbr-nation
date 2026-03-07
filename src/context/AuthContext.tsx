@@ -14,6 +14,7 @@ export interface AuthUser {
   espnId: string;
   groupmeId: string;
   favoriteTeam: string;
+  isAdmin: boolean;
 }
 
 interface AuthContextValue {

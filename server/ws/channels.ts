@@ -1,5 +1,6 @@
 import { FastifyPluginAsync } from "fastify";
 import { WebSocket } from "ws";
+import { prisma } from "../index.js";
 
 interface Client {
   ws: WebSocket;
@@ -15,7 +16,14 @@ type IncomingMessage =
 type OutgoingMessage =
   | { type: "joined"; channel: string; members: number }
   | { type: "left"; channel: string }
-  | { type: "message"; channel: string; from: string | null; data: unknown }
+  | {
+      type: "message";
+      channel: string;
+      id: string;
+      content: string;
+      createdAt: string;
+      user: { id: string; firstName: string; lastName: string };
+    }
   | { type: "member_joined"; channel: string; userId: string | null }
   | { type: "member_left"; channel: string; userId: string | null }
   | { type: "error"; message: string };
@@ -72,6 +80,10 @@ class ChannelManager {
     }
   }
 
+  broadcastAll(channel: string, message: OutgoingMessage) {
+    this.broadcast(channel, message);
+  }
+
   broadcast(
     channel: string,
     message: OutgoingMessage,
@@ -107,7 +119,7 @@ export const wsRoutes: FastifyPluginAsync = async (app) => {
       channels: new Set(),
     };
 
-    socket.on("message", (raw) => {
+    socket.on("message", async (raw) => {
       let msg: IncomingMessage;
       try {
         msg = JSON.parse(raw.toString());
@@ -130,12 +142,48 @@ export const wsRoutes: FastifyPluginAsync = async (app) => {
           break;
 
         case "message":
-          if (typeof msg.channel === "string" && client.channels.has(msg.channel)) {
-            channels.broadcast(msg.channel, {
+          if (
+            typeof msg.channel === "string" &&
+            client.channels.has(msg.channel) &&
+            client.userId
+          ) {
+            const content =
+              typeof msg.data === "string"
+                ? msg.data
+                : typeof (msg.data as any)?.text === "string"
+                  ? (msg.data as any).text
+                  : String(msg.data);
+
+            if (!content.trim()) break;
+
+            // Persist to database
+            const saved = await prisma.chatMessage.create({
+              data: {
+                content: content.trim(),
+                userId: client.userId,
+              },
+              select: {
+                id: true,
+                content: true,
+                createdAt: true,
+                user: {
+                  select: {
+                    id: true,
+                    firstName: true,
+                    lastName: true,
+                  },
+                },
+              },
+            });
+
+            // Broadcast to ALL members (including sender)
+            channels.broadcastAll(msg.channel, {
               type: "message",
               channel: msg.channel,
-              from: client.userId,
-              data: msg.data,
+              id: saved.id,
+              content: saved.content,
+              createdAt: saved.createdAt.toISOString(),
+              user: saved.user,
             });
           }
           break;

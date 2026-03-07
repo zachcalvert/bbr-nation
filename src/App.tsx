@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
+import { ChatProvider } from "./context/ChatContext";
 import { RequireAuth } from "./components/RequireAuth";
 import { Layout } from "./components/Layout";
 import { LoginPage } from "./pages/LoginPage";
@@ -19,7 +20,13 @@ function App() {
 
           {/* Auth-gated */}
           <Route element={<RequireAuth />}>
-            <Route element={<Layout />}>
+            <Route
+              element={
+                <ChatProvider>
+                  <Layout />
+                </ChatProvider>
+              }
+            >
               <Route index element={<HomePage />} />
               <Route path="/seasons" element={<SeasonsPage />} />
               <Route path="/seasons/:year" element={<SeasonDetailPage />} />

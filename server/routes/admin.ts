@@ -167,6 +167,69 @@ export const adminRoutes: FastifyPluginAsync = async (app) => {
     return reply.status(201).send({ user });
   });
 
+  // ─── Carousel CRUD ──────────────────────────────────────────────────────
+
+  app.get("/carousel", async (request, reply) => {
+    if (!(await checkAdmin(request, reply))) return;
+    const slides = await prisma.carouselSlide.findMany({
+      orderBy: { sortOrder: "asc" },
+    });
+    return { slides };
+  });
+
+  app.post<{
+    Body: { imageUrl: string; caption?: string; sortOrder: number };
+  }>("/carousel", async (request, reply) => {
+    if (!(await checkAdmin(request, reply))) return;
+    const { imageUrl, caption, sortOrder } = request.body;
+    const slide = await prisma.carouselSlide.create({
+      data: { imageUrl, caption, sortOrder },
+    });
+    return reply.status(201).send({ slide });
+  });
+
+  app.put<{
+    Params: { id: string };
+    Body: { imageUrl?: string; caption?: string; sortOrder?: number; isActive?: boolean };
+  }>("/carousel/:id", async (request, reply) => {
+    if (!(await checkAdmin(request, reply))) return;
+    const id = parseInt(request.params.id, 10);
+    const { imageUrl, caption, sortOrder, isActive } = request.body;
+    try {
+      const slide = await prisma.carouselSlide.update({
+        where: { id },
+        data: {
+          ...(imageUrl !== undefined && { imageUrl }),
+          ...(caption !== undefined && { caption }),
+          ...(sortOrder !== undefined && { sortOrder }),
+          ...(isActive !== undefined && { isActive }),
+        },
+      });
+      return { slide };
+    } catch (err) {
+      if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === "P2025") {
+        return reply.status(404).send({ error: "Slide not found" });
+      }
+      throw err;
+    }
+  });
+
+  app.delete<{ Params: { id: string } }>("/carousel/:id", async (request, reply) => {
+    if (!(await checkAdmin(request, reply))) return;
+    const id = parseInt(request.params.id, 10);
+    try {
+      await prisma.carouselSlide.delete({ where: { id } });
+      return { success: true };
+    } catch (err) {
+      if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === "P2025") {
+        return reply.status(404).send({ error: "Slide not found" });
+      }
+      throw err;
+    }
+  });
+
+  // ─── User management ──────────────────────────────────────────────────
+
   app.put<{
     Params: { id: string };
     Body: {

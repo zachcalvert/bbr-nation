@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { Trophy, AnchorSimple } from "@phosphor-icons/react";
+import { Carousel } from "../components/Carousel";
 
 interface Team {
   id: string;
@@ -101,6 +103,19 @@ export function HomePage() {
         <span className="season-badge">{current.year} Season</span>
       </div>
 
+      <section className="stats-banner">
+        <div className="stat-item">
+          <span className="stat-value">10</span>
+          <span className="stat-label">Members</span>
+        </div>
+        <div className="stat-item">
+          <span className="stat-value">12</span>
+          <span className="stat-label">Seasons</span>
+        </div>
+      </section>
+
+      <Carousel />
+
       <section className="section">
         <div className="section-header">
           <h2>Standings</h2>
@@ -126,18 +141,24 @@ export function HomePage() {
                 <tr key={team.id} className={team.finalStandingsPosition === 1 ? "champion-row" : team.id === lastPlaceTeamId ? "last-place-row" : ""}>
                   <td data-label="#" className="col-rank muted">{team.finalStandingsPosition ?? team.regularSeasonRank ?? i + 1}</td>
                   <td data-label="Team">
-                    <Link to={`/seasons/${current.year}/teams/${team.id}`} className="team-link">
-                      {team.logoUrl && (
-                        <img src={team.logoUrl} alt="" className="team-logo-sm" />
+                    <span className="team-name-row">
+                      <Link to={`/seasons/${current.year}/teams/${team.id}`} className="team-link">
+                        {team.logoUrl && (
+                          <img src={team.logoUrl} alt="" className="team-logo-sm" />
+                        )}
+                        <span>{team.name}</span>
+                      </Link>
+                      {team.finalStandingsPosition === 1 && (
+                        <span className="champion-badge">
+                          <Trophy weight="duotone" size={18} />
+                        </span>
                       )}
-                      <span>{team.name}</span>
-                    </Link>
-                    {team.finalStandingsPosition === 1 && (
-                      <span className="champion-badge">🏆</span>
-                    )}
-                    {team.id === lastPlaceTeamId && (
-                      <span className="last-place-badge">💎</span>
-                    )}
+                      {team.id === lastPlaceTeamId && (
+                        <span className="last-place-badge">
+                          <AnchorSimple weight="bold" size={16} />
+                        </span>
+                      )}
+                    </span>
                   </td>
                   <td data-label="W">{team.wins}</td>
                   <td data-label="L">{team.losses}</td>

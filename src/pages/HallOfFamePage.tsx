@@ -37,6 +37,29 @@ interface MatchupEntry {
   managerId?: string | null;
 }
 
+interface AllTimeRecord {
+  userId: string;
+  firstName: string;
+  lastName: string;
+  wins: number;
+  losses: number;
+  ties: number;
+  seasonsPlayed: number;
+  championships: number;
+  lastPlaceFinishes: number;
+}
+
+interface TeamHistoryEntry {
+  teamId: string;
+  teamName: string;
+  abbreviation: string;
+  logoUrl: string | null;
+  seasonYear: number;
+  userId: string | null;
+  firstName: string | null;
+  lastName: string | null;
+}
+
 interface HallOfFameData {
   seasonRecords: {
     mostPointsFor: SeasonEntry[];
@@ -52,9 +75,15 @@ interface HallOfFameData {
     biggestBlowout: MatchupEntry[];
     closestGame: MatchupEntry[];
   };
+  allTimeRecords: AllTimeRecord[];
+  champions: TeamHistoryEntry[];
+  lastPlaceTeams: TeamHistoryEntry[];
 }
 
 type CategoryKey =
+  | "allTimeRecord"
+  | "championshipCircle"
+  | "losersLane"
   | "mostPointsFor"
   | "fewestPointsFor"
   | "highestDifferential"
@@ -69,12 +98,15 @@ type CategoryKey =
 interface CategoryDef {
   key: CategoryKey;
   label: string;
-  group: "season" | "matchup";
-  valueLabel: string;
-  formatValue: (entry: SeasonEntry | MatchupEntry) => string;
+  group: "alltime" | "season" | "matchup";
+  valueLabel?: string;
+  formatValue?: (entry: SeasonEntry | MatchupEntry) => string;
 }
 
 const categories: CategoryDef[] = [
+  { key: "allTimeRecord", label: "All-Time Record", group: "alltime" },
+  { key: "championshipCircle", label: "Championship Circle", group: "alltime" },
+  { key: "losersLane", label: "Losers Lane", group: "alltime" },
   {
     key: "mostPointsFor",
     label: "Most Points (Season)",
@@ -170,12 +202,20 @@ function isMatchupEntry(entry: SeasonEntry | MatchupEntry): entry is MatchupEntr
   return "week" in entry;
 }
 
+type AllTimeSortKey = "wins" | "winPct";
+
+function winPct(r: AllTimeRecord): number {
+  const total = r.wins + r.losses + r.ties;
+  return total === 0 ? 0 : r.wins / total;
+}
+
 export function HallOfFamePage() {
   const [data, setData] = useState<HallOfFameData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [activeTab, setActiveTab] = useState<CategoryKey>("mostPointsFor");
+  const [activeTab, setActiveTab] = useState<CategoryKey>("allTimeRecord");
   const [expanded, setExpanded] = useState(false);
+  const [allTimeSort, setAllTimeSort] = useState<AllTimeSortKey>("wins");
 
   useEffect(() => {
     fetch("/api/espn/hall-of-fame")
@@ -198,9 +238,15 @@ export function HallOfFamePage() {
   }
 
   const activeCat = categories.find((c) => c.key === activeTab)!;
-  const entries = getEntries(data, activeTab);
+  const isAllTime = activeCat.group === "alltime";
+  const entries = isAllTime ? [] : getEntries(data, activeTab);
   const visible = expanded ? entries : entries.slice(0, 10);
-  const isMatchup = activeCat.group === "matchup";
+  const isMatchup = !isAllTime && activeCat.group === "matchup";
+
+  function switchTab(key: CategoryKey) {
+    setActiveTab(key);
+    setExpanded(false);
+  }
 
   return (
     <div className="page">
@@ -211,6 +257,22 @@ export function HallOfFamePage() {
 
       <div className="hof-tabs">
         <div className="hof-tab-group">
+          <span className="hof-tab-group-label">All Time Records</span>
+          <div className="hof-tab-row">
+            {categories
+              .filter((c) => c.group === "alltime")
+              .map((c) => (
+                <button
+                  key={c.key}
+                  className={`week-tab${activeTab === c.key ? " active" : ""}`}
+                  onClick={() => switchTab(c.key)}
+                >
+                  {c.label}
+                </button>
+              ))}
+          </div>
+        </div>
+        <div className="hof-tab-group">
           <span className="hof-tab-group-label">Season Records</span>
           <div className="hof-tab-row">
             {categories
@@ -219,10 +281,7 @@ export function HallOfFamePage() {
                 <button
                   key={c.key}
                   className={`week-tab${activeTab === c.key ? " active" : ""}`}
-                  onClick={() => {
-                    setActiveTab(c.key);
-                    setExpanded(false);
-                  }}
+                  onClick={() => switchTab(c.key)}
                 >
                   {c.label}
                 </button>
@@ -238,10 +297,7 @@ export function HallOfFamePage() {
                 <button
                   key={c.key}
                   className={`week-tab${activeTab === c.key ? " active" : ""}`}
-                  onClick={() => {
-                    setActiveTab(c.key);
-                    setExpanded(false);
-                  }}
+                  onClick={() => switchTab(c.key)}
                 >
                   {c.label}
                 </button>
@@ -251,85 +307,274 @@ export function HallOfFamePage() {
       </div>
 
       <section className="section">
-        <h2>{activeCat.label}</h2>
-        <div className="card table-card">
-          <table className="data-table">
-            <thead>
-              <tr>
-                <th className="col-rank">#</th>
-                <th>Team</th>
-                <th>Season</th>
-                {isMatchup && <th>Week</th>}
-                {isMatchup && <th>Opponent</th>}
-                <th className="col-right">{activeCat.valueLabel}</th>
-                {(activeTab === "biggestBlowout" || activeTab === "closestGame") && (
-                  <th className="col-right">Score</th>
-                )}
-              </tr>
-            </thead>
-            <tbody>
-              {visible.map((entry) => (
-                <tr key={`${entry.teamId}-${entry.seasonYear}-${entry.rank}`}>
-                  <td className="col-rank muted">{entry.rank}</td>
-                  <td>
-                    <span className="team-name-row">
-                      <Link
-                        to={`/seasons/${entry.seasonYear}/teams/${entry.teamId}`}
-                        className="team-link"
-                      >
-                        {entry.logoUrl && (
-                          <img src={entry.logoUrl} alt="" className="team-logo-sm" />
-                        )}
-                        <span>{entry.teamName}</span>
-                      </Link>
-                      {entry.isChampion && (
-                        <span className="champion-badge">
-                          <Trophy weight="duotone" size={18} />
-                        </span>
-                      )}
-                      {entry.isLastPlace && (
-                        <span className="last-place-badge">
-                          <AnchorSimple weight="bold" size={16} />
-                        </span>
-                      )}
-                    </span>
-                    {entry.managerName && (
-                      <div className="hof-manager">
-                        {entry.managerId ? (
-                          <Link to={`/members/${entry.managerId}`} className="team-link-plain">
-                            {entry.managerName}
+        {/* ── All-Time Record ── */}
+        {activeTab === "allTimeRecord" && (
+          <>
+            <div className="section-header-row">
+              <h2>All-Time Record</h2>
+              <div className="hof-sort-toggle">
+                <button
+                  className={`week-tab${allTimeSort === "wins" ? " active" : ""}`}
+                  onClick={() => setAllTimeSort("wins")}
+                >
+                  Total Wins
+                </button>
+                <button
+                  className={`week-tab${allTimeSort === "winPct" ? " active" : ""}`}
+                  onClick={() => setAllTimeSort("winPct")}
+                >
+                  Win %
+                </button>
+              </div>
+            </div>
+            <div className="card table-card">
+              <table className="data-table">
+                <thead>
+                  <tr>
+                    <th className="col-rank">#</th>
+                    <th>Manager</th>
+                    <th className="col-right">Seasons</th>
+                    <th className="col-right">W–L–T</th>
+                    <th className="col-right">Win %</th>
+                    <th className="col-right">
+                      <Trophy weight="duotone" size={14} />
+                    </th>
+                    <th className="col-right">
+                      <AnchorSimple weight="bold" size={13} />
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[...data.allTimeRecords]
+                    .sort((a, b) =>
+                      allTimeSort === "wins"
+                        ? b.wins - a.wins || winPct(b) - winPct(a)
+                        : winPct(b) - winPct(a) || b.wins - a.wins
+                    )
+                    .map((r, i) => (
+                      <tr key={r.userId}>
+                        <td className="col-rank muted">{i + 1}</td>
+                        <td>
+                          <Link to={`/members/${r.userId}`} className="team-link-plain">
+                            {r.firstName} {r.lastName}
                           </Link>
-                        ) : (
-                          entry.managerName
-                        )}
-                      </div>
-                    )}
-                  </td>
-                  <td>
-                    <Link to={`/seasons/${entry.seasonYear}`} className="team-link-plain">
-                      {entry.seasonYear}
-                    </Link>
-                  </td>
-                  {isMatchup && <td>{(entry as MatchupEntry).week}</td>}
-                  {isMatchup && <td className="muted">{(entry as MatchupEntry).opponentName}</td>}
-                  <td className="col-right">{activeCat.formatValue(entry)}</td>
-                  {(activeTab === "biggestBlowout" || activeTab === "closestGame") &&
-                    isMatchupEntry(entry) && (
-                      <td className="col-right muted">{entry.score}</td>
-                    )}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+                        </td>
+                        <td className="col-right muted">{r.seasonsPlayed}</td>
+                        <td className="col-right">
+                          {r.ties ? `${r.wins}–${r.losses}–${r.ties}` : `${r.wins}–${r.losses}`}
+                        </td>
+                        <td className="col-right">{(winPct(r) * 100).toFixed(1)}%</td>
+                        <td className="col-right">
+                          {r.championships > 0 ? (
+                            <span className="champion-badge">{r.championships}</span>
+                          ) : (
+                            <span className="muted">—</span>
+                          )}
+                        </td>
+                        <td className="col-right">
+                          {r.lastPlaceFinishes > 0 ? (
+                            <span className="last-place-badge">{r.lastPlaceFinishes}</span>
+                          ) : (
+                            <span className="muted">—</span>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
+            </div>
+          </>
+        )}
 
-        {entries.length > 10 && (
-          <button
-            className="hof-expand-btn"
-            onClick={() => setExpanded(!expanded)}
-          >
-            {expanded ? "Show Top 10" : `Show all ${entries.length}`}
-          </button>
+        {/* ── Championship Circle ── */}
+        {activeTab === "championshipCircle" && (
+          <>
+            <h2>Championship Circle</h2>
+            <div className="card table-card">
+              <table className="data-table">
+                <thead>
+                  <tr>
+                    <th>Season</th>
+                    <th>Champion</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {data.champions.map((c) => (
+                    <tr key={c.seasonYear} className="champion-row">
+                      <td>
+                        <Link to={`/seasons/${c.seasonYear}`} className="team-link-plain">
+                          {c.seasonYear}
+                        </Link>
+                      </td>
+                      <td>
+                        <span className="team-name-row">
+                          <Link
+                            to={`/seasons/${c.seasonYear}/teams/${c.teamId}`}
+                            className="team-link"
+                          >
+                            {c.logoUrl && <img src={c.logoUrl} alt="" className="team-logo-sm" />}
+                            <span>{c.teamName}</span>
+                          </Link>
+                          <span className="champion-badge">
+                            <Trophy weight="duotone" size={18} />
+                          </span>
+                        </span>
+                        {c.firstName && c.lastName && (
+                          <div className="hof-manager">
+                            {c.userId ? (
+                              <Link to={`/members/${c.userId}`} className="team-link-plain">
+                                {c.firstName} {c.lastName}
+                              </Link>
+                            ) : (
+                              `${c.firstName} ${c.lastName}`
+                            )}
+                          </div>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
+        )}
+
+        {/* ── Losers Lane ── */}
+        {activeTab === "losersLane" && (
+          <>
+            <h2>Losers Lane</h2>
+            <div className="card table-card">
+              <table className="data-table">
+                <thead>
+                  <tr>
+                    <th>Season</th>
+                    <th>Last Place</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {data.lastPlaceTeams.map((c) => (
+                    <tr key={c.seasonYear} className="last-place-row">
+                      <td>
+                        <Link to={`/seasons/${c.seasonYear}`} className="team-link-plain">
+                          {c.seasonYear}
+                        </Link>
+                      </td>
+                      <td>
+                        <span className="team-name-row">
+                          <Link
+                            to={`/seasons/${c.seasonYear}/teams/${c.teamId}`}
+                            className="team-link"
+                          >
+                            {c.logoUrl && <img src={c.logoUrl} alt="" className="team-logo-sm" />}
+                            <span>{c.teamName}</span>
+                          </Link>
+                          <span className="last-place-badge">
+                            <AnchorSimple weight="bold" size={16} />
+                          </span>
+                        </span>
+                        {c.firstName && c.lastName && (
+                          <div className="hof-manager">
+                            {c.userId ? (
+                              <Link to={`/members/${c.userId}`} className="team-link-plain">
+                                {c.firstName} {c.lastName}
+                              </Link>
+                            ) : (
+                              `${c.firstName} ${c.lastName}`
+                            )}
+                          </div>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
+        )}
+
+        {/* ── Season / Matchup leaderboard ── */}
+        {!isAllTime && (
+          <>
+            <h2>{activeCat.label}</h2>
+            <div className="card table-card">
+              <table className="data-table">
+                <thead>
+                  <tr>
+                    <th className="col-rank">#</th>
+                    <th>Team</th>
+                    <th>Season</th>
+                    {isMatchup && <th>Week</th>}
+                    {isMatchup && <th>Opponent</th>}
+                    <th className="col-right">{activeCat.valueLabel}</th>
+                    {(activeTab === "biggestBlowout" || activeTab === "closestGame") && (
+                      <th className="col-right">Score</th>
+                    )}
+                  </tr>
+                </thead>
+                <tbody>
+                  {visible.map((entry) => (
+                    <tr key={`${entry.teamId}-${entry.seasonYear}-${entry.rank}`}>
+                      <td className="col-rank muted">{entry.rank}</td>
+                      <td>
+                        <span className="team-name-row">
+                          <Link
+                            to={`/seasons/${entry.seasonYear}/teams/${entry.teamId}`}
+                            className="team-link"
+                          >
+                            {entry.logoUrl && (
+                              <img src={entry.logoUrl} alt="" className="team-logo-sm" />
+                            )}
+                            <span>{entry.teamName}</span>
+                          </Link>
+                          {entry.isChampion && (
+                            <span className="champion-badge">
+                              <Trophy weight="duotone" size={18} />
+                            </span>
+                          )}
+                          {entry.isLastPlace && (
+                            <span className="last-place-badge">
+                              <AnchorSimple weight="bold" size={16} />
+                            </span>
+                          )}
+                        </span>
+                        {entry.managerName && (
+                          <div className="hof-manager">
+                            {entry.managerId ? (
+                              <Link to={`/members/${entry.managerId}`} className="team-link-plain">
+                                {entry.managerName}
+                              </Link>
+                            ) : (
+                              entry.managerName
+                            )}
+                          </div>
+                        )}
+                      </td>
+                      <td>
+                        <Link to={`/seasons/${entry.seasonYear}`} className="team-link-plain">
+                          {entry.seasonYear}
+                        </Link>
+                      </td>
+                      {isMatchup && <td>{(entry as MatchupEntry).week}</td>}
+                      {isMatchup && (
+                        <td className="muted">{(entry as MatchupEntry).opponentName}</td>
+                      )}
+                      <td className="col-right">{activeCat.formatValue!(entry)}</td>
+                      {(activeTab === "biggestBlowout" || activeTab === "closestGame") &&
+                        isMatchupEntry(entry) && (
+                          <td className="col-right muted">{entry.score}</td>
+                        )}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {entries.length > 10 && (
+              <button className="hof-expand-btn" onClick={() => setExpanded(!expanded)}>
+                {expanded ? "Show Top 10" : `Show all ${entries.length}`}
+              </button>
+            )}
+          </>
         )}
       </section>
     </div>

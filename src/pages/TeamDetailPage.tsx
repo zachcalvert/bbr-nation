@@ -153,7 +153,10 @@ export function TeamDetailPage() {
             </p>
             {team.user && (
               <p className="team-manager">
-                Manager: {team.user.firstName} {team.user.lastName}
+                Manager:{" "}
+                <Link to={`/members/${team.user.id}`}>
+                  {team.user.firstName} {team.user.lastName}
+                </Link>
               </p>
             )}
           </div>

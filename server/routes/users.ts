@@ -2,6 +2,45 @@ import { FastifyPluginAsync } from "fastify";
 import { prisma } from "../index.js";
 
 export const userRoutes: FastifyPluginAsync = async (app) => {
+  app.get<{ Params: { userId: string } }>("/profile/:userId", async (request, reply) => {
+    const userId = request.session.userId;
+    if (!userId) {
+      return reply.status(401).send({ error: "Not authenticated" });
+    }
+
+    const profile = await prisma.user.findUnique({
+      where: { id: request.params.userId },
+      select: {
+        id: true,
+        firstName: true,
+        lastName: true,
+        favoriteTeam: true,
+        createdAt: true,
+        espnTeams: {
+          select: {
+            id: true,
+            seasonYear: true,
+            name: true,
+            abbreviation: true,
+            logoUrl: true,
+            wins: true,
+            losses: true,
+            ties: true,
+            pointsFor: true,
+            finalStandingsPosition: true,
+          },
+          orderBy: { seasonYear: "desc" },
+        },
+      },
+    });
+
+    if (!profile) {
+      return reply.status(404).send({ error: "User not found" });
+    }
+
+    return { user: profile };
+  });
+
   app.get("/me", async (request, reply) => {
     const userId = request.session.userId;
     if (!userId) {
@@ -15,7 +54,6 @@ export const userRoutes: FastifyPluginAsync = async (app) => {
         email: true,
         firstName: true,
         lastName: true,
-        espnId: true,
         groupmeId: true,
         favoriteTeam: true,
         isAdmin: true,

@@ -15,6 +15,7 @@ interface Team {
   playoffSeed: number | null;
   finalStandingsPosition: number | null;
   regularSeasonRank: number | null;
+  user: { id: string; firstName: string; lastName: string } | null;
 }
 
 interface Matchup {
@@ -136,6 +137,13 @@ export function SeasonDetailPage() {
                     )}
                     {team.id === lastPlaceTeamId && (
                       <span className="last-place-badge">💎</span>
+                    )}
+                    {team.user && (
+                      <div className="hof-manager">
+                        <Link to={`/members/${team.user.id}`} className="team-link-plain">
+                          {team.user.firstName} {team.user.lastName}
+                        </Link>
+                      </div>
                     )}
                   </td>
                   <td>{team.wins}</td>

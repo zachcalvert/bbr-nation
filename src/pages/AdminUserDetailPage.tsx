@@ -1,6 +1,24 @@
 import { useEffect, useState, FormEvent } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 
+interface EspnTeamLink {
+  id: string;
+  espnTeamId: number;
+  seasonYear: number;
+  name: string;
+  abbreviation: string;
+}
+
+interface EspnTeamSearchResult {
+  id: string;
+  espnTeamId: number;
+  seasonYear: number;
+  name: string;
+  abbreviation: string;
+  userId: string | null;
+  user: { id: string; firstName: string; lastName: string } | null;
+}
+
 interface AdminUserDetail {
   id: string;
   email: string;
@@ -11,6 +29,7 @@ interface AdminUserDetail {
   favoriteTeam: string;
   isAdmin: boolean;
   createdAt: string;
+  espnTeams: EspnTeamLink[];
 }
 
 export function AdminUserDetailPage() {
@@ -24,7 +43,7 @@ export function AdminUserDetailPage() {
   const [saveError, setSaveError] = useState("");
   const [saveSuccess, setSaveSuccess] = useState(false);
 
-  // Form state
+  // User form state
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -32,6 +51,14 @@ export function AdminUserDetailPage() {
   const [groupmeId, setGroupmeId] = useState("");
   const [favoriteTeam, setFavoriteTeam] = useState("");
   const [isAdmin, setIsAdmin] = useState(false);
+
+  // ESPN teams state
+  const [espnTeams, setEspnTeams] = useState<EspnTeamLink[]>([]);
+  const [allTeams, setAllTeams] = useState<EspnTeamSearchResult[]>([]);
+  const [teamsLoading, setTeamsLoading] = useState(true);
+  const [teamsError, setTeamsError] = useState("");
+  const [filterText, setFilterText] = useState("");
+  const [teamActionError, setTeamActionError] = useState("");
 
   useEffect(() => {
     if (!userId) return;
@@ -50,10 +77,22 @@ export function AdminUserDetailPage() {
         setGroupmeId(u.groupmeId);
         setFavoriteTeam(u.favoriteTeam);
         setIsAdmin(u.isAdmin);
+        setEspnTeams(u.espnTeams);
       })
       .catch((err: Error) => setError(err.message || "Failed to load user"))
       .finally(() => setLoading(false));
   }, [userId]);
+
+  useEffect(() => {
+    fetch("/api/admin/espn-teams")
+      .then((res) => {
+        if (!res.ok) throw new Error(`Failed to load ESPN teams: ${res.status}`);
+        return res.json();
+      })
+      .then((data: { teams: EspnTeamSearchResult[] }) => setAllTeams(data.teams))
+      .catch((err: Error) => setTeamsError(err.message || "Failed to load ESPN teams"))
+      .finally(() => setTeamsLoading(false));
+  }, []);
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -77,6 +116,61 @@ export function AdminUserDetailPage() {
       setSaveError(err instanceof Error ? err.message : "Save failed");
     } finally {
       setSaving(false);
+    }
+  }
+
+  const linkedIds = new Set(espnTeams.map((t) => t.id));
+
+  const filteredTeams = filterText.trim()
+    ? allTeams.filter((t) => {
+        const q = filterText.toLowerCase();
+        return (
+          t.name.toLowerCase().includes(q) ||
+          t.abbreviation.toLowerCase().includes(q) ||
+          String(t.seasonYear).includes(q)
+        );
+      })
+    : [];
+
+  async function handleAssign(team: EspnTeamSearchResult) {
+    if (!userId) return;
+    setTeamActionError("");
+    try {
+      const res = await fetch(`/api/admin/espn-teams/${team.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId }),
+      });
+      if (!res.ok) {
+        const body = (await res.json()) as { error?: string };
+        throw new Error(body.error || "Failed to link team");
+      }
+      // Add to current list and remove from search results
+      setEspnTeams((prev) => [
+        { id: team.id, espnTeamId: team.espnTeamId, seasonYear: team.seasonYear, name: team.name, abbreviation: team.abbreviation },
+        ...prev,
+      ].sort((a, b) => b.seasonYear - a.seasonYear));
+      setSearchResults((prev) => prev.filter((t) => t.id !== team.id));
+    } catch (err) {
+      setTeamActionError(err instanceof Error ? err.message : "Failed to link team");
+    }
+  }
+
+  async function handleRemove(teamId: string) {
+    setTeamActionError("");
+    try {
+      const res = await fetch(`/api/admin/espn-teams/${teamId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: null }),
+      });
+      if (!res.ok) {
+        const body = (await res.json()) as { error?: string };
+        throw new Error(body.error || "Failed to unlink team");
+      }
+      setEspnTeams((prev) => prev.filter((t) => t.id !== teamId));
+    } catch (err) {
+      setTeamActionError(err instanceof Error ? err.message : "Failed to unlink team");
     }
   }
 
@@ -197,6 +291,126 @@ export function AdminUserDetailPage() {
               </button>
             </div>
           </form>
+        </div>
+      </section>
+
+      <section className="section">
+        <h2>ESPN Teams</h2>
+
+        {teamActionError && <p className="error">{teamActionError}</p>}
+
+        {/* Current teams */}
+        {espnTeams.length === 0 ? (
+          <p className="muted" style={{ marginBottom: "1.5rem" }}>
+            No ESPN teams linked yet.
+          </p>
+        ) : (
+          <div className="card" style={{ maxWidth: 600, marginBottom: "1.5rem", padding: 0 }}>
+            <table style={{ width: "100%", borderCollapse: "collapse" }}>
+              <thead>
+                <tr style={{ borderBottom: "1px solid var(--border, #e2e8f0)" }}>
+                  <th style={{ textAlign: "left", padding: "0.75rem 1rem", fontWeight: 600 }}>Team</th>
+                  <th style={{ textAlign: "left", padding: "0.75rem 1rem", fontWeight: 600 }}>Abbr</th>
+                  <th style={{ textAlign: "left", padding: "0.75rem 1rem", fontWeight: 600 }}>Season</th>
+                  <th style={{ padding: "0.75rem 1rem" }} />
+                </tr>
+              </thead>
+              <tbody>
+                {espnTeams.map((team) => (
+                  <tr
+                    key={team.id}
+                    style={{ borderBottom: "1px solid var(--border, #e2e8f0)" }}
+                  >
+                    <td style={{ padding: "0.75rem 1rem" }}>{team.name}</td>
+                    <td style={{ padding: "0.75rem 1rem", color: "var(--muted, #64748b)" }}>
+                      {team.abbreviation}
+                    </td>
+                    <td style={{ padding: "0.75rem 1rem", color: "var(--muted, #64748b)" }}>
+                      {team.seasonYear}
+                    </td>
+                    <td style={{ padding: "0.75rem 1rem", textAlign: "right" }}>
+                      <button
+                        className="btn-secondary"
+                        style={{ fontSize: "0.8rem", padding: "0.25rem 0.6rem" }}
+                        onClick={() => handleRemove(team.id)}
+                      >
+                        Remove
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        {/* Filter & link */}
+        <div className="card" style={{ maxWidth: 600 }}>
+          <h3 style={{ marginTop: 0, marginBottom: "1rem", fontSize: "1rem" }}>
+            Link a Team
+          </h3>
+
+          {teamsError && <p className="error">{teamsError}</p>}
+
+          <label htmlFor="teamFilter">Filter by name, abbreviation, or year</label>
+          <input
+            id="teamFilter"
+            type="text"
+            placeholder="e.g. Lions or 2023"
+            value={filterText}
+            onChange={(e) => setFilterText(e.target.value)}
+            disabled={teamsLoading}
+          />
+
+          {filterText.trim() && (
+            <div style={{ marginTop: "0.75rem", display: "flex", flexDirection: "column", gap: "0.4rem" }}>
+              {filteredTeams.length === 0 ? (
+                <p className="muted" style={{ fontSize: "0.85rem" }}>No teams match.</p>
+              ) : (
+                filteredTeams.map((team) => {
+                  const alreadyLinked = linkedIds.has(team.id);
+                  const ownedByOther = team.userId && team.userId !== userId;
+                  return (
+                    <div
+                      key={team.id}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        padding: "0.6rem 0.75rem",
+                        borderRadius: "6px",
+                        border: "1px solid var(--border, #e2e8f0)",
+                        background: alreadyLinked ? "var(--surface-alt, #f8fafc)" : "transparent",
+                      }}
+                    >
+                      <div>
+                        <span style={{ fontWeight: 500 }}>{team.name}</span>
+                        <span className="muted" style={{ marginLeft: "0.5rem", fontSize: "0.85rem" }}>
+                          {team.abbreviation} · {team.seasonYear}
+                        </span>
+                        {ownedByOther && team.user && (
+                          <span style={{ marginLeft: "0.5rem", fontSize: "0.78rem", color: "var(--warning, #d97706)" }}>
+                            (linked to {team.user.firstName} {team.user.lastName})
+                          </span>
+                        )}
+                      </div>
+                      {alreadyLinked ? (
+                        <span className="muted" style={{ fontSize: "0.85rem" }}>✓ Linked</span>
+                      ) : (
+                        <button
+                          className="btn-secondary"
+                          style={{ fontSize: "0.8rem", padding: "0.25rem 0.6rem" }}
+                          onClick={() => handleAssign(team)}
+                        >
+                          {ownedByOther ? "Reassign" : "Link"}
+                        </button>
+                      )}
+                    </div>
+                  );
+                })
+              )}
+            </div>
+          )}
         </div>
       </section>
     </div>

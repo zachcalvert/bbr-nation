@@ -21,7 +21,21 @@ model User {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
+  chatMessages ChatMessage[]
+
   @@map("users")
+}
+
+model ChatMessage {
+  id        String   @id @default(cuid())
+  content   String
+  userId    String   @map("user_id")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([createdAt])
+  @@map("chat_messages")
 }
 
 // NOTE: The "sessions" table is managed entirely by connect-pg-simple, not Prisma.

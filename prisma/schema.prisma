@@ -81,6 +81,8 @@ model EspnTeam {
   playoffSeed            Int?    @map("playoff_seed")
   finalStandingsPosition Int?    @map("final_standings_position")
   regularSeasonRank      Int?    @map("regular_season_rank")
+  isChampion             Boolean @default(false) @map("is_champion")
+  isLastPlace            Boolean @default(false) @map("is_last_place")
 
   waiverRank             Int?    @map("waiver_rank")
 

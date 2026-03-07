@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { Trophy, Skull } from "@phosphor-icons/react";
+import { Trophy, AnchorSimple } from "@phosphor-icons/react";
 
 interface Team {
   id: string;
@@ -141,7 +141,7 @@ export function SeasonDetailPage() {
                       )}
                       {team.id === lastPlaceTeamId && (
                         <span className="last-place-badge">
-                          <Skull weight="bold" size={16} />
+                          <AnchorSimple weight="bold" size={16} />
                         </span>
                       )}
                     </span>

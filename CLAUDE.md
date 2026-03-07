@@ -48,7 +48,9 @@ This runs two processes concurrently via `concurrently`:
 - **Server**: Fastify on `:3001` (hot-reloaded by `tsx watch`)
 - **Client**: Vite on `:5173` (proxies `/api` and `/ws` to `:3001`)
 
-**Do not use the preview tool or spin up a dev server.** The app requires authentication and the user prefers to verify UI changes in their local browser.
+Use `preview_start` with the `"dev"` configuration to verify UI changes after edits. The app requires authentication, so use `preview_snapshot` and `preview_inspect` for structure/style checks rather than trying to interact with authenticated pages.
+
+Local dev credentials (for API testing, curl, etc.) can be found in `prisma/seed.ts`.
 
 ## Database Migrations
 

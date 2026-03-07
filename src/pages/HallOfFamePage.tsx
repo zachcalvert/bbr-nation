@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { Trophy, AnchorSimple } from "@phosphor-icons/react";
 
 interface SeasonEntry {
   rank: number;
@@ -12,7 +13,10 @@ interface SeasonEntry {
   wins?: number;
   losses?: number;
   ties?: number;
+  isChampion: boolean;
+  isLastPlace: boolean;
   managerName?: string | null;
+  managerId?: string | null;
 }
 
 interface MatchupEntry {
@@ -27,7 +31,10 @@ interface MatchupEntry {
   week: number;
   value: number;
   score?: string;
+  isChampion: boolean;
+  isLastPlace: boolean;
   managerName?: string | null;
+  managerId?: string | null;
 }
 
 interface HallOfFameData {
@@ -265,17 +272,37 @@ export function HallOfFamePage() {
                 <tr key={`${entry.teamId}-${entry.seasonYear}-${entry.rank}`}>
                   <td className="col-rank muted">{entry.rank}</td>
                   <td>
-                    <Link
-                      to={`/seasons/${entry.seasonYear}/teams/${entry.teamId}`}
-                      className="team-link"
-                    >
-                      {entry.logoUrl && (
-                        <img src={entry.logoUrl} alt="" className="team-logo-sm" />
+                    <span className="team-name-row">
+                      <Link
+                        to={`/seasons/${entry.seasonYear}/teams/${entry.teamId}`}
+                        className="team-link"
+                      >
+                        {entry.logoUrl && (
+                          <img src={entry.logoUrl} alt="" className="team-logo-sm" />
+                        )}
+                        <span>{entry.teamName}</span>
+                      </Link>
+                      {entry.isChampion && (
+                        <span className="champion-badge">
+                          <Trophy weight="duotone" size={18} />
+                        </span>
                       )}
-                      <span>{entry.teamName}</span>
-                    </Link>
+                      {entry.isLastPlace && (
+                        <span className="last-place-badge">
+                          <AnchorSimple weight="bold" size={16} />
+                        </span>
+                      )}
+                    </span>
                     {entry.managerName && (
-                      <div className="hof-manager">{entry.managerName}</div>
+                      <div className="hof-manager">
+                        {entry.managerId ? (
+                          <Link to={`/members/${entry.managerId}`} className="team-link-plain">
+                            {entry.managerName}
+                          </Link>
+                        ) : (
+                          entry.managerName
+                        )}
+                      </div>
                     )}
                   </td>
                   <td>

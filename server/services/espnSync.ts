@@ -218,6 +218,7 @@ export async function syncSeason(year: number): Promise<void> {
       pointsAgainst: apiTeam.regularSeasonPointsAgainst,
       playoffSeed: apiTeam.playoffSeed ?? null,
       finalStandingsPosition: apiTeam.finalStandingsPosition ?? null,
+      isChampion: (apiTeam.finalStandingsPosition ?? null) === 1,
       waiverRank: apiTeam.wavierRank ?? null, // upstream library spells it "wavier"
     };
 
@@ -247,12 +248,13 @@ export async function syncSeason(year: number): Promise<void> {
 
   if (regularSeasonComplete) {
     const rankMap = computeRegularSeasonRanks(apiTeams);
+    const maxRank = Math.max(...rankMap.values());
     for (const [espnTeamId, rank] of rankMap) {
       const dbId = teamIdMap.get(espnTeamId);
       if (!dbId) continue;
       await prisma.espnTeam.update({
         where: { id: dbId },
-        data: { regularSeasonRank: rank },
+        data: { regularSeasonRank: rank, isLastPlace: rank === maxRank },
       });
     }
   }

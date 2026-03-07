@@ -6,7 +6,6 @@ import fastifySession from "@fastify/session";
 import fastifyWebsocket from "@fastify/websocket";
 import fastifyStatic from "@fastify/static";
 import { PrismaClient } from "@prisma/client";
-import connectPgSimple from "connect-pg-simple";
 import { authRoutes } from "./routes/auth.js";
 import { userRoutes } from "./routes/users.js";
 import { espnRoutes } from "./routes/espn.js";
@@ -23,20 +22,42 @@ const app = Fastify({ logger: true });
 
 await app.register(fastifyCookie);
 
-const PgStore = connectPgSimple(fastifySession as any);
+const SESSION_MAX_AGE = 7 * 24 * 60 * 60 * 1000; // 7 days in ms
+
+const prismaSessionStore = {
+  get(sessionId: string, callback: (err: any, session?: any) => void) {
+    prisma.$queryRaw<Array<{ sess: any }>>`
+      SELECT sess FROM sessions WHERE sid = ${sessionId} AND expire > NOW()
+    `
+      .then((rows) => callback(null, rows[0]?.sess ?? null))
+      .catch((err) => callback(err));
+  },
+  set(sessionId: string, session: any, callback?: (err?: any) => void) {
+    const maxAge = session?.cookie?.maxAge ?? SESSION_MAX_AGE;
+    const expire = new Date(Date.now() + maxAge);
+    prisma.$executeRaw`
+      INSERT INTO sessions (sid, sess, expire)
+      VALUES (${sessionId}, ${JSON.stringify(session)}::json, ${expire})
+      ON CONFLICT (sid) DO UPDATE SET sess = EXCLUDED.sess, expire = EXCLUDED.expire
+    `
+      .then(() => callback?.())
+      .catch((err) => callback?.(err));
+  },
+  destroy(sessionId: string, callback?: (err?: any) => void) {
+    prisma.$executeRaw`DELETE FROM sessions WHERE sid = ${sessionId}`
+      .then(() => callback?.())
+      .catch((err) => callback?.(err));
+  },
+};
 
 await app.register(fastifySession, {
   secret: process.env.SESSION_SECRET || "change-me",
   cookie: {
     secure: process.env.NODE_ENV === "production",
     httpOnly: true,
-    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    maxAge: SESSION_MAX_AGE,
   },
-  store: new PgStore({
-    conString: process.env.DATABASE_URL,
-    tableName: "sessions",
-    createTableIfMissing: true,
-  }) as any,
+  store: prismaSessionStore as any,
 });
 
 await app.register(fastifyWebsocket);

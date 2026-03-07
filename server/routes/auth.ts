@@ -9,12 +9,11 @@ export const authRoutes: FastifyPluginAsync = async (app) => {
       password: string;
       firstName: string;
       lastName: string;
-      espnId: string;
       groupmeId: string;
       favoriteTeam: string;
     };
   }>("/register", async (request, reply) => {
-    const { email, password, firstName, lastName, espnId, groupmeId, favoriteTeam } =
+    const { email, password, firstName, lastName, groupmeId, favoriteTeam } =
       request.body;
 
     const existing = await prisma.user.findUnique({ where: { email } });
@@ -29,7 +28,6 @@ export const authRoutes: FastifyPluginAsync = async (app) => {
         password: hashed,
         firstName,
         lastName,
-        espnId,
         groupmeId,
         favoriteTeam,
       },

@@ -18,11 +18,11 @@ export function AdminPage() {
   useEffect(() => {
     fetch("/api/admin")
       .then((res) => {
-        if (!res.ok) throw new Error("Failed to load admin data");
+        if (!res.ok) throw new Error(`Failed to load admin data: ${res.status}`);
         return res.json();
       })
       .then((data) => setUsers(data.users))
-      .catch(() => setError("Failed to load admin data"))
+      .catch((err: Error) => setError(err.message || "Failed to load admin data"))
       .finally(() => setLoading(false));
   }, []);
 

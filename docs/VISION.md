@@ -7,7 +7,9 @@ BBR Nation is a private web app for the members of our ESPN fantasy football lea
 ### 1. Group Chat & DMs
 A main group chat channel for the whole league, plus the ability to send direct messages between members. Built on WebSockets for real-time delivery.
 
-→ [Plan](./plans/01-chat.md)
+**v1 shipped:** Main group chat with persistent messages, real-time delivery, and a global floating panel overlay (bottom-right on desktop, full-screen on mobile). DMs planned for v2.
+
+→ [Plan & Implementation](./plans/01-chat.md)
 
 ### 2. External Bot Integration
 Integration point for an external bot service designed for live chat interactions. The bot API details are TBD — the architecture should carve out clean boundaries for external API calls that inject messages into the chat system.
@@ -16,6 +18,8 @@ Integration point for an external bot service designed for live chat interaction
 
 ### 3. Fantasy Football Homepage
 A homepage that renders content driven by the current ESPN fantasy football season. Uses the [ESPN Fantasy Football API](https://github.com/mkreiser/ESPN-Fantasy-Football-API) Node package to pull league data, standings, matchups, and more.
+
+**v1 shipped:** ESPN service layer with full historical sync/backfill flow. Seasons, teams, matchups, rosters, and player data reliably synced into local Postgres tables. Homepage renders current standings and matchups; Seasons, Season Detail, Team Detail, and Hall of Fame pages all driven by synced data.
 
 → [Plan](./plans/03-fantasy-homepage.md)
 

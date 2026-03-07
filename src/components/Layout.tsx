@@ -39,6 +39,14 @@ export function Layout() {
           >
             Hall of Fame
           </NavLink>
+          {user?.isAdmin && (
+            <NavLink
+              to="/admin"
+              className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}
+            >
+              Admin
+            </NavLink>
+          )}
         </div>
 
         <div className="nav-user">

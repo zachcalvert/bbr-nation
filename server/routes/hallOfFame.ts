@@ -19,6 +19,29 @@ interface SeasonEntry {
   isLastPlace: boolean;
 }
 
+interface AllTimeRecord {
+  userId: string;
+  firstName: string;
+  lastName: string;
+  wins: number;
+  losses: number;
+  ties: number;
+  seasonsPlayed: number;
+  championships: number;
+  lastPlaceFinishes: number;
+}
+
+interface TeamHistoryEntry {
+  teamId: string;
+  teamName: string;
+  abbreviation: string;
+  logoUrl: string | null;
+  seasonYear: number;
+  userId: string | null;
+  firstName: string | null;
+  lastName: string | null;
+}
+
 interface MatchupEntry {
   rank: number;
   teamName: string;
@@ -46,6 +69,9 @@ export const hallOfFameRoutes: FastifyPluginAsync = async (app) => {
       fewestWins,
       highestDifferential,
       lowestDifferential,
+      allTimeRecordsRaw,
+      championsRaw,
+      lastPlaceTeamsRaw,
       highestGameScore,
       lowestGameScore,
       biggestBlowout,
@@ -95,6 +121,46 @@ export const hallOfFameRoutes: FastifyPluginAsync = async (app) => {
         LEFT JOIN users u ON t.user_id = u.id
         ORDER BY differential ASC
         LIMIT 25
+      `),
+
+      // All-time records
+      prisma.$queryRaw<RawAllTimeRow[]>(Prisma.sql`
+        SELECT
+          u.id            AS user_id,
+          u.first_name,
+          u.last_name,
+          SUM(et.wins)    AS wins,
+          SUM(et.losses)  AS losses,
+          SUM(et.ties)    AS ties,
+          COUNT(DISTINCT et.season_year) AS seasons_played,
+          COUNT(CASE WHEN et.is_champion   THEN 1 END) AS championships,
+          COUNT(CASE WHEN et.is_last_place THEN 1 END) AS last_place_finishes
+        FROM users u
+        JOIN espn_teams et ON u.id = et.user_id
+        GROUP BY u.id, u.first_name, u.last_name
+        ORDER BY wins DESC
+      `),
+
+      // Champions
+      prisma.$queryRaw<RawTeamHistoryRow[]>(Prisma.sql`
+        SELECT et.id AS team_id, et.name AS team_name, et.abbreviation, et.logo_url,
+               et.season_year,
+               u.id AS user_id, u.first_name, u.last_name
+        FROM espn_teams et
+        LEFT JOIN users u ON u.id = et.user_id
+        WHERE et.is_champion = true
+        ORDER BY et.season_year DESC
+      `),
+
+      // Last place teams
+      prisma.$queryRaw<RawTeamHistoryRow[]>(Prisma.sql`
+        SELECT et.id AS team_id, et.name AS team_name, et.abbreviation, et.logo_url,
+               et.season_year,
+               u.id AS user_id, u.first_name, u.last_name
+        FROM espn_teams et
+        LEFT JOIN users u ON u.id = et.user_id
+        WHERE et.is_last_place = true
+        ORDER BY et.season_year DESC
       `),
 
       // --- Matchup records (raw SQL with UNION) ---
@@ -221,6 +287,9 @@ export const hallOfFameRoutes: FastifyPluginAsync = async (app) => {
         biggestBlowout: toMarginEntries(biggestBlowout),
         closestGame: toMarginEntries(closestGame),
       },
+      allTimeRecords: toAllTimeRecords(allTimeRecordsRaw),
+      champions: toTeamHistoryEntries(championsRaw),
+      lastPlaceTeams: toTeamHistoryEntries(lastPlaceTeamsRaw),
     };
   });
 };
@@ -314,6 +383,29 @@ interface RawMarginRow {
   manager_last_name: string | null;
 }
 
+interface RawAllTimeRow {
+  user_id: string;
+  first_name: string;
+  last_name: string;
+  wins: bigint;
+  losses: bigint;
+  ties: bigint;
+  seasons_played: bigint;
+  championships: bigint;
+  last_place_finishes: bigint;
+}
+
+interface RawTeamHistoryRow {
+  team_id: string;
+  team_name: string;
+  abbreviation: string;
+  logo_url: string | null;
+  season_year: number;
+  user_id: string | null;
+  first_name: string | null;
+  last_name: string | null;
+}
+
 function toManagerName(firstName: string | null, lastName: string | null): string | null {
   return firstName && lastName ? `${firstName} ${lastName}` : null;
 }
@@ -375,6 +467,33 @@ function toMatchupEntries(rows: RawMatchupRow[]): MatchupEntry[] {
     isLastPlace: r.is_last_place,
     managerName: toManagerName(r.manager_first_name, r.manager_last_name),
     managerId: r.manager_id ?? null,
+  }));
+}
+
+function toAllTimeRecords(rows: RawAllTimeRow[]): AllTimeRecord[] {
+  return rows.map((r) => ({
+    userId: r.user_id,
+    firstName: r.first_name,
+    lastName: r.last_name,
+    wins: Number(r.wins),
+    losses: Number(r.losses),
+    ties: Number(r.ties),
+    seasonsPlayed: Number(r.seasons_played),
+    championships: Number(r.championships),
+    lastPlaceFinishes: Number(r.last_place_finishes),
+  }));
+}
+
+function toTeamHistoryEntries(rows: RawTeamHistoryRow[]): TeamHistoryEntry[] {
+  return rows.map((r) => ({
+    teamId: r.team_id,
+    teamName: r.team_name,
+    abbreviation: r.abbreviation,
+    logoUrl: r.logo_url,
+    seasonYear: r.season_year,
+    userId: r.user_id,
+    firstName: r.first_name,
+    lastName: r.last_name,
   }));
 }
 

@@ -782,6 +782,19 @@ input:focus {
   color: var(--accent);
   background: transparent;
 }
+.section-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+.section-header-row h2 {
+  margin: 0;
+}
+.hof-sort-toggle {
+  display: flex;
+  gap: 0.25rem;
+}
 
 .hof-manager {
   font-size: 0.7rem;

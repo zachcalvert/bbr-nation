@@ -1,5 +1,76 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
+
+interface SyncStatus {
+  running: boolean;
+  lastStartedAt: string | null;
+  lastCompletedAt: string | null;
+  lastError: string | null;
+}
+
+function SyncPanel() {
+  const [status, setStatus] = useState<SyncStatus | null>(null);
+  const [triggering, setTriggering] = useState(false);
+  const wasRunning = useRef(false);
+
+  function fetchStatus() {
+    return fetch("/api/espn/status")
+      .then((r) => r.json())
+      .then((d) => setStatus(d.sync));
+  }
+
+  useEffect(() => {
+    fetchStatus();
+  }, []);
+
+  useEffect(() => {
+    if (!status) return;
+    if (status.running) {
+      wasRunning.current = true;
+      const id = setInterval(fetchStatus, 2000);
+      return () => clearInterval(id);
+    } else if (wasRunning.current) {
+      wasRunning.current = false;
+    }
+  }, [status?.running]);
+
+  async function handleBackfill() {
+    setTriggering(true);
+    await fetch("/api/espn/sync/backfill", { method: "POST" });
+    setTriggering(false);
+    setTimeout(fetchStatus, 500);
+  }
+
+  const running = status?.running ?? false;
+  const lastCompleted = status?.lastCompletedAt
+    ? new Date(status.lastCompletedAt).toLocaleString()
+    : null;
+
+  return (
+    <div className="sync-panel">
+      <div className="sync-info">
+        {running ? (
+          <span className="sync-status syncing">
+            <span className="sync-dot" /> Syncing…
+          </span>
+        ) : status?.lastError ? (
+          <span className="sync-status error">Error: {status.lastError}</span>
+        ) : lastCompleted ? (
+          <span className="sync-status idle">Last synced {lastCompleted}</span>
+        ) : (
+          <span className="sync-status idle">Never synced</span>
+        )}
+      </div>
+      <button
+        className="btn-sync"
+        onClick={handleBackfill}
+        disabled={running || triggering}
+      >
+        {running ? "Syncing…" : "Backfill all seasons"}
+      </button>
+    </div>
+  );
+}
 
 interface AdminUser {
   id: string;
@@ -87,6 +158,8 @@ export function AdminPage() {
       <div className="page-header">
         <h1>Admin</h1>
       </div>
+
+      <SyncPanel />
 
       <section className="section">
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.75rem" }}>

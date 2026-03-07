@@ -356,7 +356,7 @@ input:focus {
 
 .last-place-badge {
   display: inline-flex;
-  color: var(--text-muted);
+  color: #7ec8e3;
 }
 
 /* ─── Data tables ────────────────────────────────────────────────────────── */

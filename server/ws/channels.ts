@@ -1,6 +1,7 @@
 import { FastifyPluginAsync } from "fastify";
 import { WebSocket } from "ws";
 import { prisma } from "../index.js";
+import { queryBbrChatService } from "../services/bbrChatService.js";
 
 interface Client {
   ws: WebSocket;
@@ -185,6 +186,41 @@ export const wsRoutes: FastifyPluginAsync = async (app) => {
               createdAt: saved.createdAt.toISOString(),
               user: saved.user,
             });
+
+            // Forward to bbr-chat-service if message contains "bbot"
+            if (content.toLowerCase().includes("bbot")) {
+              try {
+                const botResponse = await queryBbrChatService(
+                  content.trim(),
+                  client.userId
+                );
+
+                const botUser = await prisma.user.findUnique({
+                  where: { email: "bot@bbr-nation.internal" },
+                  select: { id: true, firstName: true, lastName: true },
+                });
+
+                if (!botUser) {
+                  console.error("Bot user not found — run npm run db:seed to create it");
+                } else {
+                  const savedBotMessage = await prisma.chatMessage.create({
+                    data: { content: botResponse, userId: botUser.id },
+                    select: { id: true, content: true, createdAt: true },
+                  });
+
+                  channels.broadcastAll(msg.channel, {
+                    type: "message",
+                    channel: msg.channel,
+                    id: savedBotMessage.id,
+                    content: savedBotMessage.content,
+                    createdAt: savedBotMessage.createdAt.toISOString(),
+                    user: botUser,
+                  });
+                }
+              } catch (err) {
+                console.error("bbr-chat-service error:", err);
+              }
+            }
           }
           break;
 

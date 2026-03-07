@@ -124,7 +124,34 @@ const LEAGUE_MEMBERS: LeagueMember[] = [
   },
 ];
 
+const BOT_EMAIL = "bot@bbr-nation.internal";
+
+async function seedBotUser() {
+  const existing = await prisma.user.findUnique({ where: { email: BOT_EMAIL } });
+  if (existing) {
+    console.log("  Bot user already exists — skipping.");
+    return;
+  }
+  // Password is a locked placeholder — the bot account is never used for login.
+  const hashed = await bcrypt.hash("__bot_account_no_login__", 10);
+  await prisma.user.create({
+    data: {
+      email: BOT_EMAIL,
+      password: hashed,
+      firstName: "BBR",
+      lastName: "Bot",
+      espnId: "bot",
+      groupmeId: "bot",
+      favoriteTeam: "N/A",
+    },
+  });
+  console.log("  Created: BBR Bot user.");
+}
+
 async function main() {
+  console.log("Seeding bot user...");
+  await seedBotUser();
+
   console.log(`Seeding ${LEAGUE_MEMBERS.length} league member(s)...`);
 
   for (const member of LEAGUE_MEMBERS) {

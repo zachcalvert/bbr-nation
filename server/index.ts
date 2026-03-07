@@ -50,9 +50,13 @@ await app.register(adminRoutes, { prefix: "/api/admin" });
 await app.register(wsRoutes, { prefix: "/ws" });
 
 // In production, serve the built Vite frontend
+app.get("/api/health", async (_req, reply) => {
+  return reply.send({ status: "ok" });
+});
+
 if (process.env.NODE_ENV === "production") {
   await app.register(fastifyStatic, {
-    root: path.join(__dirname, "..", "dist"),
+    root: path.join(__dirname, ".."),
     wildcard: false,
   });
 

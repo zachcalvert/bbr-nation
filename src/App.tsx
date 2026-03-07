@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import { ChatProvider } from "./context/ChatContext";
 import { RequireAuth } from "./components/RequireAuth";
+import { RequireAdmin } from "./components/RequireAdmin";
 import { Layout } from "./components/Layout";
 import { LoginPage } from "./pages/LoginPage";
 import { HomePage } from "./pages/HomePage";
@@ -9,6 +10,7 @@ import { SeasonsPage } from "./pages/SeasonsPage";
 import { SeasonDetailPage } from "./pages/SeasonDetailPage";
 import { TeamDetailPage } from "./pages/TeamDetailPage";
 import { HallOfFamePage } from "./pages/HallOfFamePage";
+import { AdminPage } from "./pages/AdminPage";
 
 function App() {
   return (
@@ -32,6 +34,11 @@ function App() {
               <Route path="/seasons/:year" element={<SeasonDetailPage />} />
               <Route path="/seasons/:year/teams/:teamId" element={<TeamDetailPage />} />
               <Route path="/hall-of-fame" element={<HallOfFamePage />} />
+
+              {/* Admin-only */}
+              <Route element={<RequireAdmin />}>
+                <Route path="/admin" element={<AdminPage />} />
+              </Route>
             </Route>
           </Route>
 

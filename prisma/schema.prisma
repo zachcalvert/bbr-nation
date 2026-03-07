@@ -17,6 +17,7 @@ model User {
   espnId       String  @unique @map("espn_id")
   groupmeId    String  @unique @map("groupme_id")
   favoriteTeam String  @map("favorite_team")
+  isAdmin      Boolean @default(false) @map("is_admin")
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")

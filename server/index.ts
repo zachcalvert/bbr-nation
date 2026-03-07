@@ -12,6 +12,7 @@ import { userRoutes } from "./routes/users.js";
 import { espnRoutes } from "./routes/espn.js";
 import { hallOfFameRoutes } from "./routes/hallOfFame.js";
 import { chatRoutes } from "./routes/chat.js";
+import { adminRoutes } from "./routes/admin.js";
 import { wsRoutes } from "./ws/channels.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -45,6 +46,7 @@ await app.register(userRoutes, { prefix: "/api/users" });
 await app.register(espnRoutes, { prefix: "/api/espn" });
 await app.register(hallOfFameRoutes, { prefix: "/api/espn/hall-of-fame" });
 await app.register(chatRoutes, { prefix: "/api/chat" });
+await app.register(adminRoutes, { prefix: "/api/admin" });
 await app.register(wsRoutes, { prefix: "/ws" });
 
 // In production, serve the built Vite frontend

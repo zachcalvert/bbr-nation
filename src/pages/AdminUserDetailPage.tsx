@@ -24,7 +24,6 @@ interface AdminUserDetail {
   email: string;
   firstName: string;
   lastName: string;
-  espnId: string;
   groupmeId: string;
   favoriteTeam: string;
   isAdmin: boolean;
@@ -47,7 +46,6 @@ export function AdminUserDetailPage() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
-  const [espnId, setEspnId] = useState("");
   const [groupmeId, setGroupmeId] = useState("");
   const [favoriteTeam, setFavoriteTeam] = useState("");
   const [isAdmin, setIsAdmin] = useState(false);
@@ -73,7 +71,6 @@ export function AdminUserDetailPage() {
         setFirstName(u.firstName);
         setLastName(u.lastName);
         setEmail(u.email);
-        setEspnId(u.espnId);
         setGroupmeId(u.groupmeId);
         setFavoriteTeam(u.favoriteTeam);
         setIsAdmin(u.isAdmin);
@@ -103,7 +100,7 @@ export function AdminUserDetailPage() {
       const res = await fetch(`/api/admin/users/${userId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ firstName, lastName, email, espnId, groupmeId, favoriteTeam, isAdmin }),
+        body: JSON.stringify({ firstName, lastName, email, groupmeId, favoriteTeam, isAdmin }),
       });
       if (!res.ok) {
         const body = (await res.json()) as { error?: string };
@@ -239,15 +236,6 @@ export function AdminUserDetailPage() {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-
-            <label htmlFor="espnId">ESPN ID</label>
-            <input
-              id="espnId"
-              type="text"
-              value={espnId}
-              onChange={(e) => setEspnId(e.target.value)}
               required
             />
 

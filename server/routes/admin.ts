@@ -29,7 +29,6 @@ export const adminRoutes: FastifyPluginAsync = async (app) => {
         email: true,
         firstName: true,
         lastName: true,
-        espnId: true,
         isAdmin: true,
         createdAt: true,
       },
@@ -49,7 +48,6 @@ export const adminRoutes: FastifyPluginAsync = async (app) => {
         email: true,
         firstName: true,
         lastName: true,
-        espnId: true,
         groupmeId: true,
         favoriteTeam: true,
         isAdmin: true,
@@ -130,7 +128,6 @@ export const adminRoutes: FastifyPluginAsync = async (app) => {
       firstName?: string;
       lastName?: string;
       email?: string;
-      espnId?: string;
       groupmeId?: string;
       favoriteTeam?: string;
       isAdmin?: boolean;
@@ -139,7 +136,7 @@ export const adminRoutes: FastifyPluginAsync = async (app) => {
     if (!(await checkAdmin(request, reply))) return;
 
     const { id } = request.params;
-    const { firstName, lastName, email, espnId, groupmeId, favoriteTeam, isAdmin } = request.body;
+    const { firstName, lastName, email, groupmeId, favoriteTeam, isAdmin } = request.body;
 
     try {
       const updated = await prisma.user.update({
@@ -148,7 +145,6 @@ export const adminRoutes: FastifyPluginAsync = async (app) => {
           ...(firstName !== undefined && { firstName }),
           ...(lastName !== undefined && { lastName }),
           ...(email !== undefined && { email }),
-          ...(espnId !== undefined && { espnId }),
           ...(groupmeId !== undefined && { groupmeId }),
           ...(favoriteTeam !== undefined && { favoriteTeam }),
           ...(isAdmin !== undefined && { isAdmin }),
@@ -158,7 +154,6 @@ export const adminRoutes: FastifyPluginAsync = async (app) => {
           email: true,
           firstName: true,
           lastName: true,
-          espnId: true,
           groupmeId: true,
           favoriteTeam: true,
           isAdmin: true,

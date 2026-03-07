@@ -6,7 +6,6 @@ interface AdminUser {
   email: string;
   firstName: string;
   lastName: string;
-  espnId: string;
   isAdmin: boolean;
   createdAt: string;
 }
@@ -54,7 +53,6 @@ export function AdminPage() {
               <tr>
                 <th>Name</th>
                 <th>Email</th>
-                <th>ESPN ID</th>
                 <th>Admin</th>
                 <th>Joined</th>
               </tr>
@@ -68,7 +66,6 @@ export function AdminPage() {
                     </Link>
                   </td>
                   <td>{u.email}</td>
-                  <td className="muted">{u.espnId}</td>
                   <td>{u.isAdmin ? "✓" : ""}</td>
                   <td className="muted">
                     {new Date(u.createdAt).toLocaleDateString()}

@@ -104,6 +104,9 @@ export const espnRoutes: FastifyPluginAsync = async (app) => {
       include: {
         teams: {
           orderBy: [{ finalStandingsPosition: "asc" }, { regularSeasonRank: "asc" }, { wins: "desc" }],
+          include: {
+            user: { select: { id: true, firstName: true, lastName: true } },
+          },
         },
         matchups: {
           orderBy: { matchupPeriodId: "asc" },

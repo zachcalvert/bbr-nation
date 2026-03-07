@@ -335,19 +335,28 @@ input:focus {
   vertical-align: middle;
 }
 .badge.champion {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
   background: rgba(245, 158, 11, 0.12);
   border-color: rgba(245, 158, 11, 0.3);
   color: var(--gold);
 }
 
+.team-name-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
 .champion-badge {
-  margin-left: 0.4rem;
-  font-size: 0.9em;
+  display: inline-flex;
+  color: var(--gold);
 }
 
 .last-place-badge {
-  margin-left: 0.4rem;
-  font-size: 0.9em;
+  display: inline-flex;
+  color: var(--text-muted);
 }
 
 /* ─── Data tables ────────────────────────────────────────────────────────── */

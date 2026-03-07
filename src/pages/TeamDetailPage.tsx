@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import { Trophy } from "@phosphor-icons/react";
 
 interface RosterEntry {
   id: string;
@@ -148,7 +149,10 @@ export function TeamDetailPage() {
                 <span className="badge">Seed #{team.regularSeasonRank}</span>
               )}
               {team.finalStandingsPosition === 1 && (
-                <span className="badge champion">🏆 Champion</span>
+                <span className="badge champion">
+                  <Trophy weight="duotone" size={14} />
+                  Champion
+                </span>
               )}
             </p>
             {team.user && (

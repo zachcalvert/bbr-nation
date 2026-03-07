@@ -18,6 +18,7 @@ export const userRoutes: FastifyPluginAsync = async (app) => {
         espnId: true,
         groupmeId: true,
         favoriteTeam: true,
+        isAdmin: true,
         createdAt: true,
       },
     });

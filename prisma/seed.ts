@@ -25,6 +25,7 @@ interface LeagueMember {
   espnId: string; // ESPN fantasy team ID (integer, as string)
   groupmeId: string; // GroupMe member ID
   favoriteTeam: string; // favorite NFL team
+  isAdmin?: boolean; // whether this user has admin privileges
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -58,6 +59,7 @@ const LEAGUE_MEMBERS: LeagueMember[] = [
     espnId: "3", // replace with your ESPN team ID
     groupmeId: "30803449", // replace with your GroupMe ID
     favoriteTeam: "Lions", // replace with your favorite NFL team
+    isAdmin: true,
   },
   {
     email: "shanechandler24@example.com",
@@ -142,6 +144,7 @@ async function main() {
           email: member.email,
           groupmeId: member.groupmeId,
           favoriteTeam: member.favoriteTeam,
+          isAdmin: member.isAdmin ?? false,
         },
       });
       console.log(`  Updated: ${member.firstName} ${member.lastName} (espnId=${member.espnId})`);
@@ -156,6 +159,7 @@ async function main() {
           espnId: member.espnId,
           groupmeId: member.groupmeId,
           favoriteTeam: member.favoriteTeam,
+          isAdmin: member.isAdmin ?? false,
         },
       });
       console.log(`  Created: ${member.firstName} ${member.lastName} (espnId=${member.espnId})`);

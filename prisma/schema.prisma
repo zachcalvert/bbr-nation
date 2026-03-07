@@ -21,8 +21,6 @@ model User {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  espnTeams EspnTeam[]
-
   @@map("users")
 }
 
@@ -72,7 +70,6 @@ model EspnTeam {
   waiverRank             Int?    @map("waiver_rank")
 
   season       EspnSeason      @relation(fields: [seasonYear], references: [year])
-  owner        User?           @relation(fields: [ownerEspnMemberId], references: [espnId])
   homeMatchups EspnMatchup[]   @relation("HomeTeam")
   awayMatchups EspnMatchup[]   @relation("AwayTeam")
   rosterWeeks  EspnRosterWeek[]

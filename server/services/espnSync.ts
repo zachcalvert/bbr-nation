@@ -1,4 +1,3 @@
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library.js";
 import { prisma } from "../index.js";
 import { espnClient, ESPN_LEAGUE_START_YEAR } from "./espnClient.js";
 import type {
@@ -222,30 +221,17 @@ export async function syncSeason(year: number): Promise<void> {
       waiverRank: apiTeam.wavierRank ?? null, // upstream library spells it "wavier"
     };
 
-    try {
-      await prisma.espnTeam.upsert({
-        where: { espnTeamId_seasonYear: { espnTeamId: apiTeam.id, seasonYear: year } },
-        create: {
-          id: crypto.randomUUID(),
-          espnTeamId: apiTeam.id,
-          seasonYear: year,
-          ownerEspnMemberId,
-          ...teamData,
-        },
-        update: teamData,
-      });
-    } catch (err) {
-      // P2003 = FK constraint violation (User with this espnId doesn't exist yet).
-      // Log a warning and continue — don't abort the whole season sync.
-      if (err instanceof PrismaClientKnownRequestError && err.code === "P2003") {
-        console.warn(
-          `[espnSync] Season ${year}: skipping team ${apiTeam.id} (${apiTeam.name}) — ` +
-            `no User with espnId="${ownerEspnMemberId}". Run db:seed first.`
-        );
-      } else {
-        throw err;
-      }
-    }
+    await prisma.espnTeam.upsert({
+      where: { espnTeamId_seasonYear: { espnTeamId: apiTeam.id, seasonYear: year } },
+      create: {
+        id: crypto.randomUUID(),
+        espnTeamId: apiTeam.id,
+        seasonYear: year,
+        ownerEspnMemberId,
+        ...teamData,
+      },
+      update: teamData,
+    });
   }
 
   // 3. Build espnTeamId → DB id map for FK use in matchups/rosters

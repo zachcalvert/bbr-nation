@@ -31,6 +31,12 @@ export function Layout() {
           >
             Seasons
           </NavLink>
+          <NavLink
+            to="/hall-of-fame"
+            className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}
+          >
+            Hall of Fame
+          </NavLink>
         </div>
 
         <div className="nav-user">

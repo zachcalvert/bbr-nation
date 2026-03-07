@@ -724,6 +724,50 @@ input:focus {
   cursor: not-allowed;
 }
 
+/* ─── Hall of Fame ───────────────────────────────────────────────────────── */
+.hof-tabs {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.hof-tab-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.hof-tab-group-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+}
+
+.hof-tab-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.hof-expand-btn {
+  display: block;
+  margin: 0.75rem auto 0;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  padding: 0.35rem 1rem;
+  font-size: 0.8125rem;
+  border-radius: var(--radius-sm);
+}
+.hof-expand-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: transparent;
+}
+
 /* ─── Utility ────────────────────────────────────────────────────────────── */
 .muted {
   color: var(--text-muted);

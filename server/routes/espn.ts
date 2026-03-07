@@ -128,6 +128,7 @@ export const espnRoutes: FastifyPluginAsync = async (app) => {
       const team = await prisma.espnTeam.findFirst({
         where: { seasonYear: year, id: request.params.teamId },
         include: {
+          user: { select: { id: true, firstName: true, lastName: true } },
           rosterWeeks: {
             orderBy: { scoringPeriodId: "asc" },
             include: {

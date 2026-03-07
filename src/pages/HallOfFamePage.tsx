@@ -12,6 +12,7 @@ interface SeasonEntry {
   wins?: number;
   losses?: number;
   ties?: number;
+  managerName?: string | null;
 }
 
 interface MatchupEntry {
@@ -26,6 +27,7 @@ interface MatchupEntry {
   week: number;
   value: number;
   score?: string;
+  managerName?: string | null;
 }
 
 interface HallOfFameData {
@@ -272,6 +274,9 @@ export function HallOfFamePage() {
                       )}
                       <span>{entry.teamName}</span>
                     </Link>
+                    {entry.managerName && (
+                      <div className="hof-manager">{entry.managerName}</div>
+                    )}
                   </td>
                   <td>
                     <Link to={`/seasons/${entry.seasonYear}`} className="team-link-plain">

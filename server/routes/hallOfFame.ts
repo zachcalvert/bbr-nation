@@ -13,6 +13,7 @@ interface SeasonEntry {
   wins?: number;
   losses?: number;
   ties?: number;
+  managerName: string | null;
 }
 
 interface MatchupEntry {
@@ -27,6 +28,7 @@ interface MatchupEntry {
   week: number;
   value: number;
   score?: string; // "120.5 - 98.3" for blowout/closest
+  managerName: string | null;
 }
 
 export const hallOfFameRoutes: FastifyPluginAsync = async (app) => {
@@ -67,18 +69,22 @@ export const hallOfFameRoutes: FastifyPluginAsync = async (app) => {
 
       // --- Differential (raw SQL) ---
       prisma.$queryRaw<RawDiffRow[]>(Prisma.sql`
-        SELECT id, name, abbreviation, logo_url, season_year,
-               wins, losses, ties, points_for, points_against,
-               (points_for - points_against) AS differential
-        FROM espn_teams
+        SELECT t.id, t.name, t.abbreviation, t.logo_url, t.season_year,
+               t.wins, t.losses, t.ties, t.points_for, t.points_against,
+               (t.points_for - t.points_against) AS differential,
+               u.first_name AS manager_first_name, u.last_name AS manager_last_name
+        FROM espn_teams t
+        LEFT JOIN users u ON t.user_id = u.id
         ORDER BY differential DESC
         LIMIT 25
       `),
       prisma.$queryRaw<RawDiffRow[]>(Prisma.sql`
-        SELECT id, name, abbreviation, logo_url, season_year,
-               wins, losses, ties, points_for, points_against,
-               (points_for - points_against) AS differential
-        FROM espn_teams
+        SELECT t.id, t.name, t.abbreviation, t.logo_url, t.season_year,
+               t.wins, t.losses, t.ties, t.points_for, t.points_against,
+               (t.points_for - t.points_against) AS differential,
+               u.first_name AS manager_first_name, u.last_name AS manager_last_name
+        FROM espn_teams t
+        LEFT JOIN users u ON t.user_id = u.id
         ORDER BY differential ASC
         LIMIT 25
       `),
@@ -89,18 +95,22 @@ export const hallOfFameRoutes: FastifyPluginAsync = async (app) => {
           SELECT m.season_year, m.matchup_period_id AS week,
                  m.home_score AS score,
                  ht.id AS team_id, ht.name AS team_name, ht.abbreviation AS team_abbr, ht.logo_url AS team_logo,
-                 at.name AS opp_name, at.abbreviation AS opp_abbr
+                 at.name AS opp_name, at.abbreviation AS opp_abbr,
+                 hu.first_name AS manager_first_name, hu.last_name AS manager_last_name
           FROM espn_matchups m
           JOIN espn_teams ht ON m.home_team_id = ht.id
           JOIN espn_teams at ON m.away_team_id = at.id
+          LEFT JOIN users hu ON ht.user_id = hu.id
           UNION ALL
           SELECT m.season_year, m.matchup_period_id AS week,
                  m.away_score AS score,
                  at.id AS team_id, at.name AS team_name, at.abbreviation AS team_abbr, at.logo_url AS team_logo,
-                 ht.name AS opp_name, ht.abbreviation AS opp_abbr
+                 ht.name AS opp_name, ht.abbreviation AS opp_abbr,
+                 au.first_name AS manager_first_name, au.last_name AS manager_last_name
           FROM espn_matchups m
           JOIN espn_teams ht ON m.home_team_id = ht.id
           JOIN espn_teams at ON m.away_team_id = at.id
+          LEFT JOIN users au ON at.user_id = au.id
         ) combined
         ORDER BY score DESC
         LIMIT 25
@@ -110,18 +120,22 @@ export const hallOfFameRoutes: FastifyPluginAsync = async (app) => {
           SELECT m.season_year, m.matchup_period_id AS week,
                  m.home_score AS score,
                  ht.id AS team_id, ht.name AS team_name, ht.abbreviation AS team_abbr, ht.logo_url AS team_logo,
-                 at.name AS opp_name, at.abbreviation AS opp_abbr
+                 at.name AS opp_name, at.abbreviation AS opp_abbr,
+                 hu.first_name AS manager_first_name, hu.last_name AS manager_last_name
           FROM espn_matchups m
           JOIN espn_teams ht ON m.home_team_id = ht.id
           JOIN espn_teams at ON m.away_team_id = at.id
+          LEFT JOIN users hu ON ht.user_id = hu.id
           UNION ALL
           SELECT m.season_year, m.matchup_period_id AS week,
                  m.away_score AS score,
                  at.id AS team_id, at.name AS team_name, at.abbreviation AS team_abbr, at.logo_url AS team_logo,
-                 ht.name AS opp_name, ht.abbreviation AS opp_abbr
+                 ht.name AS opp_name, ht.abbreviation AS opp_abbr,
+                 au.first_name AS manager_first_name, au.last_name AS manager_last_name
           FROM espn_matchups m
           JOIN espn_teams ht ON m.home_team_id = ht.id
           JOIN espn_teams at ON m.away_team_id = at.id
+          LEFT JOIN users au ON at.user_id = au.id
         ) combined
         WHERE score > 0
         ORDER BY score ASC
@@ -138,10 +152,14 @@ export const hallOfFameRoutes: FastifyPluginAsync = async (app) => {
                CASE WHEN m.home_score > m.away_score THEN ht.abbreviation ELSE at.abbreviation END AS winner_abbr,
                CASE WHEN m.home_score > m.away_score THEN ht.logo_url ELSE at.logo_url END AS winner_logo,
                CASE WHEN m.home_score > m.away_score THEN at.name ELSE ht.name END AS loser_name,
-               CASE WHEN m.home_score > m.away_score THEN at.abbreviation ELSE ht.abbreviation END AS loser_abbr
+               CASE WHEN m.home_score > m.away_score THEN at.abbreviation ELSE ht.abbreviation END AS loser_abbr,
+               CASE WHEN m.home_score > m.away_score THEN hu.first_name ELSE au.first_name END AS manager_first_name,
+               CASE WHEN m.home_score > m.away_score THEN hu.last_name ELSE au.last_name END AS manager_last_name
         FROM espn_matchups m
         JOIN espn_teams ht ON m.home_team_id = ht.id
         JOIN espn_teams at ON m.away_team_id = at.id
+        LEFT JOIN users hu ON ht.user_id = hu.id
+        LEFT JOIN users au ON at.user_id = au.id
         ORDER BY margin DESC
         LIMIT 25
       `),
@@ -156,10 +174,14 @@ export const hallOfFameRoutes: FastifyPluginAsync = async (app) => {
                CASE WHEN m.home_score > m.away_score THEN ht.abbreviation ELSE at.abbreviation END AS winner_abbr,
                CASE WHEN m.home_score > m.away_score THEN ht.logo_url ELSE at.logo_url END AS winner_logo,
                CASE WHEN m.home_score > m.away_score THEN at.name ELSE ht.name END AS loser_name,
-               CASE WHEN m.home_score > m.away_score THEN at.abbreviation ELSE ht.abbreviation END AS loser_abbr
+               CASE WHEN m.home_score > m.away_score THEN at.abbreviation ELSE ht.abbreviation END AS loser_abbr,
+               CASE WHEN m.home_score > m.away_score THEN hu.first_name ELSE au.first_name END AS manager_first_name,
+               CASE WHEN m.home_score > m.away_score THEN hu.last_name ELSE au.last_name END AS manager_last_name
         FROM espn_matchups m
         JOIN espn_teams ht ON m.home_team_id = ht.id
         JOIN espn_teams at ON m.away_team_id = at.id
+        LEFT JOIN users hu ON ht.user_id = hu.id
+        LEFT JOIN users au ON at.user_id = au.id
         WHERE ABS(m.home_score - m.away_score) > 0
         ORDER BY margin ASC
         LIMIT 25
@@ -198,6 +220,7 @@ const teamSelect = {
   ties: true,
   pointsFor: true,
   pointsAgainst: true,
+  user: { select: { firstName: true, lastName: true } },
 } as const;
 
 type TeamRow = {
@@ -211,6 +234,7 @@ type TeamRow = {
   ties: number;
   pointsFor: number;
   pointsAgainst: number;
+  user: { firstName: string; lastName: string } | null;
 };
 
 interface RawDiffRow {
@@ -225,6 +249,8 @@ interface RawDiffRow {
   points_for: number;
   points_against: number;
   differential: number;
+  manager_first_name: string | null;
+  manager_last_name: string | null;
 }
 
 interface RawMatchupRow {
@@ -237,6 +263,8 @@ interface RawMatchupRow {
   team_logo: string | null;
   opp_name: string;
   opp_abbr: string;
+  manager_first_name: string | null;
+  manager_last_name: string | null;
 }
 
 interface RawMarginRow {
@@ -251,6 +279,12 @@ interface RawMarginRow {
   winner_logo: string | null;
   loser_name: string;
   loser_abbr: string;
+  manager_first_name: string | null;
+  manager_last_name: string | null;
+}
+
+function toManagerName(firstName: string | null, lastName: string | null): string | null {
+  return firstName && lastName ? `${firstName} ${lastName}` : null;
 }
 
 function toSeasonEntries(
@@ -268,6 +302,7 @@ function toSeasonEntries(
     wins: t.wins,
     losses: t.losses,
     ties: t.ties,
+    managerName: t.user ? `${t.user.firstName} ${t.user.lastName}` : null,
   }));
 }
 
@@ -283,6 +318,7 @@ function toDiffEntries(rows: RawDiffRow[]): SeasonEntry[] {
     wins: r.wins,
     losses: r.losses,
     ties: r.ties,
+    managerName: toManagerName(r.manager_first_name, r.manager_last_name),
   }));
 }
 
@@ -298,6 +334,7 @@ function toMatchupEntries(rows: RawMatchupRow[]): MatchupEntry[] {
     seasonYear: r.season_year,
     week: r.week,
     value: Number(r.score),
+    managerName: toManagerName(r.manager_first_name, r.manager_last_name),
   }));
 }
 
@@ -317,6 +354,7 @@ function toMarginEntries(rows: RawMarginRow[]): MatchupEntry[] {
       week: r.week,
       value: Number(r.margin),
       score: `${winScore.toFixed(2)} - ${loseScore.toFixed(2)}`,
+      managerName: toManagerName(r.manager_first_name, r.manager_last_name),
     };
   });
 }

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import { Trophy, Skull } from "@phosphor-icons/react";
 
 interface Team {
   id: string;
@@ -123,21 +124,27 @@ export function SeasonDetailPage() {
                 >
                   <td className="col-rank muted">{team.finalStandingsPosition ?? team.regularSeasonRank ?? i + 1}</td>
                   <td>
-                    <Link
-                      to={`/seasons/${season.year}/teams/${team.id}`}
-                      className="team-link"
-                    >
-                      {team.logoUrl && (
-                        <img src={team.logoUrl} alt="" className="team-logo-sm" />
+                    <span className="team-name-row">
+                      <Link
+                        to={`/seasons/${season.year}/teams/${team.id}`}
+                        className="team-link"
+                      >
+                        {team.logoUrl && (
+                          <img src={team.logoUrl} alt="" className="team-logo-sm" />
+                        )}
+                        <span>{team.name}</span>
+                      </Link>
+                      {team.finalStandingsPosition === 1 && (
+                        <span className="champion-badge">
+                          <Trophy weight="duotone" size={18} />
+                        </span>
                       )}
-                      <span>{team.name}</span>
-                    </Link>
-                    {team.finalStandingsPosition === 1 && (
-                      <span className="champion-badge">🏆</span>
-                    )}
-                    {team.id === lastPlaceTeamId && (
-                      <span className="last-place-badge">💎</span>
-                    )}
+                      {team.id === lastPlaceTeamId && (
+                        <span className="last-place-badge">
+                          <Skull weight="bold" size={16} />
+                        </span>
+                      )}
+                    </span>
                     {team.user && (
                       <div className="hof-manager">
                         <Link to={`/members/${team.user.id}`} className="team-link-plain">

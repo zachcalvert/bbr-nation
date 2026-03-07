@@ -48,7 +48,7 @@ This runs two processes concurrently via `concurrently`:
 - **Server**: Fastify on `:3001` (hot-reloaded by `tsx watch`)
 - **Client**: Vite on `:5173` (proxies `/api` and `/ws` to `:3001`)
 
-The preview tool uses the `dev` configuration in `.claude/launch.json`.
+**Do not use the preview tool or spin up a dev server.** The app requires authentication and the user prefers to verify UI changes in their local browser.
 
 ## Database Migrations
 
@@ -109,6 +109,7 @@ if (!(await checkAdmin(request, reply))) return;
 - Data fetching is done inline in `useEffect` with `fetch()` — no external data-fetching library
 - Styles use CSS classes defined globally (e.g. `page`, `section`, `card`, `data-table`, `team-link`, `hof-manager`, `muted`, `champion-row`)
 - New routes must be added to the `<Routes>` tree in `src/App.tsx`
+- Icons use `@phosphor-icons/react` — prefer `weight="duotone"` for hero/positive icons, `weight="bold"` for negative/neutral icons
 
 ## Key CSS Classes (for consistent UI)
 
@@ -128,3 +129,6 @@ if (!(await checkAdmin(request, reply))) return;
 | `loading-screen` | Full-page loading state |
 | `empty-state` | Centered empty/error state |
 | `breadcrumb` / `breadcrumb-sep` | Breadcrumb navigation |
+| `team-name-row` | `inline-flex` wrapper for a `team-link` + badge icon in a table cell — ensures proper vertical alignment |
+| `champion-badge` | Gold icon badge next to the champion team name |
+| `last-place-badge` | Muted icon badge next to the last-place team name |

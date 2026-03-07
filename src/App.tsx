@@ -11,6 +11,7 @@ import { SeasonDetailPage } from "./pages/SeasonDetailPage";
 import { TeamDetailPage } from "./pages/TeamDetailPage";
 import { HallOfFamePage } from "./pages/HallOfFamePage";
 import { AdminPage } from "./pages/AdminPage";
+import { AdminUserDetailPage } from "./pages/AdminUserDetailPage";
 
 function App() {
   return (
@@ -38,6 +39,7 @@ function App() {
               {/* Admin-only */}
               <Route element={<RequireAdmin />}>
                 <Route path="/admin" element={<AdminPage />} />
+                <Route path="/admin/users/:userId" element={<AdminUserDetailPage />} />
               </Route>
             </Route>
           </Route>

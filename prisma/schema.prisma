@@ -21,8 +21,9 @@ model User {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  chatMessages ChatMessage[]
-  espnTeams    EspnTeam[]
+  chatMessages  ChatMessage[]
+  chatReactions ChatReaction[]
+  espnTeams     EspnTeam[]
 
   @@map("users")
 }
@@ -33,10 +34,25 @@ model ChatMessage {
   userId    String   @map("user_id")
   createdAt DateTime @default(now()) @map("created_at")
 
-  user User @relation(fields: [userId], references: [id])
+  user      User           @relation(fields: [userId], references: [id])
+  reactions ChatReaction[]
 
   @@index([createdAt])
   @@map("chat_messages")
+}
+
+model ChatReaction {
+  id        String   @id @default(cuid())
+  messageId String   @map("message_id")
+  userId    String   @map("user_id")
+  emoji     String
+  createdAt DateTime @default(now()) @map("created_at")
+
+  message ChatMessage @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  user    User        @relation(fields: [userId], references: [id])
+
+  @@unique([messageId, userId, emoji])
+  @@map("chat_reactions")
 }
 
 // NOTE: The "sessions" table is managed entirely by connect-pg-simple, not Prisma.

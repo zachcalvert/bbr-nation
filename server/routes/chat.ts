@@ -1,5 +1,6 @@
 import { FastifyPluginAsync } from "fastify";
 import { prisma } from "../index.js";
+import { summarizeReactions } from "../ws/channels.js";
 
 export const chatRoutes: FastifyPluginAsync = async (app) => {
   app.get("/messages", async (request, reply) => {
@@ -32,10 +33,18 @@ export const chatRoutes: FastifyPluginAsync = async (app) => {
             lastName: true,
           },
         },
+        reactions: {
+          select: { emoji: true, userId: true },
+        },
       },
     });
 
-    // Return in chronological order (oldest first)
-    return { messages: messages.reverse() };
+    // Return in chronological order (oldest first) with summarized reactions
+    return {
+      messages: messages.reverse().map(({ reactions, ...msg }) => ({
+        ...msg,
+        reactions: summarizeReactions(reactions),
+      })),
+    };
   });
 };

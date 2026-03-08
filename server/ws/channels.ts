@@ -8,10 +8,34 @@ interface Client {
   channels: Set<string>;
 }
 
+export type ReactionSummary = {
+  emoji: string;
+  count: number;
+  userIds: string[];
+};
+
+export function summarizeReactions(
+  reactions: Array<{ emoji: string; userId: string }>
+): ReactionSummary[] {
+  const map = new Map<string, string[]>();
+  for (const r of reactions) {
+    if (!map.has(r.emoji)) map.set(r.emoji, []);
+    map.get(r.emoji)!.push(r.userId);
+  }
+  return Array.from(map.entries()).map(([emoji, userIds]) => ({
+    emoji,
+    count: userIds.length,
+    userIds,
+  }));
+}
+
+const ALLOWED_EMOJIS = ["😂", "💯", "🧠", "👀", "😭", "❤️"];
+
 type IncomingMessage =
   | { type: "join"; channel: string }
   | { type: "leave"; channel: string }
-  | { type: "message"; channel: string; data: unknown };
+  | { type: "message"; channel: string; data: unknown }
+  | { type: "react"; channel: string; messageId: string; emoji: string };
 
 type OutgoingMessage =
   | { type: "joined"; channel: string; members: number }
@@ -23,6 +47,12 @@ type OutgoingMessage =
       content: string;
       createdAt: string;
       user: { id: string; firstName: string; lastName: string };
+    }
+  | {
+      type: "reaction";
+      channel: string;
+      messageId: string;
+      reactions: ReactionSummary[];
     }
   | { type: "member_joined"; channel: string; userId: string | null }
   | { type: "member_left"; channel: string; userId: string | null }
@@ -184,6 +214,56 @@ export const wsRoutes: FastifyPluginAsync = async (app) => {
               content: saved.content,
               createdAt: saved.createdAt.toISOString(),
               user: saved.user,
+            });
+          }
+          break;
+
+        case "react":
+          if (
+            typeof msg.channel === "string" &&
+            client.channels.has(msg.channel) &&
+            client.userId &&
+            typeof msg.messageId === "string" &&
+            typeof msg.emoji === "string" &&
+            ALLOWED_EMOJIS.includes(msg.emoji)
+          ) {
+            const chatMessage = await prisma.chatMessage.findUnique({
+              where: { id: msg.messageId },
+            });
+            if (!chatMessage) break;
+
+            const existing = await prisma.chatReaction.findUnique({
+              where: {
+                messageId_userId_emoji: {
+                  messageId: msg.messageId,
+                  userId: client.userId,
+                  emoji: msg.emoji,
+                },
+              },
+            });
+
+            if (existing) {
+              await prisma.chatReaction.delete({ where: { id: existing.id } });
+            } else {
+              await prisma.chatReaction.create({
+                data: {
+                  messageId: msg.messageId,
+                  userId: client.userId,
+                  emoji: msg.emoji,
+                },
+              });
+            }
+
+            const rawReactions = await prisma.chatReaction.findMany({
+              where: { messageId: msg.messageId },
+              select: { emoji: true, userId: true },
+            });
+
+            channels.broadcastAll(msg.channel, {
+              type: "reaction",
+              channel: msg.channel,
+              messageId: msg.messageId,
+              reactions: summarizeReactions(rawReactions),
             });
           }
           break;

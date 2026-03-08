@@ -582,7 +582,7 @@ export function HallOfFamePage() {
         {/* ── Championship Circle ── */}
         {activeTab === "championshipCircle" && (
           <>
-            <h2>Championship Circle</h2>
+            <h2>Winner's Circle</h2>
             <div className="card table-card">
               <table className="data-table">
                 <thead>
@@ -640,7 +640,7 @@ export function HallOfFamePage() {
         {/* ── Last Place Larrys ── */}
         {activeTab === "losersLane" && (
           <>
-            <h2>Last Place Larrys</h2>
+            <h2>Circle of Paul</h2>
             <div className="card table-card">
               <table className="data-table">
                 <thead>

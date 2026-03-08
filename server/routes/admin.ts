@@ -230,6 +230,34 @@ export const adminRoutes: FastifyPluginAsync = async (app) => {
 
   // ─── User management ──────────────────────────────────────────────────
 
+  app.delete<{ Params: { id: string } }>("/users/:id", async (request, reply) => {
+    if (!(await checkAdmin(request, reply))) return;
+
+    const { id } = request.params;
+
+    const target = await prisma.user.findUnique({
+      where: { id },
+      select: { isAdmin: true },
+    });
+
+    if (!target) {
+      return reply.status(404).send({ error: "User not found" });
+    }
+
+    if (target.isAdmin) {
+      return reply.status(403).send({ error: "Admin users cannot be deleted" });
+    }
+
+    await prisma.$transaction([
+      prisma.espnTeam.updateMany({ where: { userId: id }, data: { userId: null } }),
+      prisma.chatReaction.deleteMany({ where: { userId: id } }),
+      prisma.chatMessage.deleteMany({ where: { userId: id } }),
+      prisma.user.delete({ where: { id } }),
+    ]);
+
+    return { success: true };
+  });
+
   app.put<{
     Params: { id: string };
     Body: {

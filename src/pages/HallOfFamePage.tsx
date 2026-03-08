@@ -60,6 +60,24 @@ interface TeamHistoryEntry {
   lastName: string | null;
 }
 
+interface IndividualRecord {
+  rank: number;
+  playerName: string;
+  nflTeam: string;
+  points: number;
+  week: number;
+  teamId: string;
+  teamName: string;
+  teamAbbreviation: string;
+  teamLogoUrl: string | null;
+  seasonYear: number;
+  isChampion: boolean;
+  isLastPlace: boolean;
+  managerName: string | null;
+  managerId: string | null;
+  opponentName: string | null;
+}
+
 interface HallOfFameData {
   seasonRecords: {
     mostPointsFor: SeasonEntry[];
@@ -78,6 +96,14 @@ interface HallOfFameData {
   allTimeRecords: AllTimeRecord[];
   champions: TeamHistoryEntry[];
   lastPlaceTeams: TeamHistoryEntry[];
+  individualRecords: {
+    QB: IndividualRecord[];
+    RB: IndividualRecord[];
+    WR: IndividualRecord[];
+    TE: IndividualRecord[];
+    DST: IndividualRecord[];
+    K: IndividualRecord[];
+  };
 }
 
 type CategoryKey =
@@ -93,14 +119,21 @@ type CategoryKey =
   | "highestGameScore"
   | "lowestGameScore"
   | "biggestBlowout"
-  | "closestGame";
+  | "closestGame"
+  | "indQB"
+  | "indRB"
+  | "indWR"
+  | "indTE"
+  | "indDST"
+  | "indK";
 
 interface CategoryDef {
   key: CategoryKey;
   label: string;
-  group: "alltime" | "season" | "matchup";
+  group: "alltime" | "season" | "matchup" | "individual";
   valueLabel?: string;
   formatValue?: (entry: SeasonEntry | MatchupEntry) => string;
+  position?: keyof HallOfFameData["individualRecords"];
 }
 
 const categories: CategoryDef[] = [
@@ -189,6 +222,12 @@ const categories: CategoryDef[] = [
     valueLabel: "Margin",
     formatValue: (e) => e.value.toFixed(2),
   },
+  { key: "indQB", label: "QB", group: "individual", position: "QB" },
+  { key: "indRB", label: "RB", group: "individual", position: "RB" },
+  { key: "indWR", label: "WR", group: "individual", position: "WR" },
+  { key: "indTE", label: "TE", group: "individual", position: "TE" },
+  { key: "indDST", label: "D/ST", group: "individual", position: "DST" },
+  { key: "indK", label: "K", group: "individual", position: "K" },
 ];
 
 function getEntries(data: HallOfFameData, key: CategoryKey): (SeasonEntry | MatchupEntry)[] {
@@ -239,9 +278,16 @@ export function HallOfFamePage() {
 
   const activeCat = categories.find((c) => c.key === activeTab)!;
   const isAllTime = activeCat.group === "alltime";
-  const entries = isAllTime ? [] : getEntries(data, activeTab);
+  const isIndividual = activeCat.group === "individual";
+  const entries = isAllTime || isIndividual ? [] : getEntries(data, activeTab);
   const visible = expanded ? entries : entries.slice(0, 10);
-  const isMatchup = !isAllTime && activeCat.group === "matchup";
+  const isMatchup = !isAllTime && !isIndividual && activeCat.group === "matchup";
+
+  const individualEntries: IndividualRecord[] =
+    isIndividual && activeCat.position
+      ? data.individualRecords[activeCat.position]
+      : [];
+  const visibleIndividual = expanded ? individualEntries : individualEntries.slice(0, 10);
 
   function switchTab(key: CategoryKey) {
     setActiveTab(key);
@@ -293,6 +339,22 @@ export function HallOfFamePage() {
           <div className="hof-tab-row">
             {categories
               .filter((c) => c.group === "matchup")
+              .map((c) => (
+                <button
+                  key={c.key}
+                  className={`week-tab${activeTab === c.key ? " active" : ""}`}
+                  onClick={() => switchTab(c.key)}
+                >
+                  {c.label}
+                </button>
+              ))}
+          </div>
+        </div>
+        <div className="hof-tab-group">
+          <span className="hof-tab-group-label">Individual Records</span>
+          <div className="hof-tab-row">
+            {categories
+              .filter((c) => c.group === "individual")
               .map((c) => (
                 <button
                   key={c.key}
@@ -493,7 +555,7 @@ export function HallOfFamePage() {
         )}
 
         {/* ── Season / Matchup leaderboard ── */}
-        {!isAllTime && (
+        {!isAllTime && !isIndividual && (
           <>
             <h2>{activeCat.label}</h2>
             <div className="card table-card">
@@ -572,6 +634,87 @@ export function HallOfFamePage() {
             {entries.length > 10 && (
               <button className="hof-expand-btn" onClick={() => setExpanded(!expanded)}>
                 {expanded ? "Show Top 10" : `Show all ${entries.length}`}
+              </button>
+            )}
+          </>
+        )}
+
+        {/* ── Individual Records ── */}
+        {isIndividual && (
+          <>
+            <h2>Top {activeCat.label} Performances</h2>
+            <div className="card table-card">
+              <table className="data-table">
+                <thead>
+                  <tr>
+                    <th className="col-rank">#</th>
+                    <th>Player</th>
+                    <th className="col-right">Points</th>
+                    <th>Fantasy Team</th>
+                    <th>Opponent</th>
+                    <th>Season</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {visibleIndividual.map((entry) => (
+                    <tr key={`${entry.rank}-${entry.teamId}-${entry.seasonYear}-${entry.week}`}>
+                      <td data-label="#" className="col-rank muted">{entry.rank}</td>
+                      <td data-label="Player">
+                        <span>{entry.playerName}</span>
+                        <div className="hof-manager">{entry.nflTeam}</div>
+                      </td>
+                      <td data-label="Points" className="col-right">{entry.points.toFixed(2)}</td>
+                      <td data-label="Fantasy Team">
+                        <span className="team-name-row">
+                          <Link
+                            to={`/seasons/${entry.seasonYear}/teams/${entry.teamId}`}
+                            className="team-link"
+                          >
+                            {entry.teamLogoUrl && (
+                              <img src={entry.teamLogoUrl} alt="" className="team-logo-sm" />
+                            )}
+                            <span>{entry.teamName}</span>
+                          </Link>
+                          {entry.isChampion && (
+                            <span className="champion-badge">
+                              <Trophy weight="duotone" size={18} />
+                            </span>
+                          )}
+                          {entry.isLastPlace && (
+                            <span className="last-place-badge">
+                              <AnchorSimple weight="bold" size={16} />
+                            </span>
+                          )}
+                        </span>
+                        {entry.managerName && (
+                          <div className="hof-manager">
+                            {entry.managerId ? (
+                              <Link to={`/members/${entry.managerId}`} className="team-link-plain">
+                                {entry.managerName}
+                              </Link>
+                            ) : (
+                              entry.managerName
+                            )}
+                          </div>
+                        )}
+                      </td>
+                      <td data-label="Opponent" className="muted">
+                        {entry.opponentName ?? "—"}
+                      </td>
+                      <td data-label="Season">
+                        <Link to={`/seasons/${entry.seasonYear}`} className="team-link-plain">
+                          {entry.seasonYear}
+                        </Link>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {individualEntries.length > 10 && (
+              <button className="hof-expand-btn" onClick={() => setExpanded(!expanded)}>
+                {expanded ? "Show Top 10" : `Show all ${individualEntries.length}`}
               </button>
             )}
           </>

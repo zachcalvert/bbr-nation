@@ -463,6 +463,14 @@ input:focus {
   text-align: right;
 }
 
+.data-table th.col-right {
+  text-align: right;
+}
+
+.data-table th.col-rank {
+  text-align: center;
+}
+
 /* ─── Team links ─────────────────────────────────────────────────────────── */
 .team-link {
   display: inline-flex;

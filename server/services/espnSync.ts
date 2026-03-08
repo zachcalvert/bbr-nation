@@ -50,6 +50,47 @@ function computeRegularSeasonRanks(teams: ApiTeam[]): Map<number, number> {
   return rankMap;
 }
 
+// ── Position resolution ──────────────────────────────────────────────────────
+// The espn-fantasy-football-api library maps both defaultPositionId and
+// eligibleSlots through slotCategoryIdToPositionMap, but ESPN uses different
+// numbering for player position IDs vs slot category IDs. This causes
+// defaultPosition to return wrong values (e.g. WR→"RB/WR", TE→"WR").
+
+const STANDARD_POSITIONS = new Set(["QB", "RB", "WR", "TE", "K", "D/ST"]);
+
+// Corrects defaultPosition output (positionId mapped through slot IDs)
+const DEFAULT_POSITION_FIX: Record<string, string> = {
+  TQB: "QB", // posId 1 → slot 1 → "TQB"
+  "RB/WR": "WR", // posId 3 → slot 3 → "RB/WR"
+  WR: "TE", // posId 4 → slot 4 → "WR"
+  "WR/TE": "K", // posId 5 → slot 5 → "WR/TE"
+};
+
+// Maps flex slot names to most likely position (for eligiblePositions fallback)
+const SLOT_TO_POSITION: Record<string, string> = {
+  "RB/WR": "WR",
+  "WR/TE": "TE",
+  TQB: "QB",
+};
+
+function resolvePosition(player: EspnBoxscorePlayer): string {
+  const lineupSlot = player.rosteredPosition ?? "UNKNOWN";
+
+  // If the lineup slot is a standard position, trust it directly
+  if (STANDARD_POSITIONS.has(lineupSlot)) return lineupSlot;
+
+  // Use defaultPosition with correction for the ID mismatch
+  if (player.defaultPosition) {
+    return DEFAULT_POSITION_FIX[player.defaultPosition] ?? player.defaultPosition;
+  }
+
+  // Last resort: eligiblePositions[0] with flex-slot mapping
+  const slot = player.eligiblePositions?.[0];
+  if (slot) return SLOT_TO_POSITION[slot] ?? slot;
+
+  return "UNKNOWN";
+}
+
 // ── Roster week + entry upsert ────────────────────────────────────────────────
 
 async function syncRosterWeek(
@@ -70,8 +111,7 @@ async function syncRosterWeek(
 
     const fullName =
       p.fullName ?? [p.firstName, p.lastName].filter(Boolean).join(" ") ?? "Unknown";
-    const position =
-      p.defaultPosition ?? p.eligiblePositions?.[0] ?? "UNKNOWN";
+    const position = resolvePosition(p);
     const lineupSlot = p.rosteredPosition ?? "UNKNOWN";
     const nflTeam = p.proTeam ?? "Free Agent";
     const nflTeamAbbreviation = p.proTeamAbbreviation ?? "FA";

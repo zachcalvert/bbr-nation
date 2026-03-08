@@ -25,20 +25,23 @@ function App() {
           {/* Public */}
           <Route path="/login" element={<LoginPage />} />
 
-          {/* Auth-gated */}
-          <Route element={<RequireAuth />}>
-            <Route
-              element={
-                <ChatProvider>
-                  <Layout />
-                </ChatProvider>
-              }
-            >
-              <Route index element={<HomePage />} />
-              <Route path="/seasons" element={<SeasonsPage />} />
-              <Route path="/seasons/:year" element={<SeasonDetailPage />} />
-              <Route path="/seasons/:year/teams/:teamId" element={<TeamDetailPage />} />
-              <Route path="/hall-of-fame" element={<HallOfFamePage />} />
+          {/* Shared layout with nav (public + auth pages) */}
+          <Route
+            element={
+              <ChatProvider>
+                <Layout />
+              </ChatProvider>
+            }
+          >
+            {/* Public pages */}
+            <Route index element={<HomePage />} />
+            <Route path="/seasons" element={<SeasonsPage />} />
+            <Route path="/seasons/:year" element={<SeasonDetailPage />} />
+            <Route path="/seasons/:year/teams/:teamId" element={<TeamDetailPage />} />
+            <Route path="/hall-of-fame" element={<HallOfFamePage />} />
+
+            {/* Auth-gated pages */}
+            <Route element={<RequireAuth />}>
               <Route path="/members/:userId" element={<UserProfilePage />} />
               <Route path="/members/:userId/edit" element={<EditProfilePage />} />
 

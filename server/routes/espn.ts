@@ -85,6 +85,7 @@ export const espnRoutes: FastifyPluginAsync = async (app) => {
             playoffSeed: true,
             finalStandingsPosition: true,
             regularSeasonRank: true,
+            user: { select: { id: true, firstName: true, lastName: true } },
           },
         },
       },

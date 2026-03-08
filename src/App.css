@@ -406,6 +406,18 @@ input:focus {
   background: rgba(96, 165, 250, 0.07) !important;
 }
 
+.my-team-row {
+  background: rgba(34, 197, 94, 0.04);
+}
+.my-team-row:hover {
+  background: rgba(34, 197, 94, 0.07) !important;
+}
+
+.my-team-badge {
+  display: inline-flex;
+  color: var(--green);
+}
+
 .col-rank {
   width: 2.5rem;
   text-align: center;
@@ -1247,6 +1259,14 @@ input:focus {
 
   .last-place-row:hover {
     background: rgba(96, 165, 250, 0.1) !important;
+  }
+
+  .my-team-row {
+    background: rgba(34, 197, 94, 0.06);
+  }
+
+  .my-team-row:hover {
+    background: rgba(34, 197, 94, 0.1) !important;
   }
 
   .data-table td {

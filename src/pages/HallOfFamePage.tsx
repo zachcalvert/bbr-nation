@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Trophy, AnchorSimple } from "@phosphor-icons/react";
+import { Trophy, AnchorSimple, UserCircle } from "@phosphor-icons/react";
+import { useAuth } from "../context/AuthContext";
 
 interface SeasonEntry {
   rank: number;
@@ -210,6 +211,7 @@ function winPct(r: AllTimeRecord): number {
 }
 
 export function HallOfFamePage() {
+  const { user } = useAuth();
   const [data, setData] = useState<HallOfFameData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -352,12 +354,19 @@ export function HallOfFamePage() {
                         : winPct(b) - winPct(a) || b.wins - a.wins
                     )
                     .map((r, i) => (
-                      <tr key={r.userId}>
+                      <tr key={r.userId} className={user?.id === r.userId ? "my-team-row" : ""}>
                         <td data-label="#" className="col-rank muted">{i + 1}</td>
                         <td data-label="Manager">
+                          <span className="team-name-row">
                           <Link to={`/members/${r.userId}`} className="team-link-plain">
                             {r.firstName} {r.lastName}
                           </Link>
+                          {user?.id === r.userId && (
+                            <span className="my-team-badge">
+                              <UserCircle weight="duotone" size={18} />
+                            </span>
+                          )}
+                          </span>
                         </td>
                         <td data-label="Seasons" className="col-right muted">{r.seasonsPlayed}</td>
                         <td data-label="W–L–T" className="col-right">
@@ -418,6 +427,11 @@ export function HallOfFamePage() {
                           <span className="champion-badge">
                             <Trophy weight="duotone" size={18} />
                           </span>
+                          {user?.id === c.userId && (
+                            <span className="my-team-badge">
+                              <UserCircle weight="duotone" size={18} />
+                            </span>
+                          )}
                         </span>
                         {c.firstName && c.lastName && (
                           <div className="hof-manager">
@@ -471,6 +485,11 @@ export function HallOfFamePage() {
                           <span className="last-place-badge">
                             <AnchorSimple weight="bold" size={16} />
                           </span>
+                          {user?.id === c.userId && (
+                            <span className="my-team-badge">
+                              <UserCircle weight="duotone" size={18} />
+                            </span>
+                          )}
                         </span>
                         {c.firstName && c.lastName && (
                           <div className="hof-manager">
@@ -513,7 +532,7 @@ export function HallOfFamePage() {
                 </thead>
                 <tbody>
                   {visible.map((entry) => (
-                    <tr key={`${entry.teamId}-${entry.seasonYear}-${entry.rank}`}>
+                    <tr key={`${entry.teamId}-${entry.seasonYear}-${entry.rank}`} className={user?.id === entry.managerId ? "my-team-row" : ""}>
                       <td data-label="#" className="col-rank muted">{entry.rank}</td>
                       <td data-label="Team">
                         <span className="team-name-row">
@@ -534,6 +553,11 @@ export function HallOfFamePage() {
                           {entry.isLastPlace && (
                             <span className="last-place-badge">
                               <AnchorSimple weight="bold" size={16} />
+                            </span>
+                          )}
+                          {user?.id === entry.managerId && (
+                            <span className="my-team-badge">
+                              <UserCircle weight="duotone" size={18} />
                             </span>
                           )}
                         </span>

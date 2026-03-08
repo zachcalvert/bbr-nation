@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Trophy, AnchorSimple } from "@phosphor-icons/react";
+import { Trophy, AnchorSimple, UserCircle } from "@phosphor-icons/react";
 import { Carousel } from "../components/Carousel";
+import { useAuth } from "../context/AuthContext";
 
 interface Team {
   id: string;
@@ -17,6 +18,7 @@ interface Team {
   playoffSeed: number | null;
   finalStandingsPosition: number | null;
   regularSeasonRank: number | null;
+  user: { id: string; firstName: string; lastName: string } | null;
 }
 
 interface Matchup {
@@ -41,6 +43,7 @@ interface Season {
 }
 
 export function HomePage() {
+  const { user } = useAuth();
   const [seasons, setSeasons] = useState<Season[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -138,7 +141,7 @@ export function HomePage() {
             </thead>
             <tbody>
               {current.teams.map((team, i) => (
-                <tr key={team.id} className={team.finalStandingsPosition === 1 ? "champion-row" : team.id === lastPlaceTeamId ? "last-place-row" : ""}>
+                <tr key={team.id} className={team.finalStandingsPosition === 1 ? "champion-row" : team.id === lastPlaceTeamId ? "last-place-row" : user?.id === team.user?.id ? "my-team-row" : ""}>
                   <td data-label="#" className="col-rank muted">{team.finalStandingsPosition ?? team.regularSeasonRank ?? i + 1}</td>
                   <td data-label="Team">
                     <span className="team-name-row">
@@ -156,6 +159,11 @@ export function HomePage() {
                       {team.id === lastPlaceTeamId && (
                         <span className="last-place-badge">
                           <AnchorSimple weight="bold" size={16} />
+                        </span>
+                      )}
+                      {user?.id === team.user?.id && (
+                        <span className="my-team-badge">
+                          <UserCircle weight="duotone" size={18} />
                         </span>
                       )}
                     </span>

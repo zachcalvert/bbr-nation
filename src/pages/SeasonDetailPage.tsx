@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { Trophy, AnchorSimple } from "@phosphor-icons/react";
+import { Trophy, AnchorSimple, UserCircle } from "@phosphor-icons/react";
+import { useAuth } from "../context/AuthContext";
 
 interface Team {
   id: string;
@@ -42,6 +43,7 @@ interface Season {
 
 export function SeasonDetailPage() {
   const { year } = useParams<{ year: string }>();
+  const { user } = useAuth();
   const [season, setSeason] = useState<Season | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -120,7 +122,7 @@ export function SeasonDetailPage() {
               {season.teams.map((team, i) => (
                 <tr
                   key={team.id}
-                  className={team.finalStandingsPosition === 1 ? "champion-row" : team.id === lastPlaceTeamId ? "last-place-row" : ""}
+                  className={team.finalStandingsPosition === 1 ? "champion-row" : team.id === lastPlaceTeamId ? "last-place-row" : user?.id === team.user?.id ? "my-team-row" : ""}
                 >
                   <td data-label="#" className="col-rank muted">{team.finalStandingsPosition ?? team.regularSeasonRank ?? i + 1}</td>
                   <td data-label="Team">
@@ -142,6 +144,11 @@ export function SeasonDetailPage() {
                       {team.id === lastPlaceTeamId && (
                         <span className="last-place-badge">
                           <AnchorSimple weight="bold" size={16} />
+                        </span>
+                      )}
+                      {user?.id === team.user?.id && (
+                        <span className="my-team-badge">
+                          <UserCircle weight="duotone" size={18} />
                         </span>
                       )}
                     </span>

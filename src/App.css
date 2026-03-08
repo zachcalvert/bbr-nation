@@ -40,6 +40,22 @@
   background: var(--bg);
 }
 
+/* ─── Light theme ─────────────────────────────────────────────────────────── */
+[data-theme="light"] {
+  --bg: #ffffff;
+  --bg-card: #f1f5f9;
+  --bg-hover: #e2e8f0;
+  --border: #e2e8f0;
+  --border-subtle: #f1f5f9;
+
+  --text: #0f172a;
+  --text-muted: #94a3b8;
+  --text-dim: #64748b;
+
+  background: var(--bg);
+  color: var(--text);
+}
+
 body {
   min-height: 100vh;
   background: var(--bg);
@@ -86,6 +102,10 @@ button {
   padding: 0 var(--page-pad);
   gap: 2rem;
   z-index: 100;
+}
+
+[data-theme="light"] .nav {
+  background: rgba(255, 255, 255, 0.92);
 }
 
 .nav-brand {
@@ -159,6 +179,21 @@ button:disabled {
   border-radius: var(--radius-sm);
 }
 .btn-ghost:hover {
+  background: var(--bg-hover);
+  color: var(--text);
+}
+
+.nav-theme-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  color: var(--text-dim);
+  padding: 0.35rem;
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
+}
+.nav-theme-btn:hover {
   background: var(--bg-hover);
   color: var(--text);
 }
@@ -1283,6 +1318,14 @@ input:focus {
     font-size: 0.875rem;
   }
 
+  .mobile-nav-theme-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: var(--text-dim);
+    font-size: 0.875rem;
+  }
+
   /* Tables → card reflow */
   .card.table-card {
     background: transparent;
@@ -1427,6 +1470,7 @@ input:focus {
   }
 
   .nav-hamburger,
+  .nav-theme-btn,
   .week-tab,
   .btn-ghost,
   .btn-sync,

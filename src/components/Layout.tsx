@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
-import { List, X } from "@phosphor-icons/react";
+import { List, Moon, Sun, X } from "@phosphor-icons/react";
 import { useAuth } from "../context/AuthContext";
+import { useTheme } from "../context/ThemeContext";
 import { ChatToggle } from "./chat/ChatToggle";
 import { ChatPanel } from "./chat/ChatPanel";
 
 export function Layout() {
   const { user, logout } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -67,6 +69,17 @@ export function Layout() {
               </button>
             </>
           )}
+          <button
+            className="nav-theme-btn"
+            onClick={toggleTheme}
+            aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+          >
+            {theme === "dark" ? (
+              <Sun size={18} weight="duotone" />
+            ) : (
+              <Moon size={18} weight="duotone" />
+            )}
+          </button>
         </div>
 
         <button
@@ -116,6 +129,20 @@ export function Layout() {
               <span className="mobile-nav-username">
                 {user.firstName} {user.lastName}
               </span>
+              <div className="mobile-nav-theme-row">
+                <span>{theme === "dark" ? "Dark mode" : "Light mode"}</span>
+                <button
+                  className="nav-theme-btn"
+                  onClick={toggleTheme}
+                  aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+                >
+                  {theme === "dark" ? (
+                    <Sun size={20} weight="duotone" />
+                  ) : (
+                    <Moon size={20} weight="duotone" />
+                  )}
+                </button>
+              </div>
               <button className="btn-ghost" onClick={handleLogout}>
                 Sign out
               </button>

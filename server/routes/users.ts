@@ -1,4 +1,5 @@
 import { FastifyPluginAsync } from "fastify";
+import bcrypt from "bcrypt";
 import { prisma } from "../index.js";
 
 export const userRoutes: FastifyPluginAsync = async (app) => {
@@ -85,6 +86,43 @@ export const userRoutes: FastifyPluginAsync = async (app) => {
       });
 
       return { user: updated };
+    }
+  );
+
+  app.put<{ Params: { userId: string }; Body: { currentPassword: string; newPassword: string } }>(
+    "/profile/:userId/password",
+    async (request, reply) => {
+      const sessionUserId = request.session.userId;
+      if (!sessionUserId) {
+        return reply.status(401).send({ error: "Not authenticated" });
+      }
+      if (sessionUserId !== request.params.userId) {
+        return reply.status(403).send({ error: "Forbidden" });
+      }
+
+      const { currentPassword, newPassword } = request.body;
+
+      if (newPassword.length < 8) {
+        return reply.status(400).send({ error: "New password must be at least 8 characters" });
+      }
+
+      const user = await prisma.user.findUnique({ where: { id: sessionUserId } });
+      if (!user) {
+        return reply.status(404).send({ error: "User not found" });
+      }
+
+      const valid = await bcrypt.compare(currentPassword, user.password);
+      if (!valid) {
+        return reply.status(400).send({ error: "Current password is incorrect" });
+      }
+
+      const hashed = await bcrypt.hash(newPassword, 10);
+      await prisma.user.update({
+        where: { id: sessionUserId },
+        data: { password: hashed },
+      });
+
+      return { success: true };
     }
   );
 

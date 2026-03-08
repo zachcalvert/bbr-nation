@@ -42,6 +42,13 @@ export function AdminUserDetailPage() {
   const [saveError, setSaveError] = useState("");
   const [saveSuccess, setSaveSuccess] = useState(false);
 
+  // Change password state
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [passwordSaving, setPasswordSaving] = useState(false);
+  const [passwordError, setPasswordError] = useState("");
+  const [passwordSuccess, setPasswordSuccess] = useState(false);
+
   // User form state
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -152,7 +159,7 @@ export function AdminUserDetailPage() {
         { id: team.id, espnTeamId: team.espnTeamId, seasonYear: team.seasonYear, name: team.name, abbreviation: team.abbreviation },
         ...prev,
       ].sort((a, b) => b.seasonYear - a.seasonYear));
-      setSearchResults((prev) => prev.filter((t) => t.id !== team.id));
+      setAllTeams((prev) => prev.filter((t) => t.id !== team.id));
     } catch (err) {
       setTeamActionError(err instanceof Error ? err.message : "Failed to link team");
     }
@@ -176,8 +183,40 @@ export function AdminUserDetailPage() {
     }
   }
 
-  async function handleDelete() {
-    if (!userId) return;
+  async function handlePasswordSubmit(e: FormEvent) {
+    e.preventDefault();
+    setPasswordError("");
+    setPasswordSuccess(false);
+    if (newPassword !== confirmPassword) {
+      setPasswordError("Passwords do not match");
+      return;
+    }
+    if (newPassword.length < 8) {
+      setPasswordError("Password must be at least 8 characters");
+      return;
+    }
+    setPasswordSaving(true);
+    try {
+      const res = await fetch(`/api/admin/users/${userId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password: newPassword }),
+      });
+      if (!res.ok) {
+        const body = (await res.json()) as { error?: string };
+        throw new Error(body.error || `Save failed: ${res.status}`);
+      }
+      setNewPassword("");
+      setConfirmPassword("");
+      setPasswordSuccess(true);
+    } catch (err) {
+      setPasswordError(err instanceof Error ? err.message : "Failed to update password");
+    } finally {
+      setPasswordSaving(false);
+    }
+  }
+
+  async function handleDelete() {    if (!userId) return;
     setDeleteError("");
     setDeleting(true);
     try {
@@ -336,6 +375,41 @@ export function AdminUserDetailPage() {
                 onClick={() => navigate("/admin")}
               >
                 Cancel
+              </button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <section className="section">
+        <h2>Change Password</h2>
+        <div className="card" style={{ maxWidth: 480 }}>
+          {passwordSuccess && (
+            <p className="success">Password updated successfully.</p>
+          )}
+          {passwordError && <p className="error">{passwordError}</p>}
+          <form onSubmit={handlePasswordSubmit}>
+            <label htmlFor="newPassword">New Password</label>
+            <input
+              id="newPassword"
+              type="password"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              required
+            />
+
+            <label htmlFor="confirmPassword">Confirm New Password</label>
+            <input
+              id="confirmPassword"
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              required
+            />
+
+            <div className="form-actions">
+              <button type="submit" disabled={passwordSaving}>
+                {passwordSaving ? "Saving…" : "Update Password"}
               </button>
             </div>
           </form>

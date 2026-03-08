@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import { Trophy, Anchor, PencilSimple } from "@phosphor-icons/react";
 
 interface EspnTeam {
   id: string;
@@ -12,6 +14,8 @@ interface EspnTeam {
   ties: number;
   pointsFor: number;
   finalStandingsPosition: number | null;
+  isChampion: boolean;
+  isLastPlace: boolean;
 }
 
 interface UserProfile {
@@ -25,6 +29,7 @@ interface UserProfile {
 
 export function UserProfilePage() {
   const { userId } = useParams<{ userId: string }>();
+  const { user: currentUser } = useAuth();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -54,23 +59,59 @@ export function UserProfilePage() {
     );
   }
 
-  const championships = profile.espnTeams.filter((t) => t.finalStandingsPosition === 1);
+  const isOwnProfile = currentUser?.id === profile.id;
+
+  const totalWins = profile.espnTeams.reduce((sum, t) => sum + t.wins, 0);
+  const totalLosses = profile.espnTeams.reduce((sum, t) => sum + t.losses, 0);
+  const totalTies = profile.espnTeams.reduce((sum, t) => sum + t.ties, 0);
+  const championships = profile.espnTeams.filter((t) => t.isChampion);
+  const lastPlaces = profile.espnTeams.filter((t) => t.isLastPlace);
+  const seasons = profile.espnTeams.length;
 
   return (
     <div className="page">
       <div className="page-header">
-        <h1>{profile.firstName} {profile.lastName}</h1>
+        <div className="profile-header-row">
+          <h1>{profile.firstName} {profile.lastName}</h1>
+          {isOwnProfile && (
+            <Link to={`/members/${profile.id}/edit`} className="btn btn-secondary">
+              <PencilSimple weight="bold" /> Edit Profile
+            </Link>
+          )}
+        </div>
         <p className="page-meta">
           Member since {new Date(profile.createdAt).toLocaleDateString()}
           {profile.favoriteTeam && ` · ${profile.favoriteTeam} fan`}
         </p>
-        {championships.length > 0 && (
-          <p className="page-meta">
-            🏆 {championships.length} championship{championships.length !== 1 ? "s" : ""}
-            {" "}({championships.map((t) => t.seasonYear).join(", ")})
-          </p>
-        )}
       </div>
+
+      {seasons > 0 && (
+        <section className="section">
+          <h2>All-Time Stats</h2>
+          <div className="stats-banner">
+            <div className="stat-item">
+              <span className="stat-value">{seasons}</span>
+              <span className="stat-label">Season{seasons !== 1 ? "s" : ""}</span>
+            </div>
+            <div className="stat-item">
+              <span className="stat-value">
+                {totalWins}–{totalLosses}{totalTies > 0 ? `–${totalTies}` : ""}
+              </span>
+              <span className="stat-label">All-Time Record</span>
+            </div>
+            <div className="stat-item">
+              <Trophy weight="duotone" className="stat-icon champion-icon" />
+              <span className="stat-value">{championships.length}</span>
+              <span className="stat-label">Championship{championships.length !== 1 ? "s" : ""}</span>
+            </div>
+            <div className="stat-item">
+              <Anchor weight="bold" className="stat-icon last-place-icon" />
+              <span className="stat-value">{lastPlaces.length}</span>
+              <span className="stat-label">Last Place{lastPlaces.length !== 1 ? "s" : ""}</span>
+            </div>
+          </div>
+        </section>
+      )}
 
       <section className="section">
         <h2>Teams</h2>
@@ -91,25 +132,26 @@ export function UserProfilePage() {
               </thead>
               <tbody>
                 {profile.espnTeams.map((team) => (
-                  <tr key={team.id} className={team.finalStandingsPosition === 1 ? "champion-row" : ""}>
-                    <td>
+                  <tr key={team.id} className={team.isChampion ? "champion-row" : team.isLastPlace ? "last-place-row" : ""}>
+                    <td data-label="Season">
                       <Link to={`/seasons/${team.seasonYear}`} className="team-link-plain">
                         {team.seasonYear}
                       </Link>
                     </td>
-                    <td>
-                      <Link to={`/seasons/${team.seasonYear}/teams/${team.id}`} className="team-link">
-                        {team.logoUrl && <img src={team.logoUrl} alt="" className="team-logo-sm" />}
-                        <span>{team.name}</span>
-                      </Link>
-                      {team.finalStandingsPosition === 1 && (
-                        <span className="champion-badge">🏆</span>
-                      )}
+                    <td data-label="Team">
+                      <div className="team-name-row">
+                        <Link to={`/seasons/${team.seasonYear}/teams/${team.id}`} className="team-link">
+                          {team.logoUrl && <img src={team.logoUrl} alt="" className="team-logo-sm" />}
+                          <span>{team.name}</span>
+                        </Link>
+                        {team.isChampion && <Trophy weight="duotone" className="champion-badge" />}
+                        {team.isLastPlace && <Anchor weight="bold" className="last-place-badge" />}
+                      </div>
                     </td>
-                    <td>{team.wins}</td>
-                    <td>{team.losses}</td>
-                    <td>{team.pointsFor.toFixed(1)}</td>
-                    <td className="muted">
+                    <td data-label="W">{team.wins}</td>
+                    <td data-label="L">{team.losses}</td>
+                    <td data-label="PF">{team.pointsFor.toFixed(1)}</td>
+                    <td data-label="Finish" className="muted">
                       {team.finalStandingsPosition ? `#${team.finalStandingsPosition}` : "—"}
                     </td>
                   </tr>

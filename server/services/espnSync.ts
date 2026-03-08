@@ -71,7 +71,7 @@ async function syncRosterWeek(
     const fullName =
       p.fullName ?? [p.firstName, p.lastName].filter(Boolean).join(" ") ?? "Unknown";
     const position =
-      p.eligiblePositions?.[0] ?? p.defaultPosition ?? "UNKNOWN";
+      p.defaultPosition ?? p.eligiblePositions?.[0] ?? "UNKNOWN";
     const lineupSlot = p.rosteredPosition ?? "UNKNOWN";
     const nflTeam = p.proTeam ?? "Free Agent";
     const nflTeamAbbreviation = p.proTeamAbbreviation ?? "FA";

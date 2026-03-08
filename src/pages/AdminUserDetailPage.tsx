@@ -50,6 +50,11 @@ export function AdminUserDetailPage() {
   const [favoriteTeam, setFavoriteTeam] = useState("");
   const [isAdmin, setIsAdmin] = useState(false);
 
+  // Delete state
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState("");
+
   // ESPN teams state
   const [espnTeams, setEspnTeams] = useState<EspnTeamLink[]>([]);
   const [allTeams, setAllTeams] = useState<EspnTeamSearchResult[]>([]);
@@ -171,6 +176,23 @@ export function AdminUserDetailPage() {
     }
   }
 
+  async function handleDelete() {
+    if (!userId) return;
+    setDeleteError("");
+    setDeleting(true);
+    try {
+      const res = await fetch(`/api/admin/users/${userId}`, { method: "DELETE" });
+      if (!res.ok) {
+        const body = (await res.json()) as { error?: string };
+        throw new Error(body.error || "Failed to delete user");
+      }
+      navigate("/admin");
+    } catch (err) {
+      setDeleteError(err instanceof Error ? err.message : "Failed to delete user");
+      setDeleting(false);
+    }
+  }
+
   if (loading) return <div className="loading-screen">Loading…</div>;
 
   if (error || !user) {
@@ -202,7 +224,45 @@ export function AdminUserDetailPage() {
         <p className="muted">
           Member since {new Date(user.createdAt).toLocaleDateString()}
         </p>
+        {!user.isAdmin && (
+          <button
+            className="btn-danger"
+            style={{ marginTop: "0.75rem" }}
+            onClick={() => { setDeleteError(""); setShowDeleteModal(true); }}
+          >
+            Delete User
+          </button>
+        )}
       </div>
+
+      {showDeleteModal && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <h3>Delete {user.firstName} {user.lastName}?</h3>
+            <p>
+              This will permanently delete this user account and unlink all associated ESPN teams.
+              This action cannot be undone.
+            </p>
+            {deleteError && <p className="error" style={{ marginBottom: "1rem" }}>{deleteError}</p>}
+            <div className="modal-actions">
+              <button
+                className="btn-secondary"
+                onClick={() => setShowDeleteModal(false)}
+                disabled={deleting}
+              >
+                Cancel
+              </button>
+              <button
+                className="btn-danger"
+                onClick={handleDelete}
+                disabled={deleting}
+              >
+                {deleting ? "Deleting…" : "Delete User"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <section className="section">
         <h2>Edit User</h2>

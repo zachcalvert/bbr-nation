@@ -44,7 +44,7 @@ export const userRoutes: FastifyPluginAsync = async (app) => {
     return { user: profile };
   });
 
-  app.put<{ Params: { userId: string }; Body: { firstName?: string; lastName?: string; email?: string; favoriteTeam?: string } }>(
+  app.put<{ Params: { userId: string }; Body: { firstName?: string; lastName?: string; email?: string; username?: string | null; favoriteTeam?: string } }>(
     "/profile/:userId",
     async (request, reply) => {
       const sessionUserId = request.session.userId;
@@ -55,7 +55,7 @@ export const userRoutes: FastifyPluginAsync = async (app) => {
         return reply.status(403).send({ error: "Forbidden" });
       }
 
-      const { firstName, lastName, email, favoriteTeam } = request.body;
+      const { firstName, lastName, email, username, favoriteTeam } = request.body;
 
       if (email !== undefined) {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -74,6 +74,7 @@ export const userRoutes: FastifyPluginAsync = async (app) => {
           ...(firstName !== undefined && { firstName }),
           ...(lastName !== undefined && { lastName }),
           ...(email !== undefined && { email }),
+          ...("username" in request.body && { username: username ?? null }),
           ...(favoriteTeam !== undefined && { favoriteTeam }),
         },
         select: {
@@ -81,6 +82,7 @@ export const userRoutes: FastifyPluginAsync = async (app) => {
           firstName: true,
           lastName: true,
           email: true,
+          username: true,
           favoriteTeam: true,
         },
       });
@@ -139,6 +141,7 @@ export const userRoutes: FastifyPluginAsync = async (app) => {
         email: true,
         firstName: true,
         lastName: true,
+        username: true,
         groupmeId: true,
         favoriteTeam: true,
         isAdmin: true,

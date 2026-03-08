@@ -14,6 +14,7 @@ model User {
 
   firstName    String  @map("first_name")
   lastName     String  @map("last_name")
+  username     String? @unique
   groupmeId    String  @unique @map("groupme_id")
   favoriteTeam String  @map("favorite_team")
   isAdmin      Boolean @default(false) @map("is_admin")

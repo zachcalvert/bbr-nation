@@ -24,6 +24,7 @@ interface AdminUserDetail {
   email: string;
   firstName: string;
   lastName: string;
+  username: string | null;
   groupmeId: string;
   favoriteTeam: string;
   isAdmin: boolean;
@@ -53,6 +54,7 @@ export function AdminUserDetailPage() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [groupmeId, setGroupmeId] = useState("");
   const [favoriteTeam, setFavoriteTeam] = useState("");
   const [isAdmin, setIsAdmin] = useState(false);
@@ -83,6 +85,7 @@ export function AdminUserDetailPage() {
         setFirstName(u.firstName);
         setLastName(u.lastName);
         setEmail(u.email);
+        setUsername(u.username ?? "");
         setGroupmeId(u.groupmeId);
         setFavoriteTeam(u.favoriteTeam);
         setIsAdmin(u.isAdmin);
@@ -112,7 +115,7 @@ export function AdminUserDetailPage() {
       const res = await fetch(`/api/admin/users/${userId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ firstName, lastName, email, groupmeId, favoriteTeam, isAdmin }),
+        body: JSON.stringify({ firstName, lastName, email, username: username || null, groupmeId, favoriteTeam, isAdmin }),
       });
       if (!res.ok) {
         const body = (await res.json()) as { error?: string };
@@ -336,6 +339,15 @@ export function AdminUserDetailPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
+            />
+
+            <label htmlFor="username">Username</label>
+            <input
+              id="username"
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              placeholder="Optional — must be unique"
             />
 
             <label htmlFor="groupmeId">GroupMe ID</label>

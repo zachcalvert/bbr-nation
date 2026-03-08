@@ -13,6 +13,7 @@ export function EditProfilePage() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [favoriteTeam, setFavoriteTeam] = useState("");
   const [initialized, setInitialized] = useState(false);
 
@@ -34,6 +35,7 @@ export function EditProfilePage() {
       setFirstName(currentUser.firstName);
       setLastName(currentUser.lastName);
       setEmail(currentUser.email);
+      setUsername(currentUser.username ?? "");
       setFavoriteTeam(currentUser.favoriteTeam ?? "");
       setInitialized(true);
     }
@@ -80,7 +82,7 @@ export function EditProfilePage() {
       const res = await fetch(`/api/users/profile/${userId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ firstName, lastName, email, favoriteTeam }),
+        body: JSON.stringify({ firstName, lastName, email, username: username || null, favoriteTeam }),
       });
       if (!res.ok) {
         const body = await res.json();
@@ -138,6 +140,16 @@ export function EditProfilePage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="username">Username</label>
+              <input
+                id="username"
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                placeholder="Optional — must be unique"
               />
             </div>
             <div className="form-group">

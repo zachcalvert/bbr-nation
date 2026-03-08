@@ -1164,6 +1164,31 @@ input:focus {
   color: var(--text-muted);
 }
 
+.stat-icon {
+  font-size: 1.25rem;
+  margin-bottom: 0.1rem;
+}
+
+.champion-icon {
+  color: #d4a200;
+}
+
+.last-place-icon {
+  color: var(--text-muted);
+}
+
+/* ─── Profile header row ────────────────────────────────────────────────── */
+.profile-header-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.profile-edit-card {
+  max-width: 480px;
+}
+
 /* ─── Carousel ──────────────────────────────────────────────────────────── */
 .carousel {
   margin-bottom: 2rem;

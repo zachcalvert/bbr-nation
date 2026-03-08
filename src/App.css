@@ -986,6 +986,68 @@ input:focus {
   padding: 0 0.4rem;
 }
 
+/* ─── Chat emoji picker ─────────────────────────────────────────────────── */
+.chat-emoji-picker {
+  display: flex;
+  gap: 0.15rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 0.25rem 0.4rem;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+  margin-bottom: 0.2rem;
+}
+
+.chat-emoji-btn {
+  background: transparent;
+  border: none;
+  padding: 0.15rem 0.25rem;
+  font-size: 1.15rem;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: transform 0.1s;
+  line-height: 1;
+  min-height: 0;
+}
+
+.chat-emoji-btn:hover {
+  transform: scale(1.25);
+  background: var(--bg-hover);
+}
+
+/* ─── Chat reactions ────────────────────────────────────────────────────── */
+.chat-reactions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  margin-top: 0.15rem;
+}
+
+.chat-reaction {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  font-size: 0.7rem;
+  background: var(--bg-hover);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.1rem 0.45rem;
+  cursor: pointer;
+  transition: background 0.1s, border-color 0.1s;
+  line-height: 1.4;
+  min-height: 0;
+}
+
+.chat-reaction:hover {
+  border-color: var(--accent);
+}
+
+.chat-reaction-mine {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
 /* ─── Chat input ────────────────────────────────────────────────────────── */
 .chat-input {
   display: flex;

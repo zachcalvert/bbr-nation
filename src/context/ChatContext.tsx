@@ -9,11 +9,18 @@ import {
 } from "react";
 import { useAuth } from "./AuthContext";
 
+export interface ReactionSummary {
+  emoji: string;
+  count: number;
+  userIds: string[];
+}
+
 export interface ChatMessageData {
   id: string;
   content: string;
   createdAt: string;
   user: { id: string; firstName: string; lastName: string };
+  reactions: ReactionSummary[];
 }
 
 interface ChatContextValue {
@@ -24,6 +31,7 @@ interface ChatContextValue {
   loading: boolean;
   loadMore: () => void;
   hasMore: boolean;
+  toggleReaction: (messageId: string, emoji: string) => void;
 }
 
 const ChatContext = createContext<ChatContextValue | null>(null);
@@ -97,8 +105,15 @@ export function ChatProvider({ children }: { children: ReactNode }) {
             content: msg.content,
             createdAt: msg.createdAt,
             user: msg.user,
+            reactions: [],
           };
           setMessages((prev) => [...prev, chatMsg]);
+        } else if (msg.type === "reaction" && msg.channel === "main") {
+          setMessages((prev) =>
+            prev.map((m) =>
+              m.id === msg.messageId ? { ...m, reactions: msg.reactions } : m
+            )
+          );
         }
       } catch {
         // ignore non-JSON
@@ -129,11 +144,18 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     );
   }, []);
 
+  const toggleReaction = useCallback((messageId: string, emoji: string) => {
+    if (!wsRef.current || wsRef.current.readyState !== WebSocket.OPEN) return;
+    wsRef.current.send(
+      JSON.stringify({ type: "react", channel: "main", messageId, emoji })
+    );
+  }, []);
+
   const toggleChat = useCallback(() => setIsOpen((v) => !v), []);
 
   return (
     <ChatContext.Provider
-      value={{ isOpen, toggleChat, messages, sendMessage, loading, loadMore, hasMore }}
+      value={{ isOpen, toggleChat, messages, sendMessage, loading, loadMore, hasMore, toggleReaction }}
     >
       {children}
     </ChatContext.Provider>

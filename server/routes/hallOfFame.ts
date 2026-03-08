@@ -613,7 +613,7 @@ function buildPlayerQuery(position: string) {
     LEFT JOIN espn_teams ht_team ON m.home_team_id = ht_team.id
     LEFT JOIN espn_teams at_team ON m.away_team_id = at_team.id
     WHERE re.position = ${position}
-      AND re.lineup_slot NOT IN ('BE', 'IR')
+      AND re.lineup_slot NOT IN ('Bench', 'IR')
     ORDER BY re.total_points DESC
     LIMIT 25
   `);

@@ -49,6 +49,7 @@ export const adminRoutes: FastifyPluginAsync = async (app) => {
         email: true,
         firstName: true,
         lastName: true,
+        username: true,
         groupmeId: true,
         favoriteTeam: true,
         isAdmin: true,
@@ -264,6 +265,7 @@ export const adminRoutes: FastifyPluginAsync = async (app) => {
       firstName?: string;
       lastName?: string;
       email?: string;
+      username?: string | null;
       groupmeId?: string;
       favoriteTeam?: string;
       isAdmin?: boolean;
@@ -273,7 +275,7 @@ export const adminRoutes: FastifyPluginAsync = async (app) => {
     if (!(await checkAdmin(request, reply))) return;
 
     const { id } = request.params;
-    const { firstName, lastName, email, groupmeId, favoriteTeam, isAdmin, password } = request.body;
+    const { firstName, lastName, email, username, groupmeId, favoriteTeam, isAdmin, password } = request.body;
 
     if (password !== undefined && password.length < 8) {
       return reply.status(400).send({ error: "Password must be at least 8 characters" });
@@ -288,6 +290,7 @@ export const adminRoutes: FastifyPluginAsync = async (app) => {
           ...(firstName !== undefined && { firstName }),
           ...(lastName !== undefined && { lastName }),
           ...(email !== undefined && { email }),
+          ...("username" in request.body && { username: username ?? null }),
           ...(groupmeId !== undefined && { groupmeId }),
           ...(favoriteTeam !== undefined && { favoriteTeam }),
           ...(isAdmin !== undefined && { isAdmin }),
@@ -298,6 +301,7 @@ export const adminRoutes: FastifyPluginAsync = async (app) => {
           email: true,
           firstName: true,
           lastName: true,
+          username: true,
           groupmeId: true,
           favoriteTeam: true,
           isAdmin: true,

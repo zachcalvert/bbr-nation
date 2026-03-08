@@ -60,6 +60,24 @@ interface MatchupEntry {
   isLastPlace: boolean;
 }
 
+interface IndividualRecord {
+  rank: number;
+  playerName: string;
+  nflTeam: string;
+  points: number;
+  week: number;
+  teamId: string;
+  teamName: string;
+  teamAbbreviation: string;
+  teamLogoUrl: string | null;
+  seasonYear: number;
+  isChampion: boolean;
+  isLastPlace: boolean;
+  managerName: string | null;
+  managerId: string | null;
+  opponentName: string | null;
+}
+
 export const hallOfFameRoutes: FastifyPluginAsync = async (app) => {
   app.get("/", async () => {
     const [
@@ -76,6 +94,12 @@ export const hallOfFameRoutes: FastifyPluginAsync = async (app) => {
       lowestGameScore,
       biggestBlowout,
       closestGame,
+      indQB,
+      indRB,
+      indWR,
+      indTE,
+      indDST,
+      indK,
     ] = await Promise.all([
       // --- Season records (Prisma) ---
       prisma.espnTeam.findMany({
@@ -270,6 +294,14 @@ export const hallOfFameRoutes: FastifyPluginAsync = async (app) => {
         ORDER BY margin ASC
         LIMIT 25
       `),
+
+      // --- Individual records by position ---
+      buildPlayerQuery("QB"),
+      buildPlayerQuery("RB"),
+      buildPlayerQuery("WR"),
+      buildPlayerQuery("TE"),
+      buildPlayerQuery("D/ST"),
+      buildPlayerQuery("K"),
     ]);
 
     return {
@@ -290,6 +322,14 @@ export const hallOfFameRoutes: FastifyPluginAsync = async (app) => {
       allTimeRecords: toAllTimeRecords(allTimeRecordsRaw),
       champions: toTeamHistoryEntries(championsRaw),
       lastPlaceTeams: toTeamHistoryEntries(lastPlaceTeamsRaw),
+      individualRecords: {
+        QB: toIndividualRecords(indQB),
+        RB: toIndividualRecords(indRB),
+        WR: toIndividualRecords(indWR),
+        TE: toIndividualRecords(indTE),
+        DST: toIndividualRecords(indDST),
+        K: toIndividualRecords(indK),
+      },
     };
   });
 };
@@ -406,6 +446,24 @@ interface RawTeamHistoryRow {
   last_name: string | null;
 }
 
+interface RawPlayerRow {
+  player_name: string;
+  nfl_team: string;
+  total_points: number;
+  week: number;
+  team_id: string;
+  team_name: string;
+  team_abbr: string;
+  team_logo: string | null;
+  season_year: number;
+  is_champion: boolean;
+  is_last_place: boolean;
+  manager_id: string | null;
+  manager_first_name: string | null;
+  manager_last_name: string | null;
+  opp_name: string | null;
+}
+
 function toManagerName(firstName: string | null, lastName: string | null): string | null {
   return firstName && lastName ? `${firstName} ${lastName}` : null;
 }
@@ -519,4 +577,64 @@ function toMarginEntries(rows: RawMarginRow[]): MatchupEntry[] {
       managerId: r.manager_id ?? null,
     };
   });
+}
+
+function buildPlayerQuery(position: string) {
+  return prisma.$queryRaw<RawPlayerRow[]>(Prisma.sql`
+    SELECT
+      re.full_name AS player_name,
+      re.nfl_team,
+      re.total_points,
+      rw.scoring_period_id AS week,
+      t.id AS team_id,
+      t.name AS team_name,
+      t.abbreviation AS team_abbr,
+      t.logo_url AS team_logo,
+      t.season_year,
+      t.is_champion,
+      t.is_last_place,
+      u.id AS manager_id,
+      u.first_name AS manager_first_name,
+      u.last_name AS manager_last_name,
+      CASE
+        WHEN m.home_team_id = t.id THEN at_team.name
+        WHEN m.away_team_id = t.id THEN ht_team.name
+        ELSE NULL
+      END AS opp_name
+    FROM espn_roster_entries re
+    JOIN espn_roster_weeks rw ON re.roster_week_id = rw.id
+    JOIN espn_teams t ON rw.team_id = t.id
+    LEFT JOIN users u ON t.user_id = u.id
+    LEFT JOIN espn_matchups m ON (
+      m.season_year = t.season_year AND
+      m.matchup_period_id = rw.scoring_period_id AND
+      (m.home_team_id = t.id OR m.away_team_id = t.id)
+    )
+    LEFT JOIN espn_teams ht_team ON m.home_team_id = ht_team.id
+    LEFT JOIN espn_teams at_team ON m.away_team_id = at_team.id
+    WHERE re.position = ${position}
+      AND re.lineup_slot NOT IN ('BE', 'IR')
+    ORDER BY re.total_points DESC
+    LIMIT 25
+  `);
+}
+
+function toIndividualRecords(rows: RawPlayerRow[]): IndividualRecord[] {
+  return rows.map((r, i) => ({
+    rank: i + 1,
+    playerName: r.player_name,
+    nflTeam: r.nfl_team,
+    points: Number(r.total_points),
+    week: Number(r.week),
+    teamId: r.team_id,
+    teamName: r.team_name,
+    teamAbbreviation: r.team_abbr,
+    teamLogoUrl: r.team_logo,
+    seasonYear: Number(r.season_year),
+    isChampion: r.is_champion,
+    isLastPlace: r.is_last_place,
+    managerName: toManagerName(r.manager_first_name, r.manager_last_name),
+    managerId: r.manager_id ?? null,
+    opponentName: r.opp_name ?? null,
+  }));
 }

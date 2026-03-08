@@ -267,12 +267,19 @@ export const adminRoutes: FastifyPluginAsync = async (app) => {
       groupmeId?: string;
       favoriteTeam?: string;
       isAdmin?: boolean;
+      password?: string;
     };
   }>("/users/:id", async (request, reply) => {
     if (!(await checkAdmin(request, reply))) return;
 
     const { id } = request.params;
-    const { firstName, lastName, email, groupmeId, favoriteTeam, isAdmin } = request.body;
+    const { firstName, lastName, email, groupmeId, favoriteTeam, isAdmin, password } = request.body;
+
+    if (password !== undefined && password.length < 8) {
+      return reply.status(400).send({ error: "Password must be at least 8 characters" });
+    }
+
+    const passwordHash = password ? await bcrypt.hash(password, 10) : undefined;
 
     try {
       const updated = await prisma.user.update({
@@ -284,6 +291,7 @@ export const adminRoutes: FastifyPluginAsync = async (app) => {
           ...(groupmeId !== undefined && { groupmeId }),
           ...(favoriteTeam !== undefined && { favoriteTeam }),
           ...(isAdmin !== undefined && { isAdmin }),
+          ...(passwordHash !== undefined && { password: passwordHash }),
         },
         select: {
           id: true,

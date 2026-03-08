@@ -16,6 +16,14 @@ export function EditProfilePage() {
   const [favoriteTeam, setFavoriteTeam] = useState("");
   const [initialized, setInitialized] = useState(false);
 
+  // Change password state
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [passwordSaving, setPasswordSaving] = useState(false);
+  const [passwordError, setPasswordError] = useState("");
+  const [passwordSuccess, setPasswordSuccess] = useState(false);
+
   useEffect(() => {
     if (authLoading) return;
     if (!currentUser || currentUser.id !== userId) {
@@ -30,6 +38,39 @@ export function EditProfilePage() {
       setInitialized(true);
     }
   }, [authLoading, currentUser, userId, initialized, navigate]);
+
+  async function handlePasswordSubmit(e: FormEvent) {
+    e.preventDefault();
+    setPasswordError("");
+    setPasswordSuccess(false);
+    if (newPassword !== confirmPassword) {
+      setPasswordError("New passwords do not match");
+      return;
+    }
+    if (newPassword.length < 8) {
+      setPasswordError("New password must be at least 8 characters");
+      return;
+    }
+    setPasswordSaving(true);
+    try {
+      const res = await fetch(`/api/users/profile/${userId}/password`, {        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ currentPassword, newPassword }),
+      });
+      if (!res.ok) {
+        const body = await res.json();
+        throw new Error(body.error || "Failed to update password");
+      }
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+      setPasswordSuccess(true);
+    } catch (err: unknown) {
+      setPasswordError(err instanceof Error ? err.message : "Failed to update password");
+    } finally {
+      setPasswordSaving(false);
+    }
+  }
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -116,6 +157,51 @@ export function EditProfilePage() {
               <Link to={`/members/${userId}`} className="btn btn-secondary">
                 Cancel
               </Link>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <section className="section">
+        <div className="card profile-edit-card">
+          <h2 style={{ marginTop: 0 }}>Change Password</h2>
+          <form onSubmit={handlePasswordSubmit} className="admin-form">
+            <div className="form-group">
+              <label htmlFor="currentPassword">Current Password</label>
+              <input
+                id="currentPassword"
+                type="password"
+                value={currentPassword}
+                onChange={(e) => setCurrentPassword(e.target.value)}
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="newPassword">New Password</label>
+              <input
+                id="newPassword"
+                type="password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="confirmPassword">Confirm New Password</label>
+              <input
+                id="confirmPassword"
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                required
+              />
+            </div>
+            {passwordError && <p className="error-text">{passwordError}</p>}
+            {passwordSuccess && <p className="success-text">Password updated successfully.</p>}
+            <div className="form-actions">
+              <button type="submit" className="btn btn-primary" disabled={passwordSaving}>
+                {passwordSaving ? "Saving…" : "Update Password"}
+              </button>
             </div>
           </form>
         </div>

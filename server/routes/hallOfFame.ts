@@ -29,6 +29,8 @@ interface AllTimeRecord {
   seasonsPlayed: number;
   championships: number;
   lastPlaceFinishes: number;
+  totalPointsFor: number;
+  totalPointsAgainst: number;
 }
 
 interface TeamHistoryEntry {
@@ -83,6 +85,8 @@ export const hallOfFameRoutes: FastifyPluginAsync = async (app) => {
     const [
       mostPointsFor,
       fewestPointsFor,
+      mostPointsAgainst,
+      fewestPointsAgainst,
       mostWins,
       fewestWins,
       highestDifferential,
@@ -94,11 +98,11 @@ export const hallOfFameRoutes: FastifyPluginAsync = async (app) => {
       lowestGameScore,
       biggestBlowout,
       closestGame,
+      tiedGames,
       indQB,
       indRB,
       indWR,
       indTE,
-      indDST,
       indK,
     ] = await Promise.all([
       // --- Season records (Prisma) ---
@@ -109,6 +113,16 @@ export const hallOfFameRoutes: FastifyPluginAsync = async (app) => {
       }),
       prisma.espnTeam.findMany({
         orderBy: { pointsFor: "asc" },
+        take: 25,
+        select: teamSelect,
+      }),
+      prisma.espnTeam.findMany({
+        orderBy: { pointsAgainst: "desc" },
+        take: 25,
+        select: teamSelect,
+      }),
+      prisma.espnTeam.findMany({
+        orderBy: { pointsAgainst: "asc" },
         take: 25,
         select: teamSelect,
       }),
@@ -158,7 +172,9 @@ export const hallOfFameRoutes: FastifyPluginAsync = async (app) => {
           SUM(et.ties)    AS ties,
           COUNT(DISTINCT et.season_year) AS seasons_played,
           COUNT(CASE WHEN et.is_champion   THEN 1 END) AS championships,
-          COUNT(CASE WHEN et.is_last_place THEN 1 END) AS last_place_finishes
+          COUNT(CASE WHEN et.is_last_place THEN 1 END) AS last_place_finishes,
+          SUM(et.points_for) AS total_points_for,
+          SUM(et.points_against) AS total_points_against
         FROM users u
         JOIN espn_teams et ON u.id = et.user_id
         GROUP BY u.id, u.first_name, u.last_name
@@ -295,12 +311,28 @@ export const hallOfFameRoutes: FastifyPluginAsync = async (app) => {
         LIMIT 25
       `),
 
+      // Ties
+      prisma.$queryRaw<RawMatchupRow[]>(Prisma.sql`
+        SELECT m.season_year, m.matchup_period_id AS week,
+               m.home_score AS score,
+               ht.id AS team_id, ht.name AS team_name, ht.abbreviation AS team_abbr, ht.logo_url AS team_logo,
+               at.name AS opp_name, at.abbreviation AS opp_abbr,
+               ht.is_champion, ht.is_last_place,
+               hu.id AS manager_id, hu.first_name AS manager_first_name, hu.last_name AS manager_last_name
+        FROM espn_matchups m
+        JOIN espn_teams ht ON m.home_team_id = ht.id
+        JOIN espn_teams at ON m.away_team_id = at.id
+        LEFT JOIN users hu ON ht.user_id = hu.id
+        WHERE m.home_score = m.away_score AND m.home_score > 0
+        ORDER BY m.home_score DESC
+        LIMIT 25
+      `),
+
       // --- Individual records by position ---
       buildPlayerQuery("QB"),
       buildPlayerQuery("RB"),
       buildPlayerQuery("WR"),
       buildPlayerQuery("TE"),
-      buildPlayerQuery("D/ST"),
       buildPlayerQuery("K"),
     ]);
 
@@ -308,6 +340,8 @@ export const hallOfFameRoutes: FastifyPluginAsync = async (app) => {
       seasonRecords: {
         mostPointsFor: toSeasonEntries(mostPointsFor, (t) => t.pointsFor),
         fewestPointsFor: toSeasonEntries(fewestPointsFor, (t) => t.pointsFor),
+        mostPointsAgainst: toSeasonEntries(mostPointsAgainst, (t) => t.pointsAgainst),
+        fewestPointsAgainst: toSeasonEntries(fewestPointsAgainst, (t) => t.pointsAgainst),
         highestDifferential: toDiffEntries(highestDifferential),
         lowestDifferential: toDiffEntries(lowestDifferential),
         mostWins: toSeasonEntries(mostWins, (t) => t.wins),
@@ -318,6 +352,7 @@ export const hallOfFameRoutes: FastifyPluginAsync = async (app) => {
         lowestGameScore: toMatchupEntries(lowestGameScore),
         biggestBlowout: toMarginEntries(biggestBlowout),
         closestGame: toMarginEntries(closestGame),
+        ties: toMatchupEntries(tiedGames),
       },
       allTimeRecords: toAllTimeRecords(allTimeRecordsRaw),
       champions: toTeamHistoryEntries(championsRaw),
@@ -327,7 +362,6 @@ export const hallOfFameRoutes: FastifyPluginAsync = async (app) => {
         RB: toIndividualRecords(indRB),
         WR: toIndividualRecords(indWR),
         TE: toIndividualRecords(indTE),
-        DST: toIndividualRecords(indDST),
         K: toIndividualRecords(indK),
       },
     };
@@ -433,6 +467,8 @@ interface RawAllTimeRow {
   seasons_played: bigint;
   championships: bigint;
   last_place_finishes: bigint;
+  total_points_for: number;
+  total_points_against: number;
 }
 
 interface RawTeamHistoryRow {
@@ -539,6 +575,8 @@ function toAllTimeRecords(rows: RawAllTimeRow[]): AllTimeRecord[] {
     seasonsPlayed: Number(r.seasons_played),
     championships: Number(r.championships),
     lastPlaceFinishes: Number(r.last_place_finishes),
+    totalPointsFor: Number(r.total_points_for),
+    totalPointsAgainst: Number(r.total_points_against),
   }));
 }
 

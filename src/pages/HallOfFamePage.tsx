@@ -48,6 +48,8 @@ interface AllTimeRecord {
   seasonsPlayed: number;
   championships: number;
   lastPlaceFinishes: number;
+  totalPointsFor: number;
+  totalPointsAgainst: number;
 }
 
 interface TeamHistoryEntry {
@@ -83,6 +85,8 @@ interface HallOfFameData {
   seasonRecords: {
     mostPointsFor: SeasonEntry[];
     fewestPointsFor: SeasonEntry[];
+    mostPointsAgainst: SeasonEntry[];
+    fewestPointsAgainst: SeasonEntry[];
     highestDifferential: SeasonEntry[];
     lowestDifferential: SeasonEntry[];
     mostWins: SeasonEntry[];
@@ -93,6 +97,7 @@ interface HallOfFameData {
     lowestGameScore: MatchupEntry[];
     biggestBlowout: MatchupEntry[];
     closestGame: MatchupEntry[];
+    ties: MatchupEntry[];
   };
   allTimeRecords: AllTimeRecord[];
   champions: TeamHistoryEntry[];
@@ -102,17 +107,20 @@ interface HallOfFameData {
     RB: IndividualRecord[];
     WR: IndividualRecord[];
     TE: IndividualRecord[];
-    DST: IndividualRecord[];
     K: IndividualRecord[];
   };
 }
 
 type CategoryKey =
   | "allTimeRecord"
+  | "totalPointsFor"
+  | "totalPointsAgainst"
   | "championshipCircle"
   | "losersLane"
   | "mostPointsFor"
   | "fewestPointsFor"
+  | "mostPointsAgainst"
+  | "fewestPointsAgainst"
   | "highestDifferential"
   | "lowestDifferential"
   | "mostWins"
@@ -121,11 +129,11 @@ type CategoryKey =
   | "lowestGameScore"
   | "biggestBlowout"
   | "closestGame"
+  | "ties"
   | "indQB"
   | "indRB"
   | "indWR"
   | "indTE"
-  | "indDST"
   | "indK";
 
 interface CategoryDef {
@@ -139,20 +147,36 @@ interface CategoryDef {
 
 const categories: CategoryDef[] = [
   { key: "allTimeRecord", label: "All-Time Record", group: "alltime" },
+  { key: "totalPointsFor", label: "Total Points For", group: "alltime" },
+  { key: "totalPointsAgainst", label: "Total Points Against", group: "alltime" },
   { key: "championshipCircle", label: "Championship Circle", group: "alltime" },
   { key: "losersLane", label: "Last Place Larrys", group: "alltime" },
   {
     key: "mostPointsFor",
-    label: "Most Points (Season)",
+    label: "Most Points For (Season)",
     group: "season",
     valueLabel: "Points For",
     formatValue: (e) => e.value.toFixed(1),
   },
   {
     key: "fewestPointsFor",
-    label: "Fewest Points (Season)",
+    label: "Fewest Points For (Season)",
     group: "season",
     valueLabel: "Points For",
+    formatValue: (e) => e.value.toFixed(1),
+  },
+  {
+    key: "mostPointsAgainst",
+    label: "Most Points Against (Season)",
+    group: "season",
+    valueLabel: "Points Against",
+    formatValue: (e) => e.value.toFixed(1),
+  },
+  {
+    key: "fewestPointsAgainst",
+    label: "Fewest Points Against (Season)",
+    group: "season",
+    valueLabel: "Points Against",
     formatValue: (e) => e.value.toFixed(1),
   },
   {
@@ -223,11 +247,17 @@ const categories: CategoryDef[] = [
     valueLabel: "Margin",
     formatValue: (e) => e.value.toFixed(2),
   },
+  {
+    key: "ties",
+    label: "Ties",
+    group: "matchup",
+    valueLabel: "Score",
+    formatValue: (e) => e.value.toFixed(2),
+  },
   { key: "indQB", label: "QB", group: "individual", position: "QB" },
   { key: "indRB", label: "RB", group: "individual", position: "RB" },
   { key: "indWR", label: "WR", group: "individual", position: "WR" },
   { key: "indTE", label: "TE", group: "individual", position: "TE" },
-  { key: "indDST", label: "D/ST", group: "individual", position: "DST" },
   { key: "indK", label: "K", group: "individual", position: "K" },
 ];
 
@@ -448,6 +478,98 @@ export function HallOfFamePage() {
                           ) : (
                             <span className="muted">—</span>
                           )}
+                        </td>
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
+            </div>
+          </>
+        )}
+
+        {/* ── Total Points For ── */}
+        {activeTab === "totalPointsFor" && (
+          <>
+            <h2>Total Points For</h2>
+            <div className="card table-card">
+              <table className="data-table">
+                <thead>
+                  <tr>
+                    <th className="col-rank">#</th>
+                    <th>Manager</th>
+                    <th className="col-right">Seasons</th>
+                    <th className="col-right">Total PF</th>
+                    <th className="col-right">Avg PF/Season</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[...data.allTimeRecords]
+                    .sort((a, b) => b.totalPointsFor - a.totalPointsFor)
+                    .map((r, i) => (
+                      <tr key={r.userId} className={user?.id === r.userId ? "my-team-row" : ""}>
+                        <td data-label="#" className="col-rank muted">{i + 1}</td>
+                        <td data-label="Manager">
+                          <span className="team-name-row">
+                            <Link to={`/members/${r.userId}`} className="team-link-plain">
+                              {r.firstName} {r.lastName}
+                            </Link>
+                            {user?.id === r.userId && (
+                              <span className="my-team-badge">
+                                <UserCircle weight="duotone" size={18} />
+                              </span>
+                            )}
+                          </span>
+                        </td>
+                        <td data-label="Seasons" className="col-right muted">{r.seasonsPlayed}</td>
+                        <td data-label="Total PF" className="col-right">{r.totalPointsFor.toFixed(1)}</td>
+                        <td data-label="Avg PF/Season" className="col-right muted">
+                          {(r.totalPointsFor / r.seasonsPlayed).toFixed(1)}
+                        </td>
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
+            </div>
+          </>
+        )}
+
+        {/* ── Total Points Against ── */}
+        {activeTab === "totalPointsAgainst" && (
+          <>
+            <h2>Total Points Against</h2>
+            <div className="card table-card">
+              <table className="data-table">
+                <thead>
+                  <tr>
+                    <th className="col-rank">#</th>
+                    <th>Manager</th>
+                    <th className="col-right">Seasons</th>
+                    <th className="col-right">Total PA</th>
+                    <th className="col-right">Avg PA/Season</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[...data.allTimeRecords]
+                    .sort((a, b) => b.totalPointsAgainst - a.totalPointsAgainst)
+                    .map((r, i) => (
+                      <tr key={r.userId} className={user?.id === r.userId ? "my-team-row" : ""}>
+                        <td data-label="#" className="col-rank muted">{i + 1}</td>
+                        <td data-label="Manager">
+                          <span className="team-name-row">
+                            <Link to={`/members/${r.userId}`} className="team-link-plain">
+                              {r.firstName} {r.lastName}
+                            </Link>
+                            {user?.id === r.userId && (
+                              <span className="my-team-badge">
+                                <UserCircle weight="duotone" size={18} />
+                              </span>
+                            )}
+                          </span>
+                        </td>
+                        <td data-label="Seasons" className="col-right muted">{r.seasonsPlayed}</td>
+                        <td data-label="Total PA" className="col-right">{r.totalPointsAgainst.toFixed(1)}</td>
+                        <td data-label="Avg PA/Season" className="col-right muted">
+                          {(r.totalPointsAgainst / r.seasonsPlayed).toFixed(1)}
                         </td>
                       </tr>
                     ))}

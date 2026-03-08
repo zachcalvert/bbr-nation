@@ -224,6 +224,7 @@ export const wsRoutes: FastifyPluginAsync = async (app) => {
             client.channels.has(msg.channel) &&
             client.userId &&
             typeof msg.messageId === "string" &&
+            typeof msg.emoji === "string" &&
             ALLOWED_EMOJIS.includes(msg.emoji)
           ) {
             const chatMessage = await prisma.chatMessage.findUnique({

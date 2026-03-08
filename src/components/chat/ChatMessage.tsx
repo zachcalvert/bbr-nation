@@ -92,7 +92,6 @@ export function ChatMessage({ message }: { message: ChatMessageData }) {
         onContextMenu={handleContextMenu}
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
-        onTouchMove={handleTouchEnd}
       >
         <span className="chat-message-content">{message.content}</span>
       </div>

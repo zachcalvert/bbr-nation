@@ -7,14 +7,10 @@ import { ChatToggle } from "./chat/ChatToggle";
 import { ChatPanel } from "./chat/ChatPanel";
 
 export function Layout() {
-  const { user, loading, logout } = useAuth();
+  const { user, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
-
-  if (loading) {
-    return <div className="loading-screen">Loading…</div>;
-  }
 
   async function handleLogout() {
     await logout();
@@ -63,7 +59,7 @@ export function Layout() {
         </div>
 
         <div className="nav-user">
-          {user ? (
+          {user && (
             <>
               <span className="nav-username">
                 {user.firstName} {user.lastName}
@@ -72,8 +68,6 @@ export function Layout() {
                 Sign out
               </button>
             </>
-          ) : (
-            <NavLink to="/login" className="btn-ghost">Sign in</NavLink>
           )}
           <button
             className="nav-theme-btn"
@@ -130,7 +124,7 @@ export function Layout() {
               Admin
             </NavLink>
           )}
-          {user ? (
+          {user && (
             <div className="mobile-nav-user-section">
               <span className="mobile-nav-username">
                 {user.firstName} {user.lastName}
@@ -153,12 +147,6 @@ export function Layout() {
                 Sign out
               </button>
             </div>
-          ) : (
-            <div className="mobile-nav-user-section">
-              <NavLink to="/login" onClick={closeMenu} className="btn-ghost">
-                Sign in
-              </NavLink>
-            </div>
           )}
         </div>
       )}
@@ -167,8 +155,8 @@ export function Layout() {
         <Outlet />
       </main>
 
-      {user && <ChatToggle />}
-      {user && <ChatPanel />}
+      <ChatToggle />
+      <ChatPanel />
     </div>
   );
 }

@@ -11,7 +11,7 @@ export interface AuthUser {
   email: string;
   firstName: string;
   lastName: string;
-  groupmeId: string;
+  groupmeId: string | null;
   favoriteTeam: string;
   isAdmin: boolean;
 }

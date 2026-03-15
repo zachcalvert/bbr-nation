@@ -129,7 +129,7 @@ export const adminRoutes: FastifyPluginAsync = async (app) => {
       lastName: string;
       email: string;
       password: string;
-      groupmeId: string;
+      groupmeId?: string;
       favoriteTeam: string;
       isAdmin?: boolean;
     };
@@ -150,9 +150,9 @@ export const adminRoutes: FastifyPluginAsync = async (app) => {
         lastName,
         email,
         password: hashed,
-        groupmeId,
         favoriteTeam,
         isAdmin: isAdmin ?? false,
+        ...(groupmeId ? { groupmeId } : {}),
       },
       select: {
         id: true,
@@ -288,7 +288,7 @@ export const adminRoutes: FastifyPluginAsync = async (app) => {
           ...(firstName !== undefined && { firstName }),
           ...(lastName !== undefined && { lastName }),
           ...(email !== undefined && { email }),
-          ...(groupmeId !== undefined && { groupmeId }),
+          ...(groupmeId !== undefined && { groupmeId: groupmeId || null }),
           ...(favoriteTeam !== undefined && { favoriteTeam }),
           ...(isAdmin !== undefined && { isAdmin }),
           ...(passwordHash !== undefined && { password: passwordHash }),

@@ -86,7 +86,7 @@ ALTER TABLE "users" ADD CONSTRAINT "users_groupme_id_key" UNIQUE ("groupme_id");
 
 ## Data Model: Users and ESPN Teams
 
-Each league member is a `User` record. The key identifier is `groupmeId` — the member's ID in the league's GroupMe group chat, which has been active for the entire history of the league. It is unique and stable across seasons.
+Each league member is a `User` record identified by their email address. The optional `groupmeId` field can store an external identifier (e.g. GroupMe member ID) if the league uses one.
 
 ESPN teams (`EspnTeam`) are linked to users via a nullable `userId` FK. This is **not** set automatically during sync — `ownerEspnMemberId` is stored on each team (raw from the ESPN API) but is not used for linking because it isn't reliable across seasons. Associations are managed manually via the admin panel.
 
@@ -104,7 +104,7 @@ Routes: `/admin` (user list) and `/admin/users/:id` (user detail).
 
 **`/admin`**
 - Lists all users with name, email, admin flag, join date
-- "Add User" form — creates a new account with: firstName, lastName, email, password, groupmeId, favoriteTeam, isAdmin
+- "Add User" form — creates a new account with: firstName, lastName, email, password, favoriteTeam, isAdmin (groupmeId is optional)
 
 **`/admin/users/:id`**
 - Edit all user profile fields (including groupmeId, favoriteTeam, isAdmin)

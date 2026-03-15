@@ -142,7 +142,7 @@ export function AdminPage() {
       const res = await fetch("/api/admin/users", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ ...form, groupmeId: form.groupmeId || undefined }),
       });
 
       const data = await res.json();
@@ -282,12 +282,11 @@ export function AdminPage() {
                 />
               </label>
               <label>
-                GroupMe ID
+                GroupMe ID (optional)
                 <input
                   type="text"
                   value={form.groupmeId}
                   onChange={(e) => setForm((f) => ({ ...f, groupmeId: e.target.value }))}
-                  required
                 />
               </label>
               <label>

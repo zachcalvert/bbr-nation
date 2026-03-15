@@ -108,11 +108,11 @@ export function HomePage() {
 
       <section className="stats-banner">
         <div className="stat-item">
-          <span className="stat-value">10</span>
+          <span className="stat-value">{current.leagueSize}</span>
           <span className="stat-label">Members</span>
         </div>
         <div className="stat-item">
-          <span className="stat-value">12</span>
+          <span className="stat-value">{seasons.length}</span>
           <span className="stat-label">Seasons</span>
         </div>
       </section>

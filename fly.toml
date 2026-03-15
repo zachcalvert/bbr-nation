@@ -1,3 +1,4 @@
+# Replace with your Fly.io app name (run `fly launch` to create one)
 app = 'bbr-nation'
 primary_region = 'iad'
 

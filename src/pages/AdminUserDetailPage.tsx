@@ -24,7 +24,7 @@ interface AdminUserDetail {
   email: string;
   firstName: string;
   lastName: string;
-  groupmeId: string;
+  groupmeId: string | null;
   favoriteTeam: string;
   isAdmin: boolean;
   createdAt: string;
@@ -83,7 +83,7 @@ export function AdminUserDetailPage() {
         setFirstName(u.firstName);
         setLastName(u.lastName);
         setEmail(u.email);
-        setGroupmeId(u.groupmeId);
+        setGroupmeId(u.groupmeId ?? "");
         setFavoriteTeam(u.favoriteTeam);
         setIsAdmin(u.isAdmin);
         setEspnTeams(u.espnTeams);
@@ -112,7 +112,7 @@ export function AdminUserDetailPage() {
       const res = await fetch(`/api/admin/users/${userId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ firstName, lastName, email, groupmeId, favoriteTeam, isAdmin }),
+        body: JSON.stringify({ firstName, lastName, email, groupmeId: groupmeId || undefined, favoriteTeam, isAdmin }),
       });
       if (!res.ok) {
         const body = (await res.json()) as { error?: string };
@@ -338,13 +338,12 @@ export function AdminUserDetailPage() {
               required
             />
 
-            <label htmlFor="groupmeId">GroupMe ID</label>
+            <label htmlFor="groupmeId">GroupMe ID (optional)</label>
             <input
               id="groupmeId"
               type="text"
               value={groupmeId}
               onChange={(e) => setGroupmeId(e.target.value)}
-              required
             />
 
             <label htmlFor="favoriteTeam">Favorite Team</label>

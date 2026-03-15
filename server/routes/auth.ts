@@ -9,7 +9,7 @@ export const authRoutes: FastifyPluginAsync = async (app) => {
       password: string;
       firstName: string;
       lastName: string;
-      groupmeId: string;
+      groupmeId?: string;
       favoriteTeam: string;
     };
   }>("/register", async (request, reply) => {
@@ -28,8 +28,8 @@ export const authRoutes: FastifyPluginAsync = async (app) => {
         password: hashed,
         firstName,
         lastName,
-        groupmeId,
         favoriteTeam,
+        ...(groupmeId ? { groupmeId } : {}),
       },
     });
 

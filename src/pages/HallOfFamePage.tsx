@@ -150,7 +150,7 @@ const categories: CategoryDef[] = [
   { key: "totalPointsFor", label: "Total Points For", group: "alltime" },
   { key: "totalPointsAgainst", label: "Total Points Against", group: "alltime" },
   { key: "championshipCircle", label: "Championship Circle", group: "alltime" },
-  { key: "losersLane", label: "Last Place Larrys", group: "alltime" },
+  { key: "losersLane", label: "Last Place", group: "alltime" },
   {
     key: "mostPointsFor",
     label: "Most Points For (Season)",
@@ -637,10 +637,10 @@ export function HallOfFamePage() {
           </>
         )}
 
-        {/* ── Last Place Larrys ── */}
+        {/* ── Last Place ── */}
         {activeTab === "losersLane" && (
           <>
-            <h2>Circle of Paul</h2>
+            <h2>Last Place</h2>
             <div className="card table-card">
               <table className="data-table">
                 <thead>
